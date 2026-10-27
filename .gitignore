@@ -1,0 +1,31 @@
+# Basura de sistema y de editores
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+*.code-workspace
+
+# Restos de servidores y ejecuciones locales
+*.log
+nohup.out
+*.pid
+
+# Copias de seguridad y temporales
+*.bak
+*.orig
+*.rej
+*.tmp
+*.part
+__pycache__/
+
+# Nada de node_modules: aquí no hay npm, pero si algún día se usa,
+# que no entre en el repo.
+node_modules/
+
+# OJO: js/hero.bundle.js y js/hero-lab.bundle.js SÍ se versionan a
+# propósito. index.html los carga directamente, así que el repo tiene
+# que funcionar tal cual, con doble clic y sin compilar.

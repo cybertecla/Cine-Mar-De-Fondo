@@ -1,0 +1,11 @@
+Respuestas a las preguntas de repaso (máximo 5 líneas cada una):
+
+1. Las cuatro capas del modelo de caja son: contenido, relleno (padding), borde (border) y margen (margin). Los cuatro valores de margin se escriben en orden: top, right, bottom, left.
+
+2. CSS funciona en cascada: las reglas se aplican por orden de especificidad y origen (estilo en línea > estilo interno > hoja externa). Ejemplo: en la hoja externa p { color: red; } y en el atributo style style="color: blue;", el texto aparecerá en azul porque el estilo en línea tiene mayor especificidad.
+
+3. .sinopsis aplica a cualquier elemento que tenga class="sinopsis"; p.sinopsis aplica únicamente al elemento <p class="sinopsis">. Una clase se identifica con un punto (.) y un identificador con # en CSS.
+
+4. position: absolute saca el elemento del flujo normal y lo posiciona respecto al ancestor con posicionamiento más cercano; position: fixed posiciona el elemento en la viewport y permanece fijo al hacer scroll (comportamiento de Step 5 del ejercicio).
+
+5. Tres diferencias entre reserva.html y reserva_html5.html: (a) reserva.html usa DOCTYPE XHTML 1.0 Strict mientras que reserva_html5.html usa <!DOCTYPE html>; (b) reserva_html5.html emplea las etiquetas <nav> y <main> para estructurar el menú y el formulario, respectivamente; (c) en reserva_html5.html los campos de entrada tienen tipos específicos: type="email" para el correo, type="tel" para el teléfono y type="number" con min y max para las entradas, más los atributos required y placeholder.

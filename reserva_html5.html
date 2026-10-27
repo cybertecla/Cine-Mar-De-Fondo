@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Cine Mar de Fondo - Reservar Entradas (HTML5)</title>
+<link rel="stylesheet" type="text/css" href="estilos.css" />
+</head>
+<body>
+
+<nav>
+<h1>Cine Mar de Fondo</h1>
+<ul>
+<li><a href="index.html">Cartelera</a></li>
+<li><a href="reserva.html">Reservar entradas</a></li>
+</ul>
+</nav>
+
+<main>
+<form action="" method="get">
+
+<fieldset>
+<legend>Tus datos</legend>
+
+<label for="nombre">Nombre:</label>
+<input type="text" name="nombre" id="nombre" placeholder="Tu nombre" required />
+
+<label for="telefono">Teléfono:</label>
+<input type="tel" name="telefono" id="telefono" placeholder="Tu teléfono" />
+
+</fieldset>
+
+<fieldset>
+<legend>Tu reserva</legend>
+
+<label for="pelicula">Película:</label>
+<select name="pelicula" id="pelicula">
+<option value="pelicula1">Película 1</option>
+<option value="pelicula2">Película 2</option>
+<option value="pelicula3">Película 3</option>
+</select>
+
+<p>
+<label for="sesion17">17:00</label>
+<input type="radio" name="sesion" id="sesion17" value="17:00" />
+
+<label for="sesion19">19:30</label>
+<input type="radio" name="sesion" id="sesion19" value="19:30" />
+
+<label for="sesion22">22:00</label>
+<input type="radio" name="sesion" id="sesion22" value="22:00" />
+</p>
+
+<p>
+<label for="palomitas">Palomitas</label>
+<input type="checkbox" name="extras" id="palomitas" value="palomitas" />
+
+<label for="refresco">Refresco</label>
+<input type="checkbox" name="extras" id="refresco" value="refresco" />
+
+<label for="butaca">Butaca preferente</label>
+<input type="checkbox" name="extras" id="butaca" value="butaca" />
+</p>
+
+<textarea name="observaciones" id="observaciones" rows="3" cols="40"></textarea>
+
+<p>
+<input type="submit" value="Enviar" />
+<input type="reset" value="Restablecer" />
+</p>
+
+</fieldset>
+
+</form>
+</main>
+
+<div id="aviso">¡Estreno este viernes!</div>
+
+</body>
+</html>

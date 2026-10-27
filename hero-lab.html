@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero lab · Cine Mar de Fondo</title>
+<link rel="stylesheet" type="text/css" href="estilos.css?v=5" />
+<style>
+/* Estilos SOLO de la página de pruebas (no forman parte de la entrega) */
+body { margin:0; background-color:#111111; color:#eeeeee; }
+.lab-cabecera { padding:2rem 1.5rem 0.5rem; }
+.lab-cabecera h1 { text-align:left; color:#ffffff; font-size:1.1rem; margin:0; }
+.lab-nota { color:#999999; font-size:0.85rem; max-width:60em; }
+.lab-banner { font-size:0.95rem; font-weight:bold; letter-spacing:0.04em; color:#8fe7f5; }
+.lab-h2 { text-align:center; font-size:0.85rem; letter-spacing:0.15em; text-transform:uppercase; color:#26b5ce; margin:1.5rem 0 0.35rem; }
+.lab-estado { text-align:center; font-size:0.82rem; letter-spacing:0.04em; color:#8fe7f5; margin:0 0 0.6rem; }
+.lab-hero { height:78vh; min-height:420px; }
+.lab-controles { text-align:center; padding:0.75rem 0 1.5rem; }
+.lab-controles button { font:inherit; padding:0.45rem 1rem; background-color:#222222; color:#eeeeee; border:1px solid #555555; cursor:pointer; }
+.lab-controles button:hover { background-color:#26b5ce; border-color:#26b5ce; color:#000000; }
+#lab-blotter-mount { min-height:90px; }
+.b-canvas { display:block; margin:0 auto; }
+</style>
+</head>
+<body>
+
+<div class="lab-cabecera">
+<h1>Hero lab · pruebas de texto animado</h1>
+<p class="lab-nota">Página de pruebas, no forma parte de la entrega. Las dos secciones llevan la misma
+banda negra (solo detrás del texto) sobre un fondo animado: la sección 1 anima el texto con
+<strong>GSAP</strong> (DOM) y la sección 2 lo dibuja con <strong>Blotter.ts</strong> (WebGL).
+El fondo del hero de <code>index.html</code> (tinta líquida o rayos) se elige en
+<code>js/hero-ajustes.js</code>.</p>
+<p class="lab-banner" id="lab-webgl">WebGL: comprobando…</p>
+</div>
+
+<section>
+<h2 class="lab-h2">1 · GSAP · SplitText + ScrambleText</h2>
+<p class="lab-estado"><span id="lab-estado-1-shader">Shader: …</span> · <span id="lab-estado-1-gsap">GSAP: …</span></p>
+<div class="hero lab-hero">
+<div class="hero-shader" id="lab-shader-gsap"></div>
+<div class="hero-banda">
+<h2 class="hero-titulo" id="lab-gsap-titulo">Cine Mar de Fondo</h2>
+<p class="hero-sub" id="lab-gsap-sub">Un mar de cine · estrenos y clásicos</p>
+</div>
+</div>
+<div class="lab-controles"><button type="button" id="lab-repetir">Repetir animación</button></div>
+</section>
+
+<section>
+<h2 class="lab-h2">2 · Blotter.ts · ChannelSplit (sigue al cursor)</h2>
+<p class="lab-estado"><span id="lab-estado-2-shader">Shader: …</span> · <span id="lab-estado-2-blotter">Blotter: …</span></p>
+<div class="hero lab-hero" id="lab-blotter-escena">
+<div class="hero-shader" id="lab-shader-blotter"></div>
+<div class="hero-banda">
+<div id="lab-blotter-mount"></div>
+<p class="hero-sub">Mueve el ratón por el título</p>
+</div>
+</div>
+</section>
+
+<script type="text/javascript" src="lib/gsap/gsap.min.js?v=5"></script>
+<script type="text/javascript" src="lib/gsap/SplitText.min.js?v=5"></script>
+<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js?v=5"></script>
+<!-- Ajustes del hero: edita js/hero-ajustes.js y recarga con F5 (sin compilar) -->
+<script type="text/javascript" src="js/hero-ajustes.js?v=5"></script>
+<!-- Bundle clásico (hero-lab.js + hero-fx.js + paper-shaders + blotter + three):
+     funciona también al abrir el archivo con doble clic (file://). -->
+<script type="text/javascript" src="js/hero-lab.bundle.js?v=5"></script>
+</body>
+</html>
