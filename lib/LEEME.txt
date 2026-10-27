@@ -1,0 +1,42 @@
+LEEME · Librerías locales del hero (Cine Mar de Fondo)
+=======================================================
+
+Estas carpetas contienen copias locales de librerías de terceros, usadas
+por el hero de la cartelera (index.html) y por la página de pruebas
+(hero-lab.html). Están copiadas aquí para que el sitio funcione sin
+conexión y sin depender de un CDN.
+
+lib/gsap/           GSAP 3.15.0 + SplitText + ScrambleTextPlugin
+                    © GreenSock. Licencia estándar "no charge":
+                    https://gsap.com/standard-license
+lib/three/          three.js r170 (build módulo) · MIT
+                    https://github.com/mrdoob/three.js
+lib/blotter/        blotter.ts 1.0.1 · MIT (necesita three.js)
+                    https://github.com/dnhn/blotter
+lib/paper-shaders/  @paper-design/shaders 0.0.82 · Apache-2.0
+                    https://github.com/paper-design/shaders
+                    (shaders usados: god-rays.js y dithering.js)
+estilos.css         Tipografía Anton 400 (subconjunto latino, woff2),
+                    incrustada en base64: es la del demo de blotter.ts.
+                    © The Anton Project Authors · SIL Open Font License 1.1
+                    https://fonts.google.com/specimen/Anton
+lib/webgl-fluid/    webgl-fluid 0.4.0 (tinta líquida; porta de
+                    PavelDoGreat/WebGL-Fluid-Simulation) · MIT
+                    https://github.com/cloydlau/webgl-fluid
+
+js/hero.bundle.js, js/hero-lab.bundle.js
+                    Bundles clásicos generados con construir.sh (esbuild).
+                    Se regeneran tras cambiar js/hero.js, js/hero-dither.js,
+                    js/hero-fluid.js, js/hero-titulo.js, js/hero-lab.js o
+                    js/hero-fx.js:
+                    sh construir.sh
+                    (o dejar sh vigilar.sh corriendo; recompila solo).
+                    (un bundle clásico funciona también con file://, donde
+                    los módulos <script type="module"> no cargan.)
+                    hero.bundle.js incluye three.js + blotter.ts: el titular
+                    del hero se dibuja con Blotter, material channel-split.
+js/hero-ajustes.js  Ajustes del hero editables sin compilar (F5 y listo).
+                    Explicación de cada número: TOCAR-EL-HERO.md
+
+Para actualizar una librería, sustituye los archivos por los de la versión
+nueva (misma ruta y nombre) y prueba index.html y hero-lab.html.
