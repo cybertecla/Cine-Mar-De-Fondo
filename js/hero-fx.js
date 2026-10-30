@@ -5,8 +5,8 @@
    · animarTitulo()    → subida de letras con GSAP SplitText
    · animarSubtitulo() → descifrado de texto con GSAP ScrambleText
 
-   Lo usan index.html (js/hero.js) y hero-lab.html (js/hero-lab.js).
-   Los dos puntos de entrada se empaquetan con construir.sh.
+   Lo usa index.html (js/hero.js).
+   El punto de entrada se empaqueta con construir.sh.
    ------------------------------------------------------------------ */
 
 import { ShaderMount } from '../lib/paper-shaders/dist/shader-mount.js';
@@ -15,7 +15,7 @@ import { getShaderColorFromString } from '../lib/paper-shaders/dist/get-shader-c
 import { getShaderNoiseTexture } from '../lib/paper-shaders/dist/get-shader-noise-texture.js';
 
 /* Paletas del shader «god rays» (rayos de luz, como un proyector).
-   Prueba las dos en hero-lab.html y quédate con la que prefieras. */
+   Solo se usa la activa en js/hero-ajustes.js. */
 export const PRESETS = {
 	/* «abismo»: teal profundo, el color del sitio, sala a oscuras */
 	abismo: {

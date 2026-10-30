@@ -27,12 +27,12 @@ La guía de ajustes, con recetas, está en `TOCAR-EL-HERO.md`.
 ## Carpetas
 
 ```
-index.html · hero-lab.html   página y banco de pruebas del hero
+index.html · reserva.html · reserva_html5.html
 estilos.css                  todos los estilos (incluye la fuente Anton)
-js/                          código fuente del hero y bundles generados
+js/                          código fuente del hero y el bundle generado
 lib/                         librerías de terceros copiadas (ver lib/LEEME.txt)
 img/                         posters (de momento, marcadores de posición)
-ticket-01.* · ticket-02.jpg  entradas del cine (JPG y fuente GIMP)
+ticket-01.jpg · ticket-02.jpg  entradas del cine
 ```
 
 ## Pendiente

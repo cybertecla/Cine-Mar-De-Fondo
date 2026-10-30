@@ -22,6 +22,12 @@ nohup.out
 *.part
 __pycache__/
 
+# Cuentas del cine: fuentes de GIMP fuera del repo (viven en ../cine-fuentes/)
+*.xcf
+
+# Planes y apuntes de trabajo del agente
+.hermes/
+
 # Nada de node_modules: aquí no hay npm, pero si algún día se usa,
 # que no entre en el repo.
 node_modules/

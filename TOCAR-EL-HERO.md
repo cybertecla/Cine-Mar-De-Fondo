@@ -1,6 +1,6 @@
 # Tocar el hero (Cine Mar de Fondo) — guía rápida
 
-Página principal: `index.html` · Página de pruebas: `hero-lab.html`
+Página principal: `index.html`
 
 ---
 
@@ -158,7 +158,7 @@ Trucos rápidos:
 ## 6 · Los rayos de luz (god rays) — cada número
 
 Se retocan en `js/hero-ajustes.js`, dentro de `rayos: { … }`
-(aplican al hero de `index.html` cuando `fondo: 'rayos'` y al hero-lab):
+(aplican al hero de `index.html` cuando `fondo: 'rayos'`):
 
 ```js
 rayos: {
@@ -177,16 +177,13 @@ rayos: {
 
 ---
 
-## 7 · Diagnóstico sin abrir la consola
+## 7 · Diagnóstico rápido
 
-Abre `hero-lab.html`. Arriba del todo hay un banner:
-
-- **`WebGL ✓ · (nombre de tu tarjeta gráfica)`** → todo puede funcionar aquí.
-- **`WebGL ✗ — …`** → en ese navegador no se podrán ver ni la tinta, ni la
-  trama, ni los rayos (es cosa del navegador, no del código). Hazme una
-  foto de esa línea o cópiamela y lo arreglamos.
-
-Debajo, cada sección indica su estado: `Shader ✓/✗ · GSAP ✓/✗ · Blotter ✓/✗`.
+Abre la consola del navegador (F12 → Consola) con `index.html` cargado.
+Si el hero arranca, verás `[hero] fondo: dither` y ningún error en rojo.
+Cuando algo falla, `js/hero-fx.js` deja un aviso `[hero] …` explicando qué
+librería no llegó a arrancar; si WebGL no está disponible, la página cae al
+resplandor estático y el texto sigue viéndose: eso es lo esperado, no un bug.
 
 ---
 
@@ -213,4 +210,4 @@ shader de Paper, revisar qué uniforms de encuadre usa antes de montarlo.
 En Blotter, escribir `texto.properties = { … }` **sustituye** el objeto
 entero (no lo fusiona): hay que repetir siempre todos los valores
 (familia, tamaño, grosor, fill y padding) o el texto vuelve a negro y sin
-aire. En `js/hero-titulo.js` y `js/hero-lab.js` ya se hace así.
+aire. En `js/hero-titulo.js` ya se hace así.

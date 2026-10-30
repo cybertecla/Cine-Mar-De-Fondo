@@ -83,9 +83,8 @@ https://github.com/DavidHDev/canvas-ui
 
 >[!info] Hero — implementado (pendiente de tu prueba)
 >- `index.html`: banda negra **solo detrás del texto**; arriba y abajo se ve el fondo animado. Tres fondos intercambiables en `js/hero-ajustes.js` (`fondo:`): **la trama dither** (`'dither'`, el efecto del preview de Paper Shaders — el activo ahora), la **tinta líquida** (`'fluido'`) y los **rayos** (`'rayos'`). Titular con **Blotter.ts channel-split** (los canales R/G/B se separan siguiendo al ratón; si WebGL falla, cae solo a SplitText); subtítulo: ScrambleText.
->- `hero-lab.html`: banner `WebGL ✓/✗` arriba · sección 1 GSAP (botón «Repetir animación») · sección 2 Blotter.ts ChannelSplit (sigue al cursor).
 >- Arranque: doble clic en `index.html` (funciona también con `file://`) o `bash servir.sh` → `http://localhost:8000/`
 >- **Tocar colores/números del hero sin compilar**: edita `js/hero-ajustes.js` y recarga (F5). Guía completa: `TOCAR-EL-HERO.md`.
->- Todo se empaqueta en `js/hero.bundle.js` y `js/hero-lab.bundle.js` (regenerar con `sh construir.sh` o dejando `sh vigilar.sh` corriendo tras tocar el JS fuente).
+>- Todo se empaqueta en `js/hero.bundle.js` (regenerar con `sh construir.sh` o dejando `sh vigilar.sh` corriendo tras tocar el JS fuente).
 >- Fallo corregido: los canvas WebGL (`z-index:-1`) quedaban debajo del fondo negro de `.hero` → «no se ve ninguna animación». `.hero-shader` lleva `isolation:isolate`; no quitar.
 >- Fondo activo: `'dither'`; en `js/hero-ajustes.js` cambias a `'fluido'` o `'rayos'` cuando quieras. Titular: Blotter channel-split con la configuración exacta del demo de webdev.teknium.io (Anton 400 en `#f6f6f6`, `uOffset = base + min(0.7,distancia)*radio + velocidad*v`, paseo automático si no hay ratón; knobs en `titulo:{…}`). Si lo prefieres con GSAP, o con otro material de Blotter (liquid, rolling, sliding-door, flies), se cambia cuando digas.
