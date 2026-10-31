@@ -1987,13 +1987,13 @@ void main() {
           u_worldHeight: 0,
           u_fit: 0
         };
-        const sinMovimiento2 = prefiereMenosMovimiento();
+        const sinMovimiento3 = prefiereMenosMovimiento();
         const mount = new ShaderMount(
           caja,
           ditheringFragmentShader,
           uniforms,
           void 0,
-          sinMovimiento2 ? 0 : ajustes2.speed,
+          sinMovimiento3 ? 0 : ajustes2.speed,
           0,
           2,
           1920 * 1080 * 2
@@ -2007,7 +2007,7 @@ void main() {
         } catch (error) {
           caja.dataset.renderer = "";
         }
-        if (!sinMovimiento2 && ajustes2.steer > 0) {
+        if (!sinMovimiento3 && ajustes2.steer > 0) {
           conectarRaton(caja.parentElement || caja, caja, mount, ajustes2.steer);
         }
         resolve(mount);
@@ -14406,9 +14406,216 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
     });
   }
 
+  // js/entrada.js
+  var DOBLEZ = 34;
+  var DOBLEZ_ENCIMA = 54;
+  var UMBRAL = 5;
+  var ABIERTA_X = 0;
+  var ABIERTA_Y = 1;
+  var ASOMA = 0.12;
+  var FUNDIDO = 0.1;
+  function sinMovimiento() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+  function conRaton() {
+    return !window.matchMedia || window.matchMedia("(hover: hover)").matches;
+  }
+  function montarEntrada() {
+    const caja = document.getElementById("entrada");
+    if (!caja) {
+      return false;
+    }
+    if (!window.Peel || !window.Peel.supported) {
+      caja.className += " entrada-quieta";
+      return false;
+    }
+    const peel = new window.Peel(caja, {
+      corner: window.Peel.Corners.TOP_RIGHT,
+      /* La capa es un rectángulo y la entrada no: una sombra de caja
+         delataría el rectángulo, así que solo sombras «de dentro». */
+      topShadow: false,
+      backShadow: true,
+      backShadowSize: 0.05,
+      backReflection: true,
+      backReflectionAlpha: 0.1,
+      bottomShadow: true,
+      bottomShadowSize: 2.2,
+      bottomShadowDarkAlpha: 0.6
+    });
+    const posicion = { x: 0, y: 0 };
+    let tween = null;
+    let arrastrando = false;
+    let movido = false;
+    function doblada() {
+      return { x: caja.offsetWidth - DOBLEZ, y: DOBLEZ };
+    }
+    function encima() {
+      return { x: caja.offsetWidth - DOBLEZ_ENCIMA, y: DOBLEZ_ENCIMA };
+    }
+    function abierta() {
+      return { x: caja.offsetWidth * ABIERTA_X, y: caja.offsetHeight * ABIERTA_Y };
+    }
+    function progreso() {
+      const desde = doblada();
+      const hasta = abierta();
+      const largo = Math.hypot(hasta.x - desde.x, hasta.y - desde.y);
+      if (!largo) {
+        return 1;
+      }
+      const andado = Math.hypot(posicion.x - desde.x, posicion.y - desde.y);
+      return Math.max(0, Math.min(1, andado / largo));
+    }
+    function sincronizar() {
+      if (progreso() > ASOMA) {
+        caja.classList.add("entrada-abierta");
+      } else {
+        caja.classList.remove("entrada-abierta");
+      }
+    }
+    function poner(x, y2) {
+      posicion.x = x;
+      posicion.y = y2;
+      peel.setPeelPosition(x, y2);
+      sincronizar();
+      const visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
+      caja.style.setProperty("--entrada-visible", visto.toFixed(3));
+    }
+    function parar() {
+      if (tween) {
+        tween.kill();
+        tween = null;
+      }
+    }
+    function irA(destino, duracion) {
+      parar();
+      if (!window.gsap || sinMovimiento()) {
+        poner(destino.x, destino.y);
+        return;
+      }
+      const punto = { x: posicion.x, y: posicion.y };
+      let acabada = false;
+      const animacion = window.gsap.to(punto, {
+        x: destino.x,
+        y: destino.y,
+        duration: duracion,
+        ease: "power2.out",
+        onUpdate: function() {
+          poner(punto.x, punto.y);
+        },
+        onComplete: function() {
+          acabada = true;
+          tween = null;
+        }
+      });
+      tween = acabada ? null : animacion;
+    }
+    function alternar() {
+      if (progreso() > 0.5) {
+        irA(doblada(), 0.5);
+      } else {
+        irA(abierta(), 0.55);
+      }
+    }
+    function local(evt) {
+      const cajaRect = caja.getBoundingClientRect();
+      return {
+        x: evt.clientX - cajaRect.left,
+        y: evt.clientY - cajaRect.top
+      };
+    }
+    function alBajar(evt) {
+      if (evt.pointerType === "mouse" && evt.button !== 0) {
+        return;
+      }
+      parar();
+      arrastrando = true;
+      movido = false;
+      if (caja.setPointerCapture) {
+        caja.setPointerCapture(evt.pointerId);
+      }
+      if (evt.cancelable) {
+        evt.preventDefault();
+      }
+    }
+    function alMover(evt) {
+      if (!arrastrando) {
+        return;
+      }
+      const punto = local(evt);
+      if (Math.abs(punto.x - posicion.x) > UMBRAL || Math.abs(punto.y - posicion.y) > UMBRAL) {
+        movido = true;
+      }
+      if (evt.cancelable) {
+        evt.preventDefault();
+      }
+      poner(punto.x, punto.y);
+    }
+    function alSoltar(evt) {
+      if (!arrastrando) {
+        return;
+      }
+      arrastrando = false;
+      if (caja.releasePointerCapture && evt.pointerId !== void 0) {
+        try {
+          caja.releasePointerCapture(evt.pointerId);
+        } catch (error) {
+        }
+      }
+      if (!movido) {
+        alternar();
+        return;
+      }
+      if (progreso() < 0.5) {
+        irA(doblada(), 0.35);
+      } else {
+        irA(abierta(), 0.5);
+      }
+    }
+    function alEntrar(evt) {
+      if (arrastrando || tween || !conRaton()) {
+        return;
+      }
+      if (evt && evt.pointerType && evt.pointerType !== "mouse") {
+        return;
+      }
+      if (progreso() > 0.2) {
+        return;
+      }
+      irA(encima(), 0.28);
+    }
+    function alSalir() {
+      if (arrastrando || tween || !conRaton()) {
+        return;
+      }
+      if (progreso() > 0.2) {
+        return;
+      }
+      irA(doblada(), 0.28);
+    }
+    poner(doblada().x, doblada().y);
+    caja.addEventListener("pointerdown", alBajar, false);
+    caja.addEventListener("pointermove", alMover, false);
+    caja.addEventListener("pointerup", alSoltar, false);
+    caja.addEventListener("pointercancel", alSoltar, false);
+    caja.addEventListener("mouseenter", alEntrar, false);
+    caja.addEventListener("mouseleave", alSalir, false);
+    let espera = 0;
+    window.addEventListener("resize", function() {
+      window.clearTimeout(espera);
+      espera = window.setTimeout(function() {
+        peel.setupDimensions();
+        peel.setCorner(window.Peel.Corners.TOP_RIGHT);
+        if (progreso() < 0.2) {
+          poner(doblada().x, doblada().y);
+        }
+      }, 150);
+    });
+    return true;
+  }
+
   // js/hero.js
   var ajustes = window.HERO_AJUSTES || {};
-  var sinMovimiento = prefiereMenosMovimiento();
+  var sinMovimiento2 = prefiereMenosMovimiento();
   var cajaShader = document.getElementById("hero-shader");
   var presetRayos = PRESETS[ajustes.preset] || PRESETS.abismo;
   var montadores = {
@@ -14435,7 +14642,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
   }
   async function arrancarTitulo() {
     const titulo = document.getElementById("arriba");
-    if (!titulo || sinMovimiento) {
+    if (!titulo || sinMovimiento2) {
       return;
     }
     try {
@@ -14450,7 +14657,8 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
   }
   arrancarFondo();
   arrancarTitulo();
-  if (!sinMovimiento) {
+  montarEntrada();
+  if (!sinMovimiento2) {
     const subtitulo = document.getElementById("hero-sub");
     if (subtitulo) {
       animarSubtitulo(subtitulo, 0.75);

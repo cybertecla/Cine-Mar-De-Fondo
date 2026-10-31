@@ -28,6 +28,7 @@ import {
 import { montarFluido } from './hero-fluid.js';
 import { montarDither } from './hero-dither.js';
 import { montarTituloBlotter } from './hero-titulo.js';
+import { montarEntrada } from './entrada.js';
 
 const ajustes = window.HERO_AJUSTES || {};
 const sinMovimiento = prefiereMenosMovimiento();
@@ -78,6 +79,7 @@ async function arrancarTitulo() {
 
 arrancarFondo();
 arrancarTitulo();
+montarEntrada();   /* la entrada de cine que se pela en la esquina */
 
 if (!sinMovimiento) {
 	const subtitulo = document.getElementById('hero-sub');

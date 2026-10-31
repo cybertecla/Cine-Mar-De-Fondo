@@ -82,15 +82,10 @@ h3 {
 	clear:left;
 }
 
-/* Posicionamiento: la caja #aviso en la esquina superior derecha */
-#aviso {
-	position:absolute;
-	top:10px;
-	right:10px;
-	background:#ffcc00;
-	padding:5px 10px;
-	font-size:0.9em;
-}
+/* Posicionamiento: la caja #aviso ya no existe como tal. El aviso del
+   estreno es el titular que va encima de la entrada de cine (arriba a la
+   derecha), y se estiliza con .entrada-estreno. El id="aviso" sigue en ese
+   párrafo para no romper nada que lo busque. */
 
 /* Clase restringida a un elemento: p.sinopsis */
 p.sinopsis {
@@ -212,6 +207,135 @@ p.sinopsis {
 	background-color:#26b5ce;
 	border-color:#26b5ce;
 	color:#000000;
+}
+
+/* ============================================================
+   ENTRADA QUE SE PELA (Peel.js) — esquina superior derecha del hero
+   Las tres capas (arriba, dorso y fondo) se apilan en el mismo sitio;
+   Peel.js recorta la de arriba con un clip-path y la dobla sobre el
+   dorso. .peel-layer y .peel-svg-clip-element son las reglas que
+   exige la librería (antes venían en su peel.css).
+   ============================================================ */
+
+.peel-layer {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:1;
+	transform-origin:top left;
+}
+
+/* El SVG con los clip-path que crea Peel.js: fuera de la vista. */
+.peel-svg-clip-element {
+	position:absolute;
+	top:-10000px;
+	left:-10000px;
+	width:1px;
+	height:1px;
+	opacity:0;
+}
+
+/* El sitio donde vive la entrada: la esquina del aviso, arriba a la derecha. */
+.entrada-sitio {
+	position:absolute;
+	top:6px;
+	right:6px;
+	width:288px;
+	height:153px;
+	z-index:40;
+}
+
+.entrada {
+	position:relative;
+	width:100%;
+	height:100%;
+	cursor:grab;
+	/* Arrastrar la entrada no debe seleccionar su texto ni hacer scroll
+	   en el móvil, y en táctil no debe aparecer el destello azul. */
+	user-select:none;
+	-webkit-user-select:none;
+	touch-action:none;
+	-webkit-tap-highlight-color:transparent;
+}
+
+/* Cuerpo del neón. El arte es el PNG que exportaste de GIMP (con el fondo
+   ya borrado), así que el ticket es opaco: detrás solo se ve la página.
+   Aquí solo se puede BAJAR entero (0.5 = fantasma, 1 = como está).
+   Para rehacerlo desde el PNG de GIMP:
+       python3 entrada-arte.py            (lee ../cine-fuentes/ticket-02.png) */
+.entrada img {
+	display:block;
+	width:100%;
+	height:100%;
+	opacity:1;
+}
+
+/* Al final del pelado, la entrada se va desvaneciendo (entrada.js mueve
+   --entrada-visible de 1 a 0): sin esto quedaría una esquinita de papel
+   pegada encima del horario. */
+.entrada-anverso,
+.entrada-dorso,
+.entrada-estreno {
+	opacity:var(--entrada-visible,1);
+}
+
+/* El aviso del estreno, escrito sobre la entrada. Va dentro de la capa de
+   arriba, así que al pelar el ticket se va con él. */
+.entrada-estreno {
+	position:absolute;
+	left:12%;
+	top:38%;
+	width:76%;
+	margin:0;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	text-transform:uppercase;
+	font-size:1.12rem;
+	line-height:1.15;
+	letter-spacing:0.05em;
+	text-align:center;
+	color:#ffcc00;
+	text-shadow:0 0 14px rgba(255,204,0,0.55),0 2px 0 rgba(0,0,0,0.6);
+	cursor:inherit;
+}
+
+/* Debajo: lo que sale al levantar la entrada. Sin caja y sin fondo, para
+   que se vea la página que hay detrás. Está oculto hasta que se pela,
+   porque el marco de arriba es translúcido y si no se leerían las dos
+   cosas a la vez. */
+.entrada-reverso {
+	text-align:center;
+	opacity:0;
+	transition:opacity 0.25s linear;
+}
+
+.entrada-abierta .entrada-reverso {
+	opacity:1;
+}
+
+.entrada-datos {
+	margin:0;
+	padding-top:33%;
+	font-size:0.66rem;
+	line-height:1.8;
+	letter-spacing:0.16em;
+	text-transform:uppercase;
+	color:#8fe9ff;
+	text-shadow:0 0 10px rgba(0,220,255,0.45);
+}
+
+/* Si Peel.js no arranca, la entrada se queda quieta: no se puede pelar,
+   así que se avisa con el cursor en vez de un «grab» que no hace nada. */
+.entrada-quieta {
+	cursor:default;
+}
+
+/* En pantallas estrechas la entrada taparía el titular: fuera. */
+@media (max-width:47.99em) {
+	.entrada-sitio {
+		display:none;
+	}
 }
 
 @media (min-width:60em) {
