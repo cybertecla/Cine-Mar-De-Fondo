@@ -2,9 +2,8 @@ LEEME · Librerías locales del hero (Cine Mar de Fondo)
 =======================================================
 
 Estas carpetas contienen copias locales de librerías de terceros, usadas
-por el hero de la cartelera (index.html) y por la página de pruebas
-(hero-lab.html). Están copiadas aquí para que el sitio funcione sin
-conexión y sin depender de un CDN.
+por el hero de la cartelera (index.html). Están copiadas aquí para que el
+sitio funcione sin conexión y sin depender de un CDN.
 
 lib/gsap/           GSAP 3.15.0 + SplitText + ScrambleTextPlugin
                     © GreenSock. Licencia estándar "no charge":
@@ -23,18 +22,31 @@ estilos.css         Tipografía Anton 400 (subconjunto latino, woff2),
 lib/webgl-fluid/    webgl-fluid 0.4.0 (tinta líquida; porta de
                     PavelDoGreat/WebGL-Fluid-Simulation) · MIT
                     https://github.com/cloydlau/webgl-fluid
+lib/peel/           Peel.js (andrewplummer/peel-js) · MIT
+                    https://github.com/andrewplummer/peel-js
+                    Efecto de papel que se pela: la entrada de cine de la
+                    esquina del hero. Usa el peel.js sin minificar; las
+                    reglas CSS que pide (.peel-layer, .peel-svg-clip-element)
+                    están copiadas en estilos.css para no tener dos hojas.
 
-js/hero.bundle.js, js/hero-lab.bundle.js
-                    Bundles clásicos generados con construir.sh (esbuild).
-                    Se regeneran tras cambiar js/hero.js, js/hero-dither.js,
-                    js/hero-fluid.js, js/hero-titulo.js, js/hero-lab.js o
-                    js/hero-fx.js:
+js/hero.bundle.js   Bundle clásico generado con construir.sh (esbuild).
+                    Se regenera tras cambiar cualquier js/hero*.js o
+                    js/entrada.js:
                     sh construir.sh
                     (o dejar sh vigilar.sh corriendo; recompila solo).
                     (un bundle clásico funciona también con file://, donde
                     los módulos <script type="module"> no cargan.)
                     hero.bundle.js incluye three.js + blotter.ts: el titular
                     del hero se dibuja con Blotter, material channel-split.
+js/entrada.js       La entrada que se pela (Peel.js) y su lógica de arrastre.
+                    El arte (img/entrada-frente.png y img/entrada-dorso.png)
+                    sale del PNG exportado de GIMP, que ya trae el fondo
+                    borrado (alfa 0 fuera del ticket): detrás se ve la página.
+                    Para rehacerlo: entrada-arte.py
+entrada-arte.py     Prepara img/entrada-*.png desde el PNG de GIMP
+                    (../cine-fuentes/ticket-02.png, que ya trae el alfa).
+pruebas/            Comprobaciones que no necesitan navegador:
+                    node pruebas/entrada-test.js  → 23 pruebas de la entrada.
 js/hero-ajustes.js  Ajustes del hero editables sin compilar (F5 y listo).
                     Explicación de cada número: TOCAR-EL-HERO.md
 

@@ -8,7 +8,7 @@ sin conexión y sin CDN.
 ## Verlo
 
 - Doble clic en `index.html`, o
-- `sh servir.sh` y abrir <http://localhost:8945>
+- `sh servir.sh` y abrir <http://localhost:8000>
 
 No hay que compilar nada: `js/*.bundle.js` ya viene generado.
 
@@ -33,6 +33,8 @@ js/                          código fuente del hero y el bundle generado
 lib/                         librerías de terceros copiadas (ver lib/LEEME.txt)
 img/                         posters (de momento, marcadores de posición)
 ticket-01.jpg · ticket-02.jpg  entradas del cine
+                   (el ticket-02 con el fondo ya borrado, que es el que
+                    usa la web, vive en ../cine-fuentes/ticket-02.png)
 ```
 
 ## Pendiente

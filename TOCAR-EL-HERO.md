@@ -177,7 +177,91 @@ rayos: {
 
 ---
 
-## 7 · Diagnóstico rápido
+## 7 · La entrada que se pela (Peel.js)
+
+En la esquina superior derecha, donde antes estaba la caja amarilla del
+aviso, hay una entrada de cine. Se arrastra la esquina, se levanta el papel
+y debajo aparece el horario. **Se arrastra desde cualquier punto** de la
+entrada (no hace falta acertar en la esquinita: en cuanto mueves el puntero,
+el doblez lo sigue). Al soltar a medias se va sola al extremo más cercano,
+doblada o abierta. **Un solo clic** la pela entera, y otro la vuelve a
+doblar. Al pasar el ratón por encima la esquinita se abre un poco, para que
+se vea que se puede tirar de ella.
+
+**Trampa de la librería, si algún día la tocas:** `peel.getAmountClipped()`
+no devuelve lo que se ha pelado, sino el trozo de papel que **queda**
+(1 = entera, 0 = pelada del todo). El nombre engaña. Por eso el estado se
+mide con `progreso()` en `js/entrada.js`, que sale de la posición del
+doblez.
+El aviso del estreno vive ahora dentro de la entrada: el `id="aviso"` sigue
+existiendo, pero es el titular que va escrito encima del marco.
+
+Las piezas:
+
+| Pieza | Archivo |
+| --- | --- |
+| Librería (MIT, sin CDN) | `lib/peel/peel.js` + sus reglas CSS copiadas en `estilos.css` |
+| Lógica de arrastre y clic | `js/entrada.js` (entra en el bundle con `construir.sh`) |
+| Marcado: tres capas | `index.html` → `#entrada` |
+| Tamaño, sitio y tipografía | `estilos.css` → `.entrada-sitio`, `.entrada-estreno`, `.entrada-datos` |
+| Arte | `img/entrada-frente.png` (el marco) y `img/entrada-dorso.png` (su revés) |
+| Rehacer el arte | `entrada-arte.py` (desde el PNG de GIMP, que ya trae alfa) |
+
+**Sin fondo.** El arte sale del PNG exportado de GIMP
+(`cine-fuentes/ticket-02.png`), que ya trae el fondo borrado: transparencia
+de verdad, canal alfa a 0 en todo lo que queda fuera del ticket. No hay
+caja, ni borde, ni panel detrás: si algún día cambias el arte, el PNG tiene
+que llevar transparencia de verdad, no un fondo negro.
+
+**Cuerpo del neón (opacidad).** El arte es el PNG que exportas de GIMP con
+el fondo ya borrado: el ticket es opaco, así que detrás solo se ve la
+página. Desde CSS solo se puede bajar entero: `estilos.css` → `.entrada
+img { opacity: }`. Para rehacerlo desde el maestro de GIMP:
+
+    python3 entrada-arte.py                        # ../cine-fuentes/ticket-02.png
+    python3 entrada-arte.py otro.png 600
+
+Deja `img/entrada-frente.png` y `img/entrada-dorso.png` (el dorso es la
+cara de atrás, apagada, la que se ve en la esquinita doblada).
+
+**Pelado completo.** El doblez llega hasta la esquina opuesta y en el
+último tramo la entrada se desvanece (`--entrada-visible`, que mueve
+`js/entrada.js`): así no queda una esquinita de papel pegada encima del
+horario. Quien manda ahí es `FUNDIDO` (0.10 = se desvanece en el último
+10 % del recorrido).
+
+**Cambiar el tamaño.** `.entrada-sitio` manda: `width` y `height` son el
+tamaño real (288×153 px, la proporción del arte, 1.88:1). Los textos van en
+tanto por ciento (`.entrada-estreno` al 12 % de ancho y 38 % de alto), así
+que aguantan cambios de tamaño; si deformas la proporción, el neón se
+estira.
+
+**Cambiar el texto.** El estreno, en `index.html` → `.entrada-estreno`;
+el horario que aparece al pelar, justo debajo → `.entrada-datos`. Los dos
+archivos de arte miden 540 px de ancho (el doble de 288) para que no se
+vean blandos en pantallas de alta densidad.
+
+**Por qué no se usa `peel.handleDrag()`.** Peel.js calcula las coordenadas
+con `offsetLeft`/`offsetTop`, que dan por hecho que el elemento está en la
+esquina superior izquierda de su contenedor. Aquí está anclada arriba a la
+derecha, así que las coordenadas saldrían desplazadas; `js/entrada.js` mide
+con `getBoundingClientRect()`, que acierta siempre. Si algún día mueves la
+entrada a la esquina superior izquierda, el `handleDrag()` de la librería
+volvería a servir.
+
+**Si algo falla**, la entrada se queda quieta y entera (clase
+`entrada-quieta`): el aviso se sigue leyendo. En pantallas de menos de 48em
+se oculta para no tapar el titular.
+
+**Comprobarlo sin navegador.** `node pruebas/entrada-test.js` monta un DOM,
+un Peel y un GSAP de mentira, dispara los mismos eventos y mira dónde acaba
+el doblez: 17 comprobaciones (un clic abre, el arrastre sigue al puntero, al
+soltar a medias se va al extremo más cercano, sin animación funciona igual).
+Sale con código 1 si algo falla. Solo necesita node.
+
+---
+
+## 8 · Diagnóstico rápido
 
 Abre la consola del navegador (F12 → Consola) con `index.html` cargado.
 Si el hero arranca, verás `[hero] fondo: dither` y ningún error en rojo.
@@ -187,7 +271,7 @@ resplandor estático y el texto sigue viéndose: eso es lo esperado, no un bug.
 
 ---
 
-## 8 · Pendiente de tu decisión
+## 9 · Pendiente de tu decisión
 
 - **Cuál de los tres fondos se queda**: dither, tinta líquida o rayos.
   (Los tres están montados; se cambia con una palabra en `hero-ajustes.js`.)
@@ -195,7 +279,7 @@ resplandor estático y el texto sigue viéndose: eso es lo esperado, no un bug.
   quede la animación GSAP de antes (o probar otro de los cuatro efectos
   de Blotter: liquid, rolling, sliding-door, flies), dímelo.
 
-## 9 · Nota técnica (para que no vuelva a fallar)
+## 10 · Nota técnica (para que no vuelva a fallar)
 
 Los canvas WebGL se pintan con `z-index:-1`. Si `.hero-shader` no crea un
 contexto de apilado propio (`isolation:isolate` en `estilos.css`), los
