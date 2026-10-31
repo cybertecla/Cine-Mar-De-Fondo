@@ -3,17 +3,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="author" content="Isaac Pérez Bassart" />
 <title>Cine Mar de Fondo - Reservar Entradas</title>
-<link rel="stylesheet" type="text/css" href="estilos.css" />
+<link rel="stylesheet" type="text/css" href="estilos.css?v=13" />
 </head>
-<body>
+<body class="pagina-reserva">
 
-<h1 id="arriba">Cine Mar de Fondo</h1>
-
-<ul>
-<li><a href="index.html">Cartelera</a></li>
-<li><a href="reserva.html">Reservar entradas</a></li>
+<!-- Misma cabecera que la cartelera: el h1 y el menú, en una banda. -->
+<div class="cabecera">
+<div class="contenido">
+<h1 id="arriba" class="hero-titulo">Cine Mar de Fondo</h1>
+<ul class="menu">
+<li><a class="boton boton--fantasma" href="index.html">Cartelera</a></li>
+<li><a class="boton boton--principal" href="reserva.html">Reservar entradas</a></li>
 </ul>
+</div>
+</div>
+
+<div class="contenido">
+<div class="reserva">
+
+<p class="reserva-intro">Rellena tus datos y elige película, sesión y extras.
+Te guardamos la butaca; el pago se hace en taquilla.</p>
 
 <form action="" method="get">
 
@@ -33,47 +45,51 @@
 
 <label for="pelicula">Película:</label>
 <select name="pelicula" id="pelicula">
-<option value="pelicula1">Película 1</option>
-<option value="pelicula2">Película 2</option>
-<option value="pelicula3">Película 3</option>
+<option value="bicicletas">El ladrón de bicicletas</option>
+<option value="club">El club de la lucha</option>
+<option value="darko">Donnie Darko</option>
 </select>
 
-<p>
-<label for="sesion17">17:00</label>
+<fieldset class="grupo opciones">
+<legend>Sesión</legend>
 <input type="radio" name="sesion" id="sesion17" value="17:00" />
+<label for="sesion17">17:00</label>
 
-<label for="sesion19">19:30</label>
 <input type="radio" name="sesion" id="sesion19" value="19:30" />
+<label for="sesion19">19:30</label>
 
-<label for="sesion22">22:00</label>
 <input type="radio" name="sesion" id="sesion22" value="22:00" />
-</p>
+<label for="sesion22">22:00</label>
+</fieldset>
 
-<p>
-<label for="palomitas">Palomitas</label>
+<fieldset class="grupo opciones">
+<legend>Extras</legend>
 <input type="checkbox" name="extras" id="palomitas" value="palomitas" />
+<label for="palomitas">Palomitas</label>
 
-<label for="refresco">Refresco</label>
 <input type="checkbox" name="extras" id="refresco" value="refresco" />
+<label for="refresco">Refresco</label>
 
-<label for="butaca">Butaca preferente</label>
 <input type="checkbox" name="extras" id="butaca" value="butaca" />
-</p>
+<label for="butaca">Butaca preferente</label>
+</fieldset>
 
+<label for="observaciones">Observaciones:</label>
 <textarea name="observaciones" id="observaciones" rows="3" cols="40"></textarea>
 
-<p>
-<input type="submit" value="Enviar" />
-<input type="reset" value="Restablecer" />
+<p class="acciones">
+<input type="submit" class="boton boton--principal" value="Enviar" />
+<input type="reset" class="boton boton--fantasma" value="Restablecer" />
 </p>
 
 </fieldset>
 
 </form>
 
-<p>
-Al enviar, los datos aparecerán en la barra de direcciones del navegador.
-</p>
+<p class="nota">Al enviar, los datos aparecerán en la barra de direcciones del navegador.</p>
+
+</div>
+</div>
 
 </body>
 </html>

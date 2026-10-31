@@ -3,10 +3,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="author" content="Isaac Pérez Bassart" />
 <title>Cine Mar de Fondo - Cartelera Semanal</title>
-<link rel="stylesheet" type="text/css" href="estilos.css?v=10" />
+<link rel="stylesheet" type="text/css" href="estilos.css?v=13" />
 </head>
-<body>
+<body class="pagina-cartelera">
 
 <!-- Hero: fondo shader (Paper Shaders) con la animación visible arriba y abajo.
      La banda negra central va SOLO detrás del texto (GSAP / Blotter).
@@ -16,8 +18,14 @@
 <div class="hero-banda">
 <h1 id="arriba" class="hero-titulo">Cine Mar de Fondo</h1>
 <p class="hero-sub" id="hero-sub">Un mar de cine · estrenos y clásicos</p>
-<a class="hero-scroll" href="#cartelera">Cartelera</a>
-<a class="hero-scroll" href="#cartelera">Reservar Entradas</a>
+
+<!-- Menú de la web: la lista que pide el enunciado, en horizontal.
+     Cada enlace es un botón: el de la cartelera baja a la cartelera y el
+     de reservar lleva al formulario de reserva.html. -->
+<ul class="menu">
+<li><a class="boton boton--fantasma" href="#cartelera">Cartelera</a></li>
+<li><a class="boton boton--principal" href="reserva.html">Reservar entradas</a></li>
+</ul>
 </div>
 
 <!-- Entrada de cine que se pela (Peel.js, lib/peel): se arrastra la
@@ -40,37 +48,49 @@
 </div>
 </div>
 
-<!-- <ul>
-<li><a href="index.html">Cartelera</a></li>
-<li><a href="reserva.html">Reservar entradas</a></li>
-</ul> -->
+<div class="contenido principal">
 
-<p>
+<p class="presentacion">
 Introduciendo la <abbr title="Versión original subtitulada en español">VOSE</abbr>
 película de la semana con <strong>estrenos</strong> y <em>clásicos</em> seleccionados.
 </p>
 
 <h2 id="cartelera">Películas de la semana</h2>
 
+<!-- Tres carteles, los tres al mismo tamaño (720 x 1080, 2:3) y a la misma
+     altura: la rejilla reparte las columnas y el h3 reserva dos líneas para
+     que los carteles empiecen siempre a la misma altura.
+     El marco (.pelicula-cartel) recorta: ahí se apoya la animación de cada
+     cartel, que por ahora solo se acerca un poco al pasar el ratón. -->
+<div class="cartelera">
+
 <div class="pelicula">
-<h3>El Ladrón De Bicicletas</h3>
-<img src="img/poster1.jpg" alt="Poster de la Película 1: descripción breve" />
-<p>Sinopsis: En la Roma de la posguerra, Antonio, un obrero en paro, consigue un sencillo trabajo pegando carteles a condición de que posea una bicicleta. De ese modo, a duras penas consigue comprarse una, pero en su primer día de trabajo se la roban. Es así como comienza toda la aventura de Antonio junto con su hijo Bruno por recuperar su bicicleta mientras su esposa María espera en casa junto con su otro hijo.</p>
+<h3>El ladrón de bicicletas</h3>
+<div class="pelicula-cartel">
+<img class="cartel" src="img/poster1.jpg" alt="Cartel de El ladrón de bicicletas" width="720" height="1080" />
+</div>
+<p class="sinopsis">En la Roma de la posguerra, Antonio, un obrero en paro, consigue un sencillo trabajo pegando carteles a condición de que posea una bicicleta. De ese modo, a duras penas consigue comprarse una, pero en su primer día de trabajo se la roban. Es así como comienza toda la aventura de Antonio junto con su hijo Bruno por recuperar su bicicleta mientras su esposa María espera en casa junto con su otro hijo.</p>
 </div>
 
 <div class="pelicula">
-<h3>El Club De La Lucha</h3>
-<img src="img/poster2.jpg" alt="Poster de la Película 2: descripción breve" />
-<p>Sinopsis: Un joven hastiado de su gris y monótona vida lucha contra el insomnio. En un viaje en avión conoce a un carismático vendedor de jabón que sostiene una teoría muy particular: el perfeccionismo es cosa de gentes débiles; sólo la autodestrucción hace que la vida merezca la pena. Ambos deciden entonces fundar un club secreto de lucha, donde poder descargar sus frustaciones y su ira, que tendrá un éxito arrollador.</p>
+<h3>El club de la lucha</h3>
+<div class="pelicula-cartel">
+<img class="cartel" src="img/poster2.jpg" alt="Cartel de El club de la lucha" width="720" height="1080" />
+</div>
+<p class="sinopsis">Un joven hastiado de su gris y monótona vida lucha contra el insomnio. En un viaje en avión conoce a un carismático vendedor de jabón que sostiene una teoría muy particular: el perfeccionismo es cosa de gentes débiles; sólo la autodestrucción hace que la vida merezca la pena. Ambos deciden entonces fundar un club secreto de lucha, donde poder descargar sus frustaciones y su ira, que tendrá un éxito arrollador.</p>
 </div>
 
 <div class="pelicula">
 <h3>Donnie Darko</h3>
-<img src="img/poster3.jpg" alt="Poster de la Película 3: descripción breve" />
-<p>Sinopsis: Donnie es un chico americano dotado de gran inteligencia e imaginación. Tras escapar milagrosamente de una muerte casi segura, comienza a sufrir alucinaciones que lo llevan a actuar como nunca hubiera imaginado y a descubrir un mundo insólito a su alrededor.</p>
+<div class="pelicula-cartel">
+<img class="cartel" src="img/poster3.jpg" alt="Cartel de Donnie Darko" width="720" height="1080" />
+</div>
+<p class="sinopsis">Donnie es un chico americano dotado de gran inteligencia e imaginación. Tras escapar milagrosamente de una muerte casi segura, comienza a sufrir alucinaciones que lo llevan a actuar como nunca hubiera imaginado y a descubrir un mundo insólito a su alrededor.</p>
 </div>
 
-<h2>Horarios</h2>
+</div>
+
+<h2 id="horarios">Horarios</h2>
 
 <table>
 <thead>
@@ -88,19 +108,19 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 </tfoot>
 <tbody>
 <tr>
-<td>Película 1</td>
+<td>El ladrón de bicicletas</td>
 <td>20:00</td>
 <td>20:30</td>
 <td>21:00</td>
 </tr>
 <tr>
-<td>Película 2</td>
+<td>El club de la lucha</td>
 <td>19:30</td>
 <td>20:00</td>
 <td>20:30</td>
 </tr>
 <tr>
-<td>Película 3</td>
+<td>Donnie Darko</td>
 <td>21:00</td>
 <td>21:30</td>
 <td>22:00</td>
@@ -108,7 +128,7 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 </tbody>
 </table>
 
-<h2>Precios</h2>
+<h2 id="precios">Precios</h2>
 
 <dl>
 <dt>Entrada general</dt>
@@ -119,27 +139,33 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 <dd>4,00 €</dd>
 </dl>
 
-<div class="direccion">
+</div>
+
+<div class="pie">
+<div class="contenido">
+<p class="pie-marca">Cine Mar de Fondo</p>
+<p class="pie-direccion">
 Calle del Cine 123<br />
 Población, Provincia<br />
-<a href="mailto:[EMAIL]">[EMAIL]</a>
-<br />
-<a href="#arriba">Volver arriba</a>
+<a href="mailto:info@cinemardefondo.es">info@cinemardefondo.es</a>
+</p>
+<p class="pie-volver"><a href="#arriba">Volver arriba</a></p>
+</div>
 </div>
 
 <!-- Librerías locales (sin CDN): GSAP + plugins, ajustes y el arranque del hero -->
-<script type="text/javascript" src="lib/gsap/gsap.min.js?v=10"></script>
-<script type="text/javascript" src="lib/gsap/SplitText.min.js?v=10"></script>
-<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js?v=10"></script>
+<script type="text/javascript" src="lib/gsap/gsap.min.js?v=11"></script>
+<script type="text/javascript" src="lib/gsap/SplitText.min.js?v=11"></script>
+<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js?v=11"></script>
 <!-- Ajustes del hero: edita js/hero-ajustes.js y recarga con F5 (sin compilar) -->
-<script type="text/javascript" src="js/hero-ajustes.js?v=10"></script>
+<script type="text/javascript" src="js/hero-ajustes.js?v=11"></script>
 <!-- Peel.js local (MIT): la entrada que se pela. Si falta, la entrada se
      queda entera y quieta, sin romper nada. -->
-<script type="text/javascript" src="lib/peel/peel.js?v=10"></script>
+<script type="text/javascript" src="lib/peel/peel.js?v=11"></script>
 <!-- Bundle clásico (hero.js + fondos + titular Blotter + entrada + librerías locales):
      funciona también al abrir el archivo con doble clic (file://), donde
      type="module" no carga. -->
-<script type="text/javascript" src="js/hero.bundle.js?v=10"></script>
+<script type="text/javascript" src="js/hero.bundle.js?v=11"></script>
 
 </body>
 </html>

@@ -13,11 +13,29 @@
 }
 
 
-/* Colores, fondo y fuente */
+/* ============================================================
+   PALETA — todo el color de la web sale de estos seis valores.
+   Para cambiar el tema, se cambian aquí y se busca el hex en el
+   archivo (Ctrl+F); no hay ningún color suelto por las secciones.
+
+     fondo ............ #05080a   el negro de la web
+     fondo-alt ........ #0a1114   tarjetas, cabeceras de tabla
+     turquesa ......... #26b5ce   color principal (primario)
+     turquesa claro ... #7fe3f0   texto destacado sobre negro
+     ámbar ............ #ffcc00   secundario (el aviso del estreno)
+     texto ............ #e2ecee   texto normal
+     texto suave ...... #92a6ab   sinopsis y datos secundarios
+     borde ............ #1b2c31   líneas y separadores
+   ============================================================ */
+
+/* Color, fondo y fuente */
 body {
-	background-color:#f5f5f5;
-	color:#333333;
-	font-family:Arial,Helvetica,sans-serif;
+	background-color:#05080a;
+	color:#e2ecee;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:16px;
+	line-height:1.65;
+	margin:0;
 }
 
 /* H1 centrado y en mayúsculas */
@@ -27,71 +45,568 @@ h1 {
 	color:#26b5ce;
 }
 
-/* Menú horizontal: sin viñetas y li uno al lado del otro */
-ul {
+/* Titulares de sección. La rayita turquesa de encima la pone ::before,
+   así el HTML no lleva ni un adorno de más. */
+h2 {
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-weight:400;
+	text-transform:uppercase;
+	font-size:2.1rem;
+	line-height:1.1;
+	letter-spacing:0.02em;
+	color:#eef7f8;
+	margin:76px 0 30px;
+}
+
+h2::before {
+	content:"";
+	display:block;
+	width:56px;
+	height:3px;
+	margin-bottom:16px;
+	background-color:#26b5ce;
+}
+
+/* Títulos de película */
+h3 {
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-weight:400;
+	text-transform:uppercase;
+	font-size:1.15rem;
+	line-height:1.15;
+	letter-spacing:0.05em;
+	color:#eef7f8;
+	margin:0 0 14px;
+	min-height:2.3em;
+	clear:both;
+}
+
+/* Menú horizontal: sin viñetas y li uno al lado del otro. Va con clase
+   (.menu) para no dejar sin viñetas cualquier lista que se añada luego. */
+.menu {
 	list-style-type:none;
 	padding:0;
 	margin:0;
 }
 
-ul li {
-	display:inline;
-	margin-right:10px;
+.menu li {
+	display:inline-block;
+	margin:0 0.15rem 0.6rem;
+	vertical-align:top;
 }
 
 /* Quitar subrayado a los enlaces del menú */
-ul a {
+.menu a {
 	text-decoration:none;
-	color:#333333;
+}
+
+/* El menú vive dentro del hero (y, en la reserva, en su cabecera). */
+.menu {
+	text-align:center;
+	margin:2.9rem 0 0;
+}
+
+/* Botones del menú: una sola forma y dos variantes de color. El primario
+   (turquesa) es el de «Reservar entradas»; el fantasma, «Ver cartelera». */
+.boton {
+	display:inline-block;
+	padding:0.78rem 1.55rem;
+	border:1px solid #2b6a76;
+	border-radius:2px;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:0.75rem;
+	font-weight:700;
+	line-height:1;
+	letter-spacing:0.18em;
+	text-transform:uppercase;
+	text-decoration:none;
+	cursor:pointer;
+	transition:background-color 0.25s ease,color 0.25s ease,border-color 0.25s ease,transform 0.25s ease;
+}
+
+.boton:hover {
+	transform:translateY(-2px);
+}
+
+.boton--fantasma {
+	background-color:transparent;
+	border-color:rgba(255,255,255,0.45);
+	color:#ffffff;
+}
+
+.boton--fantasma:hover {
+	background-color:#26b5ce;
+	border-color:#1a93a8;
+	color:#04141a;
+}
+
+.boton--principal {
+	background-color:#26b5ce;
+	border-color:#1a93a8;  /* turquesa un punto más oscuro, solo el filo */
+	color:#04141a;
+}
+
+.boton--principal:hover {
+	background-color:#ffcc00;
+	border-color:#d6ab00;  /* filo del ámbar */
+	color:#1a1200;
+}
+
+.boton:focus {
+	outline:2px solid #ffcc00;
+	outline-offset:3px;
 }
 
 /* Modelo de caja: bordes, padding y margin en la tabla de horarios */
 table {
 	border-collapse:collapse;
+	border:1px solid #1b2c31;
+	padding:0;
 	width:100%;
-	margin:20px 0;
+	margin:0;
+	font-size:0.95rem;
 }
 
 table th, table td {
-	border:1px solid #dddddd;
-	padding:8px;
+	border-bottom:1px solid #1b2c31;
+	padding:15px 16px;
 	text-align:left;
 }
 
-table tfoot {
-	background-color:#f0f0f0;
+table th {
+	background-color:#0a1114;
+	border-top:1px solid #1b2c31;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-weight:400;
+	text-transform:uppercase;
+	letter-spacing:0.08em;
+	font-size:0.82rem;
+	color:#7fe3f0;
+}
+
+table tbody tr:hover {
+	background-color:rgba(38,181,206,0.06);
+}
+
+table tbody td:first-child {
+	color:#eef7f8;
+	font-weight:bold;
+}
+
+/* El pie de tabla es el día del espectador: el único sitio en ámbar,
+   para que destaque sin gritar. */
+table tfoot td {
+	background-color:rgba(255,204,0,0.06);
+	border-top:1px solid #4a3a00;
+	border-bottom:none;
+	color:#ffcc00;
 	font-weight:bold;
 }
 
 /* Modelo de caja en los fieldset */
 fieldset {
-	border:1px solid #cccccc;
-	padding:20px;
-	margin:20px 0;
+	background-color:#0a1114;
+	border:1px solid #1b2c31;
+	border-radius:2px;
+	padding:26px 28px 6px;
+	margin:0 0 24px;
 }
 
-/* Imágenes flotantes: clase .cartel */
+legend {
+	padding:0 10px;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-size:1rem;
+	letter-spacing:0.06em;
+	text-transform:uppercase;
+	color:#7fe3f0;
+}
+
+/* Los labels de un campo suelto van en su línea; los de radio y casilla,
+   dentro de un .grupo, se quedan al lado de su control. */
+fieldset > label {
+	display:block;
+	margin:0 0 6px;
+	font-size:0.74rem;
+	letter-spacing:0.14em;
+	text-transform:uppercase;
+	color:#92a6ab;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+	width:100%;
+	box-sizing:border-box;
+	margin:0 0 22px;
+	padding:0.7rem 0.8rem;
+	background-color:#05080a;
+	border:1px solid #4a7180;
+	border-radius:2px;
+	color:#e2ecee;
+	font-family:inherit;
+	font-size:0.95rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+	outline:none;
+	border-color:#26b5ce;
+	box-shadow:0 0 0 3px rgba(38,181,206,0.18);
+}
+
+/* El gris que pone Chromium en el placeholder no llega a 4,5:1. */
+::placeholder {
+	color:#92a6ab;
+}
+
+textarea {
+	min-height:104px;
+	resize:vertical;
+}
+
+fieldset.grupo > label {
+	display:inline-block;
+	margin:0 1.5rem 0 0;
+	font-size:0.9rem;
+	color:#c8d6d9;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+	margin:0 0.35rem 0 0;
+	vertical-align:middle;
+	cursor:pointer;
+}
+
+/* Fila de radios y de casillas, y fila de botones del formulario. */
+.opciones {
+	margin:0 0 20px;
+	line-height:2.2;
+}
+
+/* fieldset.grupo: caja invisible, solo pone nombre al grupo de radios y
+   casillas («Sesión», «Extras») para que el lector de pantalla lo lea. */
+fieldset.grupo {
+	border:0;
+	background:none;
+	padding:0;
+	margin:0 0 20px;
+}
+
+fieldset.grupo > legend {
+	padding:0;
+	margin:0 0 4px;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:0.72rem;
+	font-weight:700;
+	letter-spacing:0.14em;
+	text-transform:uppercase;
+	color:#92a6ab;
+}
+
+.acciones {
+	margin:6px 0 22px;
+}
+
+.acciones .boton {
+	margin-right:8px;
+}
+
+/* El número de entradas es un número corto, no una caja de texto entera. */
+.reserva input[type="number"] {
+	width:6.5em;
+	min-width:0;
+}
+
+.nota {
+	font-size:0.8rem;
+	color:#7b9199;
+	margin:0 0 8px;
+}
+
+input[type="submit"],
+input[type="reset"] {
+	border-radius:2px;
+}
+
+/* Imágenes flotantes: clase .cartel. El ancho es fijo (320 px) y el alto
+   sale solo: los tres carteles están recortados a 720 x 1080 (2:3), así que
+   los tres miden exactamente lo mismo y sus tres columnas cuadran. */
 .cartel {
-	width:150px;
 	float:left;
-	margin:5px 10px 5px 0;
+	width:320px;
+	height:auto;
+	display:block;
+	transition:transform 0.6s ease,filter 0.6s ease;
 }
 
-/* clear: both en los h3 para que cada película empiece debajo de la anterior */
-h3 {
-	clear:left;
+/* Posicionamiento: la caja #aviso, arriba a la derecha. En index.html vive
+   encima de la entrada de cine (que es la que ocupa esa esquina), así que
+   se coloca sobre el papel; en reserva_html5.html se queda fija en la
+   pantalla, que es lo que pide el paso 5. */
+#aviso {
+	position:absolute;
+	top:38%;
+	right:12%;
+	width:76%;
+	margin:0;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	text-transform:uppercase;
+	font-size:1.12rem;
+	line-height:1.15;
+	letter-spacing:0.05em;
+	text-align:center;
+	color:#ffcc00;
+	text-shadow:0 0 14px rgba(255,204,0,0.55),0 2px 0 rgba(0,0,0,0.6);
+	cursor:inherit;
 }
 
-/* Posicionamiento: la caja #aviso ya no existe como tal. El aviso del
-   estreno es el titular que va encima de la entrada de cine (arriba a la
-   derecha), y se estiliza con .entrada-estreno. El id="aviso" sigue en ese
-   párrafo para no romper nada que lo busque. */
+body.reserva-html5 #aviso {
+	position:fixed;
+	/* Por debajo de la banda de cabecera: si no, tapa «Reservar entradas». */
+	top:6.5rem;
+	right:1.25rem;
+	width:auto;
+	max-width:70%;
+	padding:0.75rem 1.1rem;
+	background-color:#1a1200;
+	border:1px solid #ffcc00;
+	box-shadow:0 0 22px rgba(255,204,0,0.28);
+	font-size:0.9rem;
+	z-index:50;
+}
 
 /* Clase restringida a un elemento: p.sinopsis */
 p.sinopsis {
 	font-style:italic;
-	color:#555555;
-	margin-top:5px;
+	color:#92a6ab;
+	margin:0;
+	font-size:0.95rem;
+	line-height:1.7;
+}
+
+/* ============================================================
+   CARTELERA, HORARIOS, PRECIOS Y PIE
+   El contenido va sobre negro; las tarjetas y las tablas usan el
+   fondo-alt y las líneas del borde. Nada de esto toca al hero.
+   ============================================================ */
+
+/* Caja de contenido: una sola anchura para toda la página. */
+.contenido {
+	width:90%;
+	max-width:1040px;
+	margin:0 auto;
+}
+
+/* La primera caja después del hero respira. */
+.principal {
+	padding-top:88px;
+	padding-bottom:16px;
+}
+
+/* Párrafo de presentación: el que lleva strong, em y la abreviatura. */
+.presentacion {
+	max-width:62ch;
+	margin:0 auto;
+	text-align:center;
+	font-size:1.1rem;
+	color:#c8d6d9;
+}
+
+.presentacion strong {
+	color:#ffcc00;
+	font-weight:700;
+}
+
+.presentacion em {
+	color:#7fe3f0;
+	font-style:italic;
+}
+
+.presentacion abbr {
+	border-bottom:1px dotted #26b5ce;
+	text-decoration:none;
+	cursor:help;
+}
+
+/* Rejilla de las tres películas. Las columnas son de 320 px (el ancho de
+   .cartel) y se reparten el ancho disponible; los tres carteles quedan a
+   la misma altura porque el h3 reserva dos líneas y las tres imágenes
+   miden lo mismo. Aquí es donde enganchará la animación de cada cartel. */
+.cartelera {
+	display:grid;
+	grid-template-columns:repeat(3,320px);
+	justify-content:space-between;
+	gap:40px;
+}
+
+.pelicula {
+	display:flex;
+	flex-direction:column;
+}
+
+/* Marco del cartel: recorta el zoom del hover y separa la imagen del fondo
+   con una línea (box-shadow, que no ocupa sitio ni descoloca la rejilla). */
+.pelicula-cartel {
+	position:relative;
+	overflow:hidden;
+	line-height:0;
+	background-color:#0a1114;
+	box-shadow:0 0 0 1px #1b2c31,0 22px 44px rgba(0,0,0,0.55);
+}
+
+/* Base de la animación de cada cartel: al pasar el ratón, la imagen se
+   acerca dentro de su marco. Cambiar el zoom o el filtro es tocar esta
+   regla; el marco se encarga de que no se salga. */
+.pelicula:hover .cartel {
+	transform:scale(1.045);
+	filter:brightness(1.08) saturate(1.05);
+}
+
+/* La sinopsis arranca siempre justo debajo del cartel: las tres columnas
+   empiezan a la misma altura y se leen como un bloque. */
+.pelicula .sinopsis {
+	padding-top:18px;
+}
+
+/* Lista de precios: tres columnas, cada pareja dt/dd en vertical.
+   grid-auto-flow:column es lo que mantiene el dt encima de su dd. */
+dl {
+	display:grid;
+	grid-template-columns:repeat(3,1fr);
+	grid-template-rows:auto auto;
+	grid-auto-flow:column;
+	gap:8px 32px;
+	margin:0;
+}
+
+dt {
+	border-top:1px solid #1b2c31;
+	padding-top:16px;
+	font-size:0.78rem;
+	letter-spacing:0.14em;
+	text-transform:uppercase;
+	color:#92a6ab;
+}
+
+dd {
+	margin:0;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-size:2rem;
+	line-height:1.1;
+	color:#26b5ce;
+}
+
+/* Pie: dirección, correo y «Volver arriba». */
+.pie {
+	margin-top:88px;
+	border-top:1px solid #1b2c31;
+	background-color:#04070a;
+	padding:44px 0 56px;
+}
+
+.pie .contenido {
+	display:flex;
+	flex-wrap:wrap;
+	align-items:flex-end;
+	justify-content:space-between;
+	gap:24px;
+}
+
+.pie-marca {
+	margin:0;
+	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
+	font-size:1.4rem;
+	letter-spacing:0.04em;
+	text-transform:uppercase;
+	color:#eef7f8;
+}
+
+.pie-direccion {
+	margin:0;
+	font-size:0.9rem;
+	line-height:1.8;
+	color:#92a6ab;
+}
+
+.pie-direccion a {
+	color:#7fe3f0;
+	text-decoration:none;
+}
+
+.pie-direccion a:hover {
+	text-decoration:underline;
+}
+
+.pie-volver {
+	margin:0;
+}
+
+.pie-volver a {
+	font-size:0.75rem;
+	font-weight:700;
+	letter-spacing:0.18em;
+	text-transform:uppercase;
+	color:#ffcc00;
+	text-decoration:none;
+}
+
+.pie-volver a:hover {
+	text-decoration:underline;
+}
+
+/* ============================================================
+   CABECERA DE LA RESERVA (reserva.html y reserva_html5.html)
+   El mismo h1 y el mismo menú que la cartelera, en una banda.
+   ============================================================ */
+
+.cabecera {
+	border-bottom:1px solid #1b2c31;
+	background-color:#04070a;
+	padding:26px 0 24px;
+}
+
+.cabecera .contenido {
+	display:flex;
+	flex-wrap:wrap;
+	align-items:center;
+	justify-content:space-between;
+	gap:16px;
+}
+
+/* Más específico que .hero-titulo (y que su media query) a propósito. */
+.cabecera .hero-titulo {
+	font-size:1.5rem;
+	letter-spacing:0.04em;
+	text-shadow:none;
+}
+
+.cabecera .menu {
+	margin:0;
+}
+
+.cabecera .menu li:last-child {
+	margin-right:0;
+}
+
+/* Formulario de reserva: dos columnas cuando hay sitio. */
+.reserva {
+	max-width:620px;
+	margin:0 auto;
+	padding:64px 0 24px;
+}
+
+.reserva-intro {
+	margin:0 0 32px;
+	color:#92a6ab;
+	font-size:0.95rem;
 }
 
 /* ============================================================
@@ -137,10 +652,8 @@ p.sinopsis {
 	box-sizing:border-box;
 }
 
-.hero-banda .hero-scroll {
-	display:inline-block;
-}
-
+/* Los botones del menú caen sobre la banda negra: el texto blanco y el
+   turquesa ya se leen bien ahí, no hace falta nada más. */
 /* Sin WebGL: resplandor estático para que arriba y abajo de la banda
    no quede un negro muerto (se añade desde js/hero-fx.js al fallar). */
 .hero-shader.sin-shader {
@@ -173,7 +686,6 @@ p.sinopsis {
 	left:50%;
 	top:50%;
 	transform:translate(-50%,-50%);
-	pointer-events:none;
 	opacity:0;
 	transition:opacity 0.9s ease;
 	filter:drop-shadow(0 0 22px rgba(38,181,206,0.55));
@@ -189,24 +701,6 @@ p.sinopsis {
 	font-size:0.95rem;
 	letter-spacing:0.22em;
 	margin:1.4rem 0 0 0;
-}
-
-.hero-scroll {
-	color:#ffffff;
-	text-decoration:none;
-	text-transform:uppercase;
-	font-size:0.8rem;
-	letter-spacing:0.16em;
-	border:1px solid rgba(255,255,255,0.55);
-	padding:0.6rem 1.2rem;
-	margin-top:2.8rem;
-	transition:background-color 0.3s,color 0.3s;
-}
-
-.hero-scroll:hover {
-	background-color:#26b5ce;
-	border-color:#26b5ce;
-	color:#000000;
 }
 
 /* ============================================================
@@ -281,24 +775,9 @@ p.sinopsis {
 	opacity:var(--entrada-visible,1);
 }
 
-/* El aviso del estreno, escrito sobre la entrada. Va dentro de la capa de
-   arriba, así que al pelar el ticket se va con él. */
-.entrada-estreno {
-	position:absolute;
-	left:12%;
-	top:38%;
-	width:76%;
-	margin:0;
-	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
-	text-transform:uppercase;
-	font-size:1.12rem;
-	line-height:1.15;
-	letter-spacing:0.05em;
-	text-align:center;
-	color:#ffcc00;
-	text-shadow:0 0 14px rgba(255,204,0,0.55),0 2px 0 rgba(0,0,0,0.6);
-	cursor:inherit;
-}
+/* El aviso del estreno va dentro de la capa de arriba, así que al pelar el
+   ticket se va con él. Su sitio y su tipografía son la regla #aviso (arriba,
+   en «Posicionamiento»); aquí solo queda la clase que lo desvanece. */
 
 /* Debajo: lo que sale al levantar la entrada. Sin caja y sin fondo, para
    que se vea la página que hay detrás. Está oculto hasta que se pela,
@@ -336,6 +815,73 @@ p.sinopsis {
 	.entrada-sitio {
 		display:none;
 	}
+
+	/* Con la cabecera en dos filas (casi 200 px), el aviso fijo se va a la
+	   esquina de abajo: sigue fijo al hacer scroll, pero no tapa el menú. */
+	body.reserva-html5 #aviso {
+		top:auto;
+		bottom:1rem;
+		right:1rem;
+		max-width:70%;
+	}
+}
+
+/* La cartelera baja de tres columnas a dos, y luego a una. En la de una,
+   el cartel ocupa todo el ancho disponible (si no, se sale de la pantalla). */
+@media (max-width:72.3em) {
+	.cartelera {
+		grid-template-columns:repeat(2,320px);
+		justify-content:center;
+	}
+}
+
+@media (max-width:47.99em) {
+	.cartelera {
+		grid-template-columns:1fr;
+		gap:56px;
+	}
+
+	.cartel {
+		width:100%;
+	}
+
+	h2 {
+		font-size:1.8rem;
+	}
+
+	/* La tabla de horarios cabe en un móvil sin scroll lateral. */
+	table {
+		font-size:0.78rem;
+	}
+
+	table th,
+	table td {
+		padding:10px 6px;
+	}
+
+	table th {
+		font-size:0.68rem;
+		letter-spacing:0.04em;
+	}
+
+	dl {
+		grid-template-columns:1fr;
+		grid-template-rows:auto;
+		grid-auto-flow:row;
+		gap:20px;
+	}
+
+	.pie .contenido {
+		display:block;
+	}
+
+	.pie-marca {
+		margin-bottom:16px;
+	}
+
+	.pie-volver {
+		margin-top:20px;
+	}
 }
 
 @media (min-width:60em) {
@@ -347,9 +893,10 @@ p.sinopsis {
 	}
 }
 
-/* Si el usuario prefiere menos movimiento, desactivamos la transición */
+/* Si el usuario prefiere menos movimiento, desactivamos las transiciones */
 @media (prefers-reduced-motion: reduce) {
-	.hero-scroll {
+	.boton,
+	.cartel {
 		transition:none;
 	}
 }

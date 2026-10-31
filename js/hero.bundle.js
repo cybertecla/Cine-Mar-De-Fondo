@@ -14664,7 +14664,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
       animarSubtitulo(subtitulo, 0.75);
     }
     if (window.gsap) {
-      window.gsap.from(".hero-scroll", {
+      window.gsap.from(".hero-banda .boton", {
         autoAlpha: 0,
         y: 12,
         duration: 0.8,
