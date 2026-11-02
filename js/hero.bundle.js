@@ -1095,6 +1095,38 @@ void main() {
       }
     };
   }
+  function cuandoSeVayaElCargador(listo) {
+    const raiz = document.documentElement;
+    if (!raiz || !raiz.hasAttribute("data-cargando") || typeof window.MutationObserver !== "function") {
+      listo();
+      return;
+    }
+    let observador = null;
+    const red = window.setTimeout(() => {
+      if (observador) {
+        observador.disconnect();
+        observador = null;
+      }
+      listo();
+    }, 13e3);
+    observador = new window.MutationObserver(() => {
+      if (raiz.hasAttribute("data-cargando")) {
+        return;
+      }
+      observador.disconnect();
+      observador = null;
+      window.clearTimeout(red);
+      listo();
+    });
+    observador.observe(raiz, { attributes: true, attributeFilter: ["data-cargando"] });
+  }
+  function cifrarTexto(texto, chars) {
+    let salida = "";
+    for (let i = 0; i < texto.length; i += 1) {
+      salida += texto.charAt(i) === " " ? " " : chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return salida;
+  }
   function animarSubtitulo(elemento, retardo) {
     const lib = buscarGsap();
     if (!elemento || !lib || !lib.ScrambleTextPlugin) {
@@ -1102,18 +1134,23 @@ void main() {
     }
     const gsap = lib.gsap;
     gsap.registerPlugin(lib.ScrambleTextPlugin);
+    const chars = "A\xC1BCDE\xC9FGHI\xCDJKLMNOPQRSTU\xDAVWXYZ\xB7\u2014/";
     const textoFinal = elemento.textContent;
     gsap.set(elemento, { autoAlpha: 0 });
-    gsap.to(elemento, {
-      autoAlpha: 1,
-      duration: 1.1,
-      delay: retardo,
-      scrambleText: {
-        text: textoFinal,
-        chars: "A\xC1BCDE\xC9FGHI\xCDJKLMNOPQRSTU\xDAVWXYZ\xB7\u2014/",
-        revealDelay: 0.4,
-        speed: 0.45
-      }
+    cuandoSeVayaElCargador(() => {
+      elemento.textContent = cifrarTexto(textoFinal, chars);
+      gsap.to(elemento, {
+        duration: 1.6,
+        delay: retardo || 0,
+        ease: "none",
+        scrambleText: {
+          text: textoFinal,
+          chars,
+          revealDelay: 0,
+          speed: 0.35
+        }
+      });
+      gsap.set(elemento, { autoAlpha: 1 });
     });
   }
 
@@ -14412,13 +14449,47 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
   var UMBRAL = 5;
   var ABIERTA_X = 0;
   var ABIERTA_Y = 1;
-  var ASOMA = 0.12;
   var FUNDIDO = 0.1;
+  var CARAS = ["img/entrada-frente.png", "img/entrada-dorso.png"];
+  var ESPERA_CARAS = 1200;
   function sinMovimiento() {
     return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
   function conRaton() {
     return !window.matchMedia || window.matchMedia("(hover: hover)").matches;
+  }
+  function marcarLista(caja) {
+    let pendientes = CARAS.length;
+    let hecho = false;
+    function listo() {
+      if (hecho) {
+        return;
+      }
+      hecho = true;
+      caja.classList.add("entrada-lista");
+    }
+    if (!window.Image) {
+      listo();
+      return;
+    }
+    CARAS.forEach(function(ruta) {
+      const img = new window.Image();
+      function unaMenos() {
+        pendientes -= 1;
+        if (pendientes <= 0) {
+          listo();
+        }
+      }
+      if (img.decode) {
+        img.src = ruta;
+        img.decode().then(unaMenos, unaMenos);
+      } else {
+        img.onload = unaMenos;
+        img.onerror = unaMenos;
+        img.src = ruta;
+      }
+    });
+    window.setTimeout(listo, ESPERA_CARAS);
   }
   function montarEntrada() {
     const caja = document.getElementById("entrada");
@@ -14438,14 +14509,16 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
       backShadowSize: 0.05,
       backReflection: true,
       backReflectionAlpha: 0.1,
-      bottomShadow: true,
-      bottomShadowSize: 2.2,
-      bottomShadowDarkAlpha: 0.6
+      /* Peel.js pinta un degradado negro en .peel-bottom-shadow (la capa
+         de abajo) y, al pelar del todo, se quedaba encima del hero como
+         un manchón oscuro: sin sombra de fondo no hay nada que borrar. */
+      bottomShadow: false
     });
     const posicion = { x: 0, y: 0 };
     let tween = null;
     let arrastrando = false;
     let movido = false;
+    let visto = 1;
     function doblada() {
       return { x: caja.offsetWidth - DOBLEZ, y: DOBLEZ };
     }
@@ -14465,19 +14538,11 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
       const andado = Math.hypot(posicion.x - desde.x, posicion.y - desde.y);
       return Math.max(0, Math.min(1, andado / largo));
     }
-    function sincronizar() {
-      if (progreso() > ASOMA) {
-        caja.classList.add("entrada-abierta");
-      } else {
-        caja.classList.remove("entrada-abierta");
-      }
-    }
     function poner(x, y2) {
       posicion.x = x;
       posicion.y = y2;
       peel.setPeelPosition(x, y2);
-      sincronizar();
-      const visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
+      visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
       caja.style.setProperty("--entrada-visible", visto.toFixed(3));
     }
     function parar() {
@@ -14510,7 +14575,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
       tween = acabada ? null : animacion;
     }
     function alternar() {
-      if (progreso() > 0.5) {
+      if (visto < 0.5) {
         irA(doblada(), 0.5);
       } else {
         irA(abierta(), 0.55);
@@ -14599,6 +14664,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
     caja.addEventListener("pointercancel", alSoltar, false);
     caja.addEventListener("mouseenter", alEntrar, false);
     caja.addEventListener("mouseleave", alSalir, false);
+    marcarLista(caja);
     let espera = 0;
     window.addEventListener("resize", function() {
       window.clearTimeout(espera);
@@ -14661,16 +14727,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
   if (!sinMovimiento2) {
     const subtitulo = document.getElementById("hero-sub");
     if (subtitulo) {
-      animarSubtitulo(subtitulo, 0.75);
-    }
-    if (window.gsap) {
-      window.gsap.from(".hero-banda .boton", {
-        autoAlpha: 0,
-        y: 12,
-        duration: 0.8,
-        delay: 1.5,
-        ease: "power2.out"
-      });
+      animarSubtitulo(subtitulo, 0);
     }
   }
 })();

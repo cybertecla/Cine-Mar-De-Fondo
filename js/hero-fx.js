@@ -185,7 +185,56 @@ export function animarTitulo(elemento) {
 	};
 }
 
-/* El subtítulo se «descifra» con caracteres aleatorios (ScrambleText). */
+/* El cargador (js/cargador.js) deja <html data-cargando="si"> mientras su
+   overlay tapa la página y quita el atributo justo al retirarlo. El
+   subtítulo espera a esa señal: si arrancara antes, el descifrado correría
+   debajo del overlay y no lo vería nadie. Red de seguridad: 13 s. */
+function cuandoSeVayaElCargador(listo) {
+	const raiz = document.documentElement;
+	if (
+		!raiz ||
+		!raiz.hasAttribute('data-cargando') ||
+		typeof window.MutationObserver !== 'function'
+	) {
+		listo();
+		return;
+	}
+
+	let observador = null;
+	const red = window.setTimeout(() => {
+		if (observador) {
+			observador.disconnect();
+			observador = null;
+		}
+		listo();
+	}, 13000);
+
+	observador = new window.MutationObserver(() => {
+		if (raiz.hasAttribute('data-cargando')) {
+			return;
+		}
+		observador.disconnect();
+		observador = null;
+		window.clearTimeout(red);
+		listo();
+	});
+	observador.observe(raiz, { attributes: true, attributeFilter: ['data-cargando'] });
+}
+
+/* Texto del mismo largo con caracteres del juego del descifrado, para que
+   el primer fotograma visible ya esté cifrado y no se lea el definitivo. */
+function cifrarTexto(texto, chars) {
+	let salida = '';
+	for (let i = 0; i < texto.length; i += 1) {
+		salida += texto.charAt(i) === ' ' ? ' ' : chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+	return salida;
+}
+
+/* El subtítulo se «descifra» con caracteres aleatorios (ScrambleText).
+   Empieza en cuanto el cargador suelta la página (retardo 0) y el
+   descifrado se reparte por igual en toda la duración: sin tramos
+   muertos y sin fundido, visible desde el primer fotograma. */
 export function animarSubtitulo(elemento, retardo) {
 	const lib = buscarGsap();
 	if (!elemento || !lib || !lib.ScrambleTextPlugin) {
@@ -195,18 +244,30 @@ export function animarSubtitulo(elemento, retardo) {
 	const gsap = lib.gsap;
 	gsap.registerPlugin(lib.ScrambleTextPlugin);
 
+	const chars = 'AÁBCDEÉFGHIÍJKLMNOPQRSTUÚVWXYZ·—/';
 	const textoFinal = elemento.textContent;
+
+	/* Se oculta mientras carga: el fundido del overlay dura 450 ms y, sin
+	   esto, el texto final se leería entero justo antes de volver a
+	   cifrarse. Vuelve a verse en el primer fotograma ya cifrado. */
 	gsap.set(elemento, { autoAlpha: 0 });
 
-	gsap.to(elemento, {
-		autoAlpha: 1,
-		duration: 1.1,
-		delay: retardo,
-		scrambleText: {
-			text: textoFinal,
-			chars: 'AÁBCDEÉFGHIÍJKLMNOPQRSTUÚVWXYZ·—/',
-			revealDelay: 0.4,
-			speed: 0.45
-		}
+	cuandoSeVayaElCargador(() => {
+		/* Se cifra a mano antes de mostrarlo: el primer fotograma visible
+		   lleva caracteres aleatorios, nunca el texto final. */
+		elemento.textContent = cifrarTexto(textoFinal, chars);
+		gsap.to(elemento, {
+			duration: 1.6,
+			delay: retardo || 0,
+			ease: 'none',
+			scrambleText: {
+				text: textoFinal,
+				chars: chars,
+				revealDelay: 0,
+				speed: 0.35
+			}
+		});
+		/* Sin fundido: aparece opaco en el mismo instante en que arranca. */
+		gsap.set(elemento, { autoAlpha: 1 });
 	});
 }

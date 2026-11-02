@@ -84,16 +84,11 @@ montarEntrada();   /* la entrada de cine que se pela en la esquina */
 if (!sinMovimiento) {
 	const subtitulo = document.getElementById('hero-sub');
 	if (subtitulo) {
-		animarSubtitulo(subtitulo, 0.75);
-	}
-
-	if (window.gsap) {
-		window.gsap.from('.hero-banda .boton', {
-			autoAlpha: 0,
-			y: 12,
-			duration: 0.8,
-			delay: 1.5,
-			ease: 'power2.out'
-		});
+		/* Sin retardo: el descifrado espera dentro a que el cargador
+		   retire su overlay y arranca entonces, a la vista. */
+		animarSubtitulo(subtitulo, 0);
 	}
 }
+
+/* Los dos botones del hero no se animan nunca: se ven desde el primer
+   fotograma, sin fundido ni retardo. Su estilo vive en css/botones.css. */
