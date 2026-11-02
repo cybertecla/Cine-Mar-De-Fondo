@@ -9,7 +9,7 @@
    a 36 px, interlineado amplio y contraste alto sobre negro.
    ============================================================ */
 
-/* --- Caja principal: más ancha y con más aire ------------------ */
+/* --- Caja principal ------------------ */
 body.pagina-cartelera .contenido.principal {
 	width: 94%;
 	max-width: 1400px;
@@ -17,7 +17,7 @@ body.pagina-cartelera .contenido.principal {
 	padding-bottom: 32px;
 }
 
-/* Párrafo de presentación: mismo texto, más grande y centrado. */
+/* Párrafo de presentación */
 body.pagina-cartelera .contenido .presentacion {
 	max-width: 58ch;
 	margin: 0 auto;
@@ -42,8 +42,7 @@ body.pagina-cartelera .contenido .presentacion abbr {
 }
 
 /* --- Titulares de sección ------------------------------------- */
-/* Sin mayúsculas forzadas: las mayúsculas sostenidas cuestan más
-   de leer. Se mantiene la rayita turquesa de estilos.css. */
+
 body.pagina-cartelera .contenido h2 {
 	margin: 104px 0 40px;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -437,28 +436,8 @@ body.pagina-cartelera .contenido abbr:focus-visible {
 	}
 }
 
-/* ============================================================
-   FOCO AL PASAR EL RATÓN (Y AL LLEGAR CON EL TECLADO)
-   La sinopsis es el bloque de texto más largo de la tarjeta y,
-   para quien ve poco, cuesta arrancar a leerlo entre tres
-   tarjetas iguales. Al señalar una película:
-     · su sinopsis se aclara, se apoya en un velo turquesa muy
-       tenue y gana un filo de 1 px que la engorda sin moverla;
-     · su título se enciende con un halo turquesa;
-     · las otras tarjetas se apagan un poco, nunca por debajo de
-       4,5:1 de contraste en su texto.
-   Nada de esto cambia el tamaño de la letra ni el interlineado:
-   la sinopsis sigue a 20 px / 1,7 y no hay ni un píxel de salto.
-   El recuadro del hover se dibuja con margen negativo compensado
-   con relleno, así que el texto queda exactamente donde estaba.
-   ============================================================ */
-
 /* --- Geometría invisible del recuadro de la sinopsis ----------- */
-/* Margen –12 px y relleno +12 px se anulan: mismo ancho de línea
-   y mismo alto de tarjeta. El relleno inferior (10 px) se compensa
-   con margen negativo para que el velo no quede pegado a la
-   última línea; la sinopsis es el último hijo, así que ese margen
-   no empuja nada. En reposo el fondo es transparente. */
+
 body.pagina-cartelera .contenido .pelicula p.sinopsis {
 	margin: 0 -12px -10px;
 	padding-right: 12px;
@@ -469,7 +448,7 @@ body.pagina-cartelera .contenido .pelicula p.sinopsis {
 	transition: color 200ms ease, background-color 200ms ease, text-shadow 200ms ease;
 }
 
-/* --- La tarjeta y su título también respiran al cambiar -------- */
+/* --- La tarjeta y su título  -------- */
 body.pagina-cartelera .contenido .pelicula {
 	transition: opacity 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
@@ -478,36 +457,25 @@ body.pagina-cartelera .contenido .pelicula h3 {
 	transition: color 200ms ease, text-shadow 200ms ease;
 }
 
-/* Los estados de hover solo existen donde hay ratón de verdad.
-   En pantallas táctiles nada de esto se aplica: no hay tarjetas
-   atenuadas ni texto que pierda contraste. */
+
 @media (hover: hover) and (pointer: fine) {
 
-	/* Las tarjetas que no están señaladas se atenúan: el ojo va
-	   solo a la que se está leyendo. Con 0,6 el texto de las otras
-	   se queda en 5,6:1, por encima del 4,5:1 exigido. */
+	
 	body.pagina-cartelera .contenido .cartelera:hover .pelicula:not(:hover) {
 		opacity: 0.6;
 	}
 
-	/* La tarjeta señalada se queda a plena luz y con el borde
-	   un poco más claro. */
 	body.pagina-cartelera .contenido .cartelera:hover .pelicula:hover {
 		opacity: 1;
 		border-color: #4a7783;
 		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(127, 227, 240, 0.22);
 	}
 
-	/* Título encendido: se queda en blanco (contraste máximo) y gana
-	   un halo turquesa que lo enciende sin tocar su geometría. */
 	body.pagina-cartelera .contenido .pelicula:hover h3 {
 		color: #ffffff;
 		text-shadow: 0 0 2px rgba(127, 227, 240, 0.9), 0 0 10px rgba(127, 227, 240, 0.75), 0 0 30px rgba(56, 197, 224, 0.6);
 	}
 
-	/* Sinopsis en primer plano: color más luminoso, velo turquesa
-	   al 6 % y una sombra de 1 px del mismo color que le da algo
-	   más de cuerpo. text-shadow no ocupa sitio en la línea. */
 	body.pagina-cartelera .contenido .pelicula:hover p.sinopsis {
 		color: #f2fbfd;
 		background-color: rgba(38, 181, 206, 0.06);
@@ -515,11 +483,6 @@ body.pagina-cartelera .contenido .pelicula h3 {
 	}
 }
 
-/* --- Teclado: la misma puesta en escena ------------------------ */
-/* Hoy ninguna tarjeta tiene nada enfocable (la ficha y la sinopsis
-   son texto), así que estas reglas no se ven; quedan puestas para
-   que, si se añade un enlace dentro, el foco de teclado encienda
-   la tarjeta igual que el ratón. */
 body.pagina-cartelera .contenido .cartelera:focus-within .pelicula:not(:focus-within) {
 	opacity: 0.6;
 }
@@ -541,7 +504,7 @@ body.pagina-cartelera .contenido .pelicula:focus-within p.sinopsis {
 	text-shadow: 0 0 1px rgba(242, 251, 253, 0.55);
 }
 
-/* --- Táctil: todo igual que en reposo -------------------------- */
+/* --- Táctil -------------------------- */
 /* Refuerzo para navegadores híbridos que dejan el :hover pegado
    después de tocar: se devuelven los valores de reposo a mano. */
 @media (hover: none) {
@@ -568,7 +531,6 @@ body.pagina-cartelera .contenido .pelicula:focus-within p.sinopsis {
 	}
 }
 
-/* --- Menos movimiento: el cambio llega de golpe ---------------- */
 @media (prefers-reduced-motion: reduce) {
 
 	body.pagina-cartelera .contenido .pelicula,

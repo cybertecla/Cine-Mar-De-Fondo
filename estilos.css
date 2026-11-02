@@ -1,5 +1,3 @@
-/* Estilos compartidos para Cine Mar de Fondo */
-
 /* Anton (SIL Open Font License) — la tipografía del titular, la misma
    que usa el demo de blotter.ts. Va incrustada en base64 para que
    funcione también al abrir index.html con doble clic (file://), donde
@@ -292,7 +290,7 @@ input[type="checkbox"] {
 }
 
 /* fieldset.grupo: caja invisible, solo pone nombre al grupo de radios y
-   casillas («Sesión», «Extras») para que el lector de pantalla lo lea. */
+   casillas («Sesión», «Extras») para que el lector lo pueda leer mas facilmente. */
 fieldset.grupo {
 	border:0;
 	background:none;
@@ -400,7 +398,7 @@ p.sinopsis {
 /* ============================================================
    CARTELERA, HORARIOS, PRECIOS Y PIE
    El contenido va sobre negro; las tarjetas y las tablas usan el
-   fondo-alt y las líneas del borde. Nada de esto toca al hero.
+   fondo-alt y las líneas del borde.
    ============================================================ */
 
 /* Caja de contenido: una sola anchura para toda la página. */
@@ -441,10 +439,7 @@ p.sinopsis {
 	cursor:help;
 }
 
-/* Rejilla de las tres películas. Las columnas son de 320 px (el ancho de
-   .cartel) y se reparten el ancho disponible; los tres carteles quedan a
-   la misma altura porque el h3 reserva dos líneas y las tres imágenes
-   miden lo mismo. Aquí es donde enganchará la animación de cada cartel. */
+/* Rejilla de las tres películas. Aquí es donde enganchará la animación de cada cartel. */
 .cartelera {
 	display:grid;
 	grid-template-columns:repeat(3,320px);
@@ -509,12 +504,7 @@ dd {
 	color:#26b5ce;
 }
 
-/* Pie: marca, «Volver arriba» y dirección en UNA fila.
-   La caja negra la pone .contenido (css/fondo.css); el aire de .pie
-   deja ver el mar por arriba y por abajo, igual a ambos lados.
-   El padding simétrico de la caja (40 px arriba y abajo, y el mismo
-   valor a izquierda y derecha) deja aire suficiente para que nada
-   quede pegado a los bordes. */
+/* Pie: marca, «Volver arriba» y dirección en UNA fila. */
 .pie {
 	margin-top:88px;
 	border-top:1px solid #1b2c31;
@@ -523,14 +513,7 @@ dd {
 }
 
 /* Tres columnas 1fr auto 1fr: marca a la izquierda, «Volver arriba»
-   en la columna del medio y dirección a la derecha. Las dos columnas
-   de fuera miden exactamente lo mismo, así que el enlace cae en el
-   centro geométrico de la caja; con space-between y anchos distintos
-   el bloque del medio se desplazaría hacia el lado más estrecho.
-   align-items:center centra los tres bloques en vertical.
-   El selector lleva .pagina-cartelera para ganar en especificidad a
-   .pagina-cartelera .contenido de css/fondo.css, que fija el padding
-   lateral de la caja. */
+   en la columna del medio y dirección a la derecha. */
 .pagina-cartelera .pie .contenido {
 	display:grid;
 	grid-template-columns:1fr auto 1fr;
@@ -597,7 +580,6 @@ dd {
 
 /* ============================================================
    CABECERA DE LA RESERVA (reserva.html y reserva_html5.html)
-   El mismo h1 y el mismo menú que la cartelera, en una banda.
    ============================================================ */
 
 .cabecera {
@@ -614,7 +596,6 @@ dd {
 	gap:16px;
 }
 
-/* Más específico que .hero-titulo (y que su media query) a propósito. */
 .cabecera .hero-titulo {
 	font-size:1.5rem;
 	letter-spacing:0.04em;
@@ -644,10 +625,7 @@ dd {
 
 /* ============================================================
    HERO: fondo shader (Paper Shaders) + texto animado (GSAP)
-   El canvas del shader lo crea js/hero.js dentro de .hero-shader.
-   Si no hay WebGL o falla el JS, queda el fondo negro con el
-   texto en blanco: la página sigue viéndose bien.
-   ============================================================ */
+============================================================ */
 
 .hero {
 	position:relative;
@@ -657,10 +635,9 @@ dd {
 	background-color:#000000;
 }
 
-/* Capa 1: el fondo animado del hero (lo monta js/hero.js: tinta líquida
-   o rayos). isolation:isolate es OBLIGATORIO: sus canvas se pintan con
+/* Capa 1: el fondo animado del hero. isolation:isolate es OBLIGATORIO: sus canvas se pintan con
    z-index:-1 y sin esto quedarían debajo del fondo negro de .hero
-   (el fallo de «no se ve ninguna animación»). */
+*/
 .hero-shader {
 	position:absolute;
 	top:0;
@@ -672,11 +649,7 @@ dd {
 
 /* Capa 1 bis: el velo. NO es un fondo: va POR ENCIMA del shader con
    opacidad 0.9, así que la animación se sigue notando al 10 % (y ese
-   0.1 queda libre para jugar más adelante). Cada velo ocupa media
-   altura y la banda opaca tapa los bordes interiores, de modo que a la
-   vista quedan solo las dos franjas de arriba y abajo, sin costura que
-   medir. pointer-events:none: la entrada vive en la franja de arriba y
-   tiene que seguir siendo pulsable (z-index 40, por encima del velo). */
+   0.1 queda libre para jugar más adelante). */
 .hero-velo {
 	position:absolute;
 	left:0;
@@ -711,12 +684,7 @@ dd {
 	box-sizing:border-box;
 }
 
-/* Los botones del menú caen sobre la banda negra: el texto blanco y el
-   turquesa ya se leen bien ahí, no hace falta nada más. */
-/* Sin WebGL: resplandor estático para que arriba y abajo de la banda
-   no quede un negro muerto (se añade desde js/hero-fx.js al fallar).
-   Va casi opaco a propósito: el velo lo tapa al 90 %, así que al 10 %
-   sigue viéndose un resplandor tenue en vez de un negro plano. */
+/* Los botones del menú caen sobre la banda negra. */
 .hero-shader.sin-shader {
 	background:radial-gradient(ellipse at 50% 36%,rgba(38,181,206,0.95) 0%,rgba(38,181,206,0.55) 30%,rgba(2,6,8,0) 62%),#020608;
 }
@@ -733,10 +701,7 @@ dd {
 	margin:0;
 }
 
-/* Titular dibujado con Blotter.ts (channel-split). Cuando el efecto
-   arranca, el texto real se vuelve transparente (sigue ahí para los
-   lectores de pantalla y ocupando su sitio) y el lienzo de Blotter se
-   centra encima. Si Blotter no arranca, nada de esto se activa. */
+/* Titular dibujado con Blotter.ts  */
 .hero-titulo.blotter-activo {
 	color:transparent;
 	text-shadow:none;
@@ -770,7 +735,7 @@ dd {
    Peel.js recorta la de arriba con un clip-path y la dobla sobre el
    dorso. La capa de fondo la crea la librería vacía: al pelar no hay
    nada debajo, solo el hero. .peel-layer y .peel-svg-clip-element son
-   las reglas que exige la librería (antes venían en su peel.css).
+   las reglas que exige la librería.
    ============================================================ */
 
 .peel-layer {
@@ -839,9 +804,7 @@ dd {
 	-webkit-tap-highlight-color:transparent;
 }
 
-/* Cuerpo del neón. El arte es el PNG que exportaste de GIMP (con el fondo
-   ya borrado), así que el ticket es opaco: detrás solo se ve la página.
-   Aquí solo se puede BAJAR entero (0.5 = fantasma, 1 = como está).
+/* Cuerpo del neón. 
    Para rehacerlo desde el PNG de GIMP:
        python3 entrada-arte.py            (lee ../cine-fuentes/ticket-02.png) */
 .entrada img {
@@ -887,7 +850,7 @@ dd {
 }
 
 /* La cartelera baja de tres columnas a dos, y luego a una. En la de una,
-   el cartel ocupa todo el ancho disponible (si no, se sale de la pantalla). */
+   el cartel ocupa todo el ancho disponible */
 @media (max-width:72.3em) {
 	.cartelera {
 		grid-template-columns:repeat(2,320px);

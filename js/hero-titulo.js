@@ -1,32 +1,12 @@
 /* ------------------------------------------------------------------
    hero-titulo.js — el titular del hero dibujado con Blotter.ts.
-
-   El <h1> «Cine Mar de Fondo» se queda en el documento (lectores de
-   pantalla, selección, validación), pero cuando Blotter arranca su
-   texto se vuelve transparente y encima se dibuja el mismo texto con
-   ChannelSplitMaterial: los canales R/G/B se separan y la separación
-   sigue al ratón.
-
-   La configuración es la del demo de blotter.ts de webdev.teknium.io
-   («Channel»), copiada de su código:
-     · tipografía Anton 400 + relleno #f6f6f6 sobre la banda negra
-     · padding proporcional al tamaño (0.3 / 0.2 / 0.14 / 0.14) y leading 1
-     · uOffset = 0.012 + min(0.7, distancia al centro) * 0.07 + velocidad * 0.025
-     · uRotation = ángulo del ratón respecto al centro (en grados)
-     · si el ratón no se mueve 2.2 s, el «puntero» pasea solo (Lissajous)
-     · ratio de píxeles limitado a 2
-
-   - Devuelve false (sin tocar nada) si WebGL no está o algo falla;
-     js/hero.js lo interpreta como «el titular va con GSAP».
-   - Retoques sin compilar: js/hero-ajustes.js → titulo:{ … }.
-   - Se empaqueta dentro de js/hero.bundle.js (sh construir.sh).
-   ------------------------------------------------------------------ */
+------------------------------------------------------------------ */
 
 import { Blotter, Text, isWebGLSupported } from '../lib/blotter/index.js';
 import { ChannelSplitMaterial } from '../lib/blotter/materials.js';
 import { prefiereMenosMovimiento } from './hero-fx.js';
 
-/* Valores del demo de teknium; se retocan desde js/hero-ajustes.js */
+/* Valores se retocan desde js/hero-ajustes.js */
 const OPCIONES_TITULO = {
 	efecto: true,     // false = no usar Blotter (hero.js cae a GSAP)
 	base: 0.012,      // separación mínima, en fracción del alto del lienzo
@@ -69,9 +49,7 @@ async function cargarFuente(familia, frase) {
 	}
 }
 
-/* Recorta el tamaño si el titular no cabe a lo ancho (p. ej. en
-   móviles, donde el CSS lo partiría en varias líneas): se mide el
-   texto y se reduce la fuente lo justo para que quepa en una línea. */
+/* Recorta el tamaño si el titular no cabe a lo ancho */
 function tamanoQueCabe(prop, titulo) {
 	const frase = titulo.textContent.trim().toUpperCase();
 	const disponible = Math.max(220, (titulo.getBoundingClientRect().width || window.innerWidth) - 24);
@@ -87,12 +65,11 @@ function tamanoQueCabe(prop, titulo) {
 	return prop.size;
 }
 
-/* Propiedades completas del texto, con el padding proporcional del demo
-   de teknium (0.3 arriba, 0.2 abajo, 0.14 a los lados).
-
+/* 
    OJO: en Blotter, escribir texto.properties sustituye el objeto entero
    (no lo fusiona), así que siempre se pasa todo: si faltara el fill, el
-   titular se volvería negro sobre la banda negra y desaparecería. */
+   titular se volvería negro sobre la banda negra y desaparecería.
+*/
 function propiedadesTexto(titulo) {
 	const prop = propiedadesBase(titulo);
 	const size = tamanoQueCabe(prop, titulo);
@@ -150,9 +127,7 @@ export async function montarTituloBlotter(titulo) {
 		throw new Error('Blotter no dejó lienzo en el titular');
 	}
 
-	/* El texto real se vuelve transparente (sigue ahí, ocupando su
-	   sitio, y los lectores de pantalla lo siguen leyendo); encima
-	   aparece el lienzo con un fundido. */
+	/* El texto real se vuelve transparente; encima aparece el lienzo con un fundido. */
 	titulo.classList.add('blotter-activo');
 	titulo.setAttribute('data-efecto', 'blotter');   /* para comprobarlo en el inspector */
 	window.requestAnimationFrame(() => lienzo.classList.add('listo'));
@@ -163,9 +138,7 @@ export async function montarTituloBlotter(titulo) {
 	return true;
 }
 
-/* El ratón manda, igual que en el demo de teknium: la distancia al
-   centro del lienzo fija cuánto se separan los canales, la dirección
-   fija el ángulo y la velocidad del puntero añade un extra. */
+/* El seguimiento del ratón */
 function seguirRaton(material, titulo, lienzo, ajustes) {
 	const escucha = titulo.closest('.hero') || titulo;
 	const uniformes = material.uniforms;

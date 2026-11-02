@@ -1,27 +1,13 @@
 /* ============================================================
-   reserva-hero.css — apoyo del efecto del titular de la cabecera
-   de reserva (reserva.html y reserva_html5.html).
-
-   El efecto lo monta js/reserva-hero.js: un <canvas> 2D dentro del
-   propio <h1>, con la separación de canales R/G/B del titular de la
-   portada. Aquí solo van el sitio del lienzo, el estado «activo»
-   (texto real transparente) y el apagado por prefers-reduced-motion.
-
-   No se toca estilos.css: todas las reglas van con el prefijo
-   .cabecera para no afectar al hero de index.html.
+   reserva-hero.css
    ============================================================ */
 
-/* El <h1> ya es position:relative en estilos.css; se le da contexto
-   de apilado propio para que el lienzo quede sobre su texto y no
-   sobre el menú. */
 .cabecera .hero-titulo {
 	position:relative;
 	z-index:0;
 }
 
-/* Lienzo del efecto: se centra sobre la caja del <h1>. El tamaño en
-   píxeles lo fija js/reserva-hero.js (incluye aire para el fleco de
-   los canales); aquí solo se coloca y se le da el brillo teal. */
+/* Lienzo del efecto */
 .cabecera .hero-titulo canvas.titulo-lienzo {
 	position:absolute;
 	left:50%;

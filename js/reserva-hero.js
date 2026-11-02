@@ -1,39 +1,6 @@
 /* ------------------------------------------------------------------
    reserva-hero.js — el titular de la cabecera de reserva, con vida.
-
-   QUÉ SE APLICA (mismo lenguaje visual que la portada):
-   · Entrada «glitch» con GSAP ScrambleText: el texto se descifra
-     durante ~0,9 s con caracteres aleatorios.
-   · Después, un lienzo 2D dibuja el mismo titular con un fleco
-     cromático (channel-split): el blanco se queda en el centro y los
-     canales rojo y azul se separan a cada lado. La separación sigue
-     al ratón y, si el ratón no se mueve 2,2 s, el puntero pasea solo
-     (Lissajous), con las mismas fórmulas que js/hero-titulo.js de
-     index.html.
-   · El texto real del <h1> sigue en el documento (lectores de
-     pantalla, selección y buscadores); solo se vuelve transparente
-     cuando el lienzo ya está dibujado, igual que en la portada.
-
-   QUÉ NO SE APLICA Y POR QUÉ:
-   · El fondo WebGL del hero (dither, tinta o rayos) no se trae: es
-     el shader a pantalla completa y aquí la cabecera es una banda
-     de una sola franja; además supondría cargar three.js,
-     paper-shaders y webgl-fluid (el bundle de la portada pesa
-     892 KB). La cabecera se queda con su fondo negro liso.
-   · Blotter.ts no se carga tal cual: sus módulos son ESM, importan
-     three.js (~780 KB entre blotter y three) y no pueden cargarse
-     con <script> clásico desde file://, que es como se abren estas
-     páginas. Su ChannelSplitMaterial se reproduce aquí con Canvas
-     2D (~9 KB) sin WebGL: mismos canales separados, mismo
-     seguimiento del ratón, mismo paseo automático.
-   · SplitText no se usa: el titular es una sola línea dentro de una
-     cabecera flex y el «glitch» de entrada ya lo da ScrambleText.
-
-   RESPETA prefers-reduced-motion: si está activo no se crea lienzo,
-   no se anima nada y el <h1> se queda blanco y quieto. Si la
-   preferencia cambia en caliente, el efecto se retira o se vuelve a
-   montar.
-   ------------------------------------------------------------------ */
+------------------------------------------------------------------ */
 
 (function () {
 	'use strict';

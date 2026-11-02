@@ -16,16 +16,14 @@
 </head>
 <body class="pagina-cartelera">
 
-<!-- Hero: fondo shader (Paper Shaders) con la animación visible arriba y abajo.
+<!-- Hero: fondo shader (Paper Shaders).
      La banda negra central va SOLO detrás del texto (GSAP / Blotter).
      Si no hay JS o WebGL, queda la banda negra con el texto en blanco. -->
 <div class="hero">
 <div class="hero-shader" id="hero-shader"></div>
 
 <!-- Velo negro de las dos franjas: va POR ENCIMA del shader (no es un
-     fondo) con opacidad 0.9, así que la animación se intuye al 10 %.
-     Son dos capas de media altura; la banda opaca tapa el borde interior
-     y a la vista solo quedan la franja de arriba y la de abajo. -->
+     fondo) con opacidad 0.77. -->
 <div class="hero-velo hero-velo--arriba"></div>
 <div class="hero-velo hero-velo--abajo"></div>
 
@@ -42,10 +40,7 @@
 </ul>
 </div>
 
-<!-- Entrada de cine que se pela (Peel.js, lib/peel): se arrastra la
-     esquina y se levanta el papel. Debajo no hay nada: queda el hero.
-     El marco es translúcido: por dentro se ve la página, sin caja ni fondo.
-     El div de fuera solo la ancla en la esquina del aviso. -->
+<!-- Aviso: Entrada de cine que se pela (Peel.js, lib/peel) -->
 <div class="entrada-sitio">
 <div class="entrada peel" id="entrada">
 <div class="peel-top entrada-anverso">
@@ -60,7 +55,7 @@
 </div>
 
 <!-- ============================================================
-     FONDO CONTINUO — el mar del hero sigue por toda la página
+     FONDO CONTINUO
      ============================================================
      Qué es: una sola capa, el velo que oscurece el shader del hero
      también por debajo del hero. El shader NO se duplica: es el mismo
@@ -68,20 +63,6 @@
      position:fixed. Esta capa va POR ENCIMA de él y POR DEBAJO del
      contenido (z-index 1), y empieza justo donde termina el hero:
      así el hero conserva sus dos velos y su banda tal cual estaban.
-
-     Dónde va: en index.html, justo DESPUÉS de cerrar
-         <div class="hero"> … </div>
-     y ANTES de
-         <div class="contenido principal">
-     No lleva contenido ni texto: es solo pintura. La capa no tiene
-     semántica (un div vacío) y el CSS le pone pointer-events:none.
-
-     La hoja ya está enlazada en el <head>, después de estilos.css
-     (para que pueda sobrescribirla), así que aquí solo queda el velo.
-
-     Sin WebGL o sin JS no se rompe nada: el shader se queda con su
-     resplandor estático (.sin-shader) y el velo sigue oscureciendo
-     igual; el contenido va sobre negro sólido.
      ============================================================ -->
 <div class="fondo-velo"></div>
 
@@ -240,14 +221,11 @@ Población, Provincia<br />
 </div>
 </div>
 
-<!-- Librerías locales (sin CDN): GSAP + plugins, ajustes y el arranque del hero -->
+<!-- Librerías locales -->
 <script type="text/javascript" src="lib/gsap/gsap.min.js"></script>
 <script type="text/javascript" src="lib/gsap/SplitText.min.js"></script>
 <script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js"></script>
-<!-- Ajustes del hero: edita js/hero-ajustes.js y recarga con F5 (sin compilar) -->
 <script type="text/javascript" src="js/hero-ajustes.js"></script>
-<!-- Peel.js local (MIT): la entrada que se pela. Si falta, la entrada se
-     queda entera y quieta, sin romper nada. -->
 <script type="text/javascript" src="lib/peel/peel.js"></script>
 <!-- Las dos caras de la entrada se piden ya, antes del bundle: cuando
      entrada.js pregunte por ellas estarán en caché y podrá enseñar el
@@ -262,13 +240,7 @@ Población, Provincia<br />
 	}
 }());
 </script>
-<!-- Bundle clásico (hero.js + fondos + titular Blotter + entrada + librerías locales):
-     funciona también al abrir el archivo con doble clic (file://), donde
-     type="module" no carga. -->
 <script type="text/javascript" src="js/hero.bundle.js"></script>
-<!-- Efecto contenido de la marca del pie: ScrambleText al entrar en
-     pantalla y fleco cromático en canvas. Usa el GSAP y el plugin que
-     ya se cargan arriba; si faltan, la marca se queda quieta. -->
 <script type="text/javascript" src="js/pie-marca.js"></script>
 
 </body>

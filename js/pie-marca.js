@@ -2,23 +2,6 @@
    pie-marca.js — «Cine Mar de Fondo» del pie con el efecto del
    titular de reserva.html, pero contenido: es un pie, no un hero.
 
-   QUÉ HACE:
-   · La primera vez que el pie entra en pantalla (IntersectionObserver)
-     descifra la marca con GSAP ScrambleText durante 0,9 s.
-   · Al terminar, un <canvas> 2D dibuja el mismo texto con fleco
-     cromático (channel-split): blanco en el centro y los canales rojo
-     y azul separados a cada lado. La separación sigue al ratón y, si
-     el ratón se queda quieto, el puntero pasea solo (Lissajous).
-   · El texto real del <p> sigue en el documento para lectores de
-     pantalla, selección y buscadores; solo se vuelve transparente
-     cuando el lienzo ya está pintado.
-
-   QUÉ NO HACE:
-   · No toca js/reserva-hero.js ni las páginas de reserva: la técnica
-     se reutiliza aquí, adaptada al tamaño y al ritmo de un pie.
-   · No crea canvas si prefers-reduced-motion está activo: en ese caso
-     la marca se queda blanca, quieta y perfectamente legible.
-
    El canvas se añade después del scramble a propósito: ScrambleText
    reescribe el contenido del <p> y se llevaría por delante el lienzo.
    ------------------------------------------------------------------ */

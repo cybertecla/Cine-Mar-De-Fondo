@@ -1,14 +1,5 @@
 /* ------------------------------------------------------------------
-   hero-dither.js — fondo de «trama tramada» (dithering) del hero.
-
-   Es el shader Dithering de Paper Shaders (el mismo del preview:
-   «move to steer · pick shape, matrix, ink»): dos tintas, una trama
-   ordenada Bayer (2×2 / 4×4 / 8×8) o aleatoria, sobre siete formas
-   animadas (simplex, warp, dots, wave, ripple, swirl, sphere).
-   El ratón «dirige» la trama moviéndola (u_offsetX / u_offsetY).
-
-   Ajustes sin compilar: js/hero-ajustes.js → dither:{ … }
-   Lista completa en TOCAR-EL-HERO.md.
+   hero-dither.js — fondo del hero.
    ------------------------------------------------------------------ */
 
 import { ShaderMount } from '../lib/paper-shaders/dist/shader-mount.js';

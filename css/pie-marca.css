@@ -1,11 +1,6 @@
 /* ============================================================
    pie-marca.css — apoyo del efecto de «Cine Mar de Fondo» en el pie.
 
-   El efecto lo monta js/pie-marca.js: un <canvas> 2D dentro del
-   propio <p class="pie-marca">, con la separación de canales del
-   titular de reserva.html. Aquí solo van el sitio del lienzo, el
-   estado «activo» (texto real transparente) y el apagado por
-   prefers-reduced-motion. No toca ninguna otra parte del pie.
    ============================================================ */
 
 /* El <p> necesita contexto de apilado propio para que el lienzo
@@ -15,10 +10,7 @@
 	z-index:0;
 }
 
-/* Lienzo del efecto: centrado sobre la caja de la marca. El tamaño
-   en píxeles lo fija js/pie-marca.js (incluye aire para el fleco de
-   los canales); aquí solo se coloca, se le da un brillo teal muy
-   discreto y se le quitan los clics. */
+/* Lienzo del efecto */
 .pie-marca canvas.pie-marca-lienzo {
 	position:absolute;
 	left:50%;

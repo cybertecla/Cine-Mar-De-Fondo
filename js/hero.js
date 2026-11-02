@@ -1,21 +1,7 @@
 /* ------------------------------------------------------------------
    hero.js — arranque del hero de la cartelera (index.html)
 
-   1. Monta el fondo animado dentro de #hero-shader. Hay tres, y se
-      elige en js/hero-ajustes.js (window.HERO_AJUSTES.fondo):
-      · «dither» → trama tramada Bayer (Paper Shaders, el del preview)
-      · «fluido» → tinta líquida interactiva (webgl-fluid)
-      · «rayos»  → haces de luz god rays (Paper Shaders)
-      Si el elegido falla, prueba los otros por orden; si ninguno
-      arranca, queda el resplandor estático. La página nunca se queda
-      en negro muerto.
-   2. El titular (#arriba) lo dibuja Blotter.ts con ChannelSplitMaterial
-      (js/hero-titulo.js): los canales R/G/B se separan y la separación
-      sigue al ratón. Si WebGL o Blotter fallan, cae a la animación
-      GSAP SplitText de siempre.
-   3. El subtítulo se anima con GSAP (ScrambleText).
-
-   Se empaqueta en js/hero.bundle.js (ver construir.sh o vigilar.sh).
+   Se empaqueta en js/hero.bundle.js.
    ------------------------------------------------------------------ */
 
 import {

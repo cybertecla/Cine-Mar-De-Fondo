@@ -1,11 +1,6 @@
 /* ------------------------------------------------------------------
    cargador.js — pantalla de carga de Cine Mar de Fondo
 
-   Va en el <head> antes del bundle: monta el overlay en el primer tick
-   y lo retira cuando window load, las <img> (decode), fonts.ready y las
-   promesas registradas están listos. Sin JS no se inyecta nada.
-   Red de seguridad: 12 s. API: esperar, esperarEtiqueta, listo.
-
    El spinner es el «jelly-triangle» de LDRS (MIT, Griffin Johnston),
    portado a SVG + CSS sin web components: se construye aquí con
    createElementNS para que el XHTML siga siendo válido y funcione al
@@ -38,10 +33,8 @@
 		return el;
 	}
 
-	/* SVG del jelly-triangle: 3 puntos en los vértices, 1 viajero y el
-	   filtro «ooze» (desenfoque + matriz de alfa + mezcla) que los une
-	   como gelatina. Los atributos van aquí, no en el HTML, para no
-	   meter etiquetas que xmllint no conoce. */
+	/* SVG del jelly-triangle
+	   Los atributos van aquí, no en el HTML, para no meter etiquetas que xmllint no conoce. */
 	function crearSpinner() {
 		svg = document.createElementNS(NS, 'svg');
 		svg.setAttribute('class', 'cargador-jelly');

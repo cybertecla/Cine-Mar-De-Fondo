@@ -1,17 +1,10 @@
 /* ------------------------------------------------------------------
    cargador.css — pantalla de carga de Cine Mar de Fondo
 
-   La monta js/cargador.js; sin JS no pinta nada y la web se ve normal.
-   Solo sale el spinner sobre negro: ni título ni etiqueta. El nombre
-   del sitio lo anuncia el aria-label del propio overlay.
-
    El spinner «jelly-triangle» es un port a HTML+CSS puro (sin web
    components ni shadow DOM) del original de LDRS:
        https://uiball.com/ldrs  ·  https://github.com/GriffinJohnston/ldrs
    Copyright (c) Griffin Johnston — publicado bajo licencia MIT.
-   Se conservan su geometría (triángulo de 3 puntos + viajero), el
-   filtro «ooze» y los tiempos; solo cambian los nombres de clase y
-   que el SVG lo crea js/cargador.js con createElementNS.
    ------------------------------------------------------------------ */
 
 /* El negro entra antes de que exista el body: si el navegador pinta
@@ -89,7 +82,7 @@ html[data-cargando="si"] body {
 }
 
 /* Los tres vértices laten con el mismo «grow», desfasados un tercio
-   de ciclo entre sí (los retardos negativos del original). */
+   de ciclo entre sí. */
 .jelly-punto:nth-child(1) {
 	animation:grow var(--jelly-ciclo) ease infinite;
 }
@@ -108,7 +101,7 @@ html[data-cargando="si"] body {
 	animation:triangulate var(--jelly-ciclo) ease infinite;
 }
 
-/* Keyframes copiados del original: el viajero salta de vértice en
+/* Keyframes: el viajero salta de vértice en
    vértice y los puntos se hinchan o desaparecen a su paso. */
 @keyframes triangulate {
 	0%,

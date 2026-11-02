@@ -1,34 +1,8 @@
 /* ------------------------------------------------------------------
-   entrada.js — la entrada de cine que se pela en la esquina del hero
+   entrada.js
 
    Peel.js (lib/peel/peel.js, MIT) recorta la capa de arriba con un
    clip-path, como si se levantara papel, y voltea la esquina.
-
-   Cómo reacciona:
-     · Arrastrar: el doblez sigue al puntero desde el primer píxel,
-       en cualquier punto de la entrada (ratón o dedo).
-     · Se puede pelar ENTERA: el doblez llega a la esquina opuesta y la
-       capa de arriba se desvanece, así que no queda una esquinita
-       pegada encima del hero.
-     · Al soltar a medias se va sola al extremo más cercano: doblada
-       o pelada del todo.
-     · Clic seco: pela del todo o vuelve al doblez. Con un clic basta:
-       la animación sale siempre de donde está el papel, nunca del
-       punto donde has hecho clic (si saliera de ahí, el primer
-       fotograma daba un salto y parecía que no respondía).
-     · Pasar el ratón por encima abre un poco la esquinita.
-
-   Ojo, dos trampas de la librería, ya sorteadas aquí:
-
-   1) peel.getAmountClipped() NO devuelve lo que se ha pelado, sino el
-      área de la capa de arriba que TODAVÍA QUEDA (1 = entera, 0 =
-      pelada del todo). El nombre engaña. Por eso el estado se mide con
-      progreso(), a partir de la posición del doblez.
-
-   2) NO se usa peel.handleDrag() porque calcula las coordenadas con
-      offsetLeft/offsetTop, y esta entrada está anclada arriba a la
-      derecha: saldrían desplazadas. Aquí se miden con
-      getBoundingClientRect(), que siempre acierta.
 
    Si el navegador no soporta clip-path, o Peel.js no está, la entrada
    se queda entera y quieta: no se pierde nada de información.
@@ -54,9 +28,6 @@ const FUNDIDO = 0.10;
 /* Las dos caras del ticket, en el orden en que las pide el HTML. */
 const CARAS = ['img/entrada-frente.png', 'img/entrada-dorso.png'];
 
-/* Cuánto se espera, como mucho, a que las caras estén decodificadas.
-   Si pasado este tiempo no han contestado, se enseña el dorso igual:
-   mejor el ticket sin el borde fino que un ticket a medias. */
 const ESPERA_CARAS = 1200;
 
 function sinMovimiento() {
@@ -68,11 +39,7 @@ function conRaton() {
 	return !window.matchMedia || window.matchMedia('(hover: hover)').matches;
 }
 
-/* Enseña el dorso: pone .entrada-lista, que es lo que quita el
-   visibility:hidden del CSS. Se llama con Peel ya montado y las dos caras
-   decodificadas; sin eso, el primer fotograma del doblez podía salir con
-   el PNG del revés a medio pintar (o directamente en blanco). Sin JS esta
-   clase no llega nunca y se queda el anverso, que es el respaldo bueno. */
+/* Enseña el dorso */
 function marcarLista(caja) {
 	let pendientes = CARAS.length;
 	let hecho = false;
@@ -85,7 +52,6 @@ function marcarLista(caja) {
 		caja.classList.add('entrada-lista');
 	}
 
-	/* En las pruebas no hay DOM ni Image: se marca y ya. */
 	if (!window.Image) {
 		listo();
 		return;
@@ -134,20 +100,17 @@ export function montarEntrada() {
 		backShadowSize: 0.05,
 		backReflection: true,
 		backReflectionAlpha: 0.1,
-		/* Peel.js pinta un degradado negro en .peel-bottom-shadow (la capa
-		   de abajo) y, al pelar del todo, se quedaba encima del hero como
-		   un manchón oscuro: sin sombra de fondo no hay nada que borrar. */
 		bottomShadow: false
 	});
 
-	/* Dónde está el doblez AHORA: la fuente de verdad para animar. */
+	/* Dónde está el doblez  */
 	const posicion = { x: 0, y: 0 };
 	let tween = null;
 	let arrastrando = false;
 	let movido = false;
 	/* Cuánto se ve la entrada: 1 = entera, 0 = pelada del todo. Es la misma
 	   cifra que se vuelca en --entrada-visible, guardada aquí para poder
-	   consultarla sin depender del CSSOM (las pruebas montan un caja falso). */
+	   consultarla sin depender del CSSOM. */
 	let visto = 1;
 
 	function doblada() {
@@ -182,8 +145,7 @@ export function montarEntrada() {
 		posicion.x = x;
 		posicion.y = y;
 		peel.setPeelPosition(x, y);
-		/* En el último tramo la capa de arriba se va desvaneciendo: así la
-		   entrada no se queda como una esquinita encima del hero. */
+		/* En el último tramo la capa de arriba se va desvaneciendo. */
 		visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
 		caja.style.setProperty('--entrada-visible', visto.toFixed(3));
 	}
@@ -222,12 +184,7 @@ export function montarEntrada() {
 		tween = acabada ? null : animacion;
 	}
 
-	/* Clic seco: pela del todo o vuelve al doblez. La decisión se toma por lo
-	   que se ve, no por lo que haya pelado el propio pointerdown: al pulsar en
-	   el centro de la entrada la librería ya coloca el doblez a media altura y
-	   progreso() daba más de 0.5, así que el clic se interpretaba como
-	   «cierra» y no pasaba nada. Con la visibilidad como referencia, clic
-	   siempre pela y el segundo clic siempre devuelve la entrada. */
+	/* Click seco. */
 	function alternar() {
 		if (visto < 0.5) {
 			irA(doblada(), 0.5);
@@ -334,8 +291,7 @@ export function montarEntrada() {
 	caja.addEventListener('mouseleave', alSalir, false);
 
 	/* Peel ya está montado y el doblez colocado: ahora sí se puede
-	   enseñar el dorso (hasta aquí el CSS lo tenía escondido). Se espera
-	   además a que las dos caras estén decodificadas. */
+	   enseñar el dorso (hasta aquí el CSS lo tenía escondido) */
 	marcarLista(caja);
 
 	/* Peel.js mide el elemento una sola vez: si cambia el tamaño hay que

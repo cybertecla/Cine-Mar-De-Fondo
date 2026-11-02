@@ -24,17 +24,7 @@
 /* ------------------------------------------------------------
    1. El shader, de capa del hero a fondo de la página
    ------------------------------------------------------------
-   fixed + inset:0 lo saca del flujo del hero y lo pega a la
-   ventana. Se comprobó en el DOM real que ningún ancestro tiene
-   transform, filter, will-change, perspective ni contain: si lo
-   tuvieran, fixed se anclaría a ese ancestro en vez de a la
-   ventana. .hero solo tiene overflow:hidden, que no recorta a un
-   descendiente fijo (su bloque contenedor es la ventana).
-
-   z-index:0 lo deja encima del fondo negro del body y del hero,
-   pero por debajo de los velos (1) y del contenido (2).
-   .hero-shader conserva isolation:isolate, así que los canvas
-   internos (z-index:-1) siguen viéndose. */
+*/
 .pagina-cartelera #hero-shader {
 	position: fixed;
 	inset: 0;
@@ -46,19 +36,7 @@
 /* ------------------------------------------------------------
    2. El velo que continúa el del hero
    ------------------------------------------------------------
-   No es fixed A PROPÓSITO: si cubriera toda la ventana taparía
-   también el hero y lo oscurecería dos veces (0.8 del hero + 0.9
-   de aquí = casi negro). Colocado en absolute desde el borde
-   inferior del hero hasta el final del body, tapa exactamente lo
-   que hay debajo del hero y se desplaza con el contenido; el
-   shader de detrás sigue fijo y vivo.
-
-   Arriba empieza con la misma opacidad que los velos del hero
-   (0.8) y baja a 0.9 en 180 px: así no hay escalón de brillo en
-   la costura del hero, que es justo lo que se vería al hacer
-   scroll. El 0.9 es el valor pedido para el resto de la página.
-
-   pointer-events:none para que no bloquee enlaces ni la entrada. */
+*/
 .pagina-cartelera .fondo-velo {
 	position: absolute;
 	top: max(100vh, 560px);   /* = alto exacto del hero */
@@ -77,15 +55,7 @@
 /* ------------------------------------------------------------
    3. El contenido, sobre negro y con ancho máximo
    ------------------------------------------------------------
-   La caja negra es más ancha que el texto (1040 px de contenido +
-   52 px de aire a cada lado) para que el texto nunca pise el mar.
-   En pantallas anchas sobran laterales: ahí se ve el shader.
-   En móvil la caja ocupa todo el ancho y no hay mar lateral; el
-   mar queda arriba (hero) y en las franjas del pie.
-
-   box-sizing:border-box es imprescindible: el padding no puede
-   sumarse a los 1040 px porque .cartelera mide justo 1040
-   (3 × 320 + 2 × 40). */
+*/
 .pagina-cartelera .contenido {
 	position: relative;
 	z-index: 2;
@@ -111,10 +81,7 @@
 /* ------------------------------------------------------------
    4. El pie
    ------------------------------------------------------------
-   El fondo del .pie era opaco a todo lo ancho y cortaba el mar.
-   Se deja transparente y la caja negra la pone su .contenido, así
-   el pie sigue siendo legible y por los laterales (y en la franja
-   de 44 px de arriba) se sigue viendo el agua. */
+*/
 .pagina-cartelera .pie {
 	position: relative;
 	z-index: 2;
@@ -124,10 +91,7 @@
 /* ------------------------------------------------------------
    5. Móvil
    ------------------------------------------------------------
-   A menos de 768 px la caja ya ocupa el 100 % y el padding baja a
-   18 px: no hay mar lateral (el texto manda), pero sí una franja
-   fina de mar justo debajo del hero, antes de la caja negra. Es
-   el mismo shader, sin capas nuevas. */
+*/
 @media (max-width: 47.99em) {
 	.pagina-cartelera .contenido.principal {
 		margin-top: 10px;

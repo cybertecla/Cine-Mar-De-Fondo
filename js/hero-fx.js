@@ -1,12 +1,5 @@
 /* ------------------------------------------------------------------
    hero-fx.js — efectos compartidos del hero de Cine Mar de Fondo
-
-   · montarShader()    → fondo de rayos de luz con Paper Shaders
-   · animarTitulo()    → subida de letras con GSAP SplitText
-   · animarSubtitulo() → descifrado de texto con GSAP ScrambleText
-
-   Lo usa index.html (js/hero.js).
-   El punto de entrada se empaqueta con construir.sh.
    ------------------------------------------------------------------ */
 
 import { ShaderMount } from '../lib/paper-shaders/dist/shader-mount.js';
@@ -14,8 +7,7 @@ import { godRaysFragmentShader } from '../lib/paper-shaders/dist/shaders/god-ray
 import { getShaderColorFromString } from '../lib/paper-shaders/dist/get-shader-color-from-string.js';
 import { getShaderNoiseTexture } from '../lib/paper-shaders/dist/get-shader-noise-texture.js';
 
-/* Paletas del shader «god rays» (rayos de luz, como un proyector).
-   Solo se usa la activa en js/hero-ajustes.js. */
+/* Paletas del shader «god rays» */
 export const PRESETS = {
 	/* «abismo»: teal profundo, el color del sitio, sala a oscuras */
 	abismo: {
@@ -50,10 +42,7 @@ export function prefiereMenosMovimiento() {
 	return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/* Monta el shader de rayos dentro de la caja indicada.
-   Devuelve una promesa con el ShaderMount (o null si no se pudo crear).
-   Deja el resultado en caja.dataset.estado ('ok' | 'sin-webgl' | 'fallo'),
-   caja.dataset.motivo y caja.dataset.renderer para poder diagnosticar. */
+/* Monta el shader de rayos dentro de la caja indicada. */
 export function montarShader(caja, preset) {
 	return new Promise((resolve) => {
 		if (!caja) {
