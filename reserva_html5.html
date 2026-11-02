@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Isaac Pérez Bassart">
 <title>Cine Mar de Fondo - Reservar Entradas (HTML5)</title>
-<link rel="stylesheet" type="text/css" href="estilos.css?v=13">
+<link rel="stylesheet" type="text/css" href="estilos.css">
+<!-- Apoyo del efecto del titular: sitio del lienzo y apagado por
+     prefers-reduced-motion. No duplica estilos de estilos.css. -->
+<link rel="stylesheet" type="text/css" href="css/reserva-hero.css">
 </head>
 <body class="reserva-html5">
 
@@ -15,7 +18,6 @@
 <h1 id="arriba" class="hero-titulo">Cine Mar de Fondo</h1>
 <ul class="menu">
 <li><a class="boton boton--fantasma" href="index.html">Cartelera</a></li>
-<li><a class="boton boton--principal" href="reserva_html5.html">Reservar entradas</a></li>
 </ul>
 </div>
 </nav>
@@ -98,6 +100,17 @@ Te guardamos la butaca; el pago se hace en taquilla.</p>
 
 <!-- El aviso del estreno: en esta página va fijo (paso 5 del enunciado). -->
 <div id="aviso">¡Estreno este viernes!</div>
+
+<!-- Titular con el efecto de la portada, en versión contenida:
+     · GSAP + ScrambleText: entrada «glitch» de 0,9 s.
+     · js/reserva-hero.js: lienzo 2D con fleco cromático rojo/azul
+       (el channel-split de Blotter), siguiendo al ratón.
+     NO se carga el bundle de ~893 KB ni el shader WebGL del hero:
+     la cabecera no tiene fondo animado y Blotter necesita ESM +
+     three.js. Todo el detalle está comentado en js/reserva-hero.js. -->
+<script type="text/javascript" src="lib/gsap/gsap.min.js"></script>
+<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js"></script>
+<script type="text/javascript" src="js/reserva-hero.js"></script>
 
 </body>
 </html>
