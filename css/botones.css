@@ -1,0 +1,183 @@
+/* ============================================================
+   BOTONES DEL HERO — Cine Mar de Fondo
+   Hoja que se enlaza DESPUÉS de estilos.css: solo añade o ajusta
+   lo necesario para que los dos botones del hero sean grandes y
+   cómodos sin romper la banda negra ni el diseño original.
+
+   Medidas actuales (objetivo accesibilidad, gente con poca visión):
+     alto ......... ~72 px (antes 62 px)
+     letra ........ 20,5 px en escritorio y 20 px en móvil (antes 18,4)
+     padding ...... 21/30 px escritorio · 22/20 px móvil
+     gap .......... 18 px escritorio · 12 px móvil
+
+   Contraste medido (WCAG 2.1, luminancia relativa):
+     blanco #ffffff sobre cian #26b5ce ....... 2,45:1  (insuficiente)
+     casi negro #08131a sobre cian #26b5ce ... 7,67:1  (AAA)
+   Por eso el texto del botón principal va en casi negro y no en
+   blanco. El botón fantasma lleva texto claro sobre negro: 20,0:1.
+   ============================================================ */
+
+/* La lista pasa a flex para controlar la separación real entre
+   botones (el margen de .menu li se quedaba en 9 px). */
+.hero-banda .menu {
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:stretch;
+	gap:18px;
+	margin:2.9rem 0 0;
+	padding:0;
+}
+
+.hero-banda .menu li {
+	display:flex;
+	margin:0;
+}
+
+/* Base común: área táctil de 72 px de alto, texto de 20,5 px y
+   padding generoso. box-sizing evita que el borde sume de más.
+   El alto sale de 20,48 px × 1,25 de interlínea + 42 px de padding
+   vertical + 4 px de borde = 71,6 px. */
+.hero-banda .boton {
+	position:relative;
+	top:0;
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	box-sizing:border-box;
+	min-width:11.5rem;
+	min-height:64px;
+	padding:21px 30px;
+	border:2px solid transparent;
+	border-radius:2px;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:1.28rem;
+	font-weight:700;
+	line-height:1.25;
+	letter-spacing:0.06em;
+	text-transform:uppercase;
+	text-align:center;
+	text-decoration:none;
+	white-space:nowrap;
+	cursor:pointer;
+	/* El movimiento del botón va por top, no por transform: la intro
+	   de GSAP deja un transform en línea y anularía el de :hover. */
+	transform:none;
+	transition:background-color 0.22s ease,color 0.22s ease,border-color 0.22s ease,top 0.12s ease;
+}
+
+/* Variante principal: cian de la casa con texto casi negro.
+   #08131a sobre #26b5ce da 7,67:1. */
+.hero-banda .boton--principal {
+	background-color:#26b5ce;
+	border-color:#1a93a8;
+	color:#08131a;
+}
+
+/* Variante fantasma: fondo transparente, borde de 2 px y texto
+   claro. El borde blanco al 55 % sobre negro da 6,25:1. */
+.hero-banda .boton--fantasma {
+	background-color:transparent;
+	border-color:rgba(255,255,255,0.55);
+	color:#f2fbfd;
+}
+
+/* Estados de puntero: solo donde hay hover real, para que en móvil
+   no se quede el relleno pegado después de tocar. El salto usa top
+   (no transform): así no choca con ningún transform en línea que se
+   aplique en el futuro. Hoy los botones del hero no se animan. */
+@media (hover:hover) {
+	.hero-banda .boton:hover {
+		top:-2px;
+	}
+
+	.hero-banda .boton--principal:hover {
+		background-color:#ffcc00;
+		border-color:#d6ab00;
+		color:#1a1200;
+	}
+
+	.hero-banda .boton--fantasma:hover {
+		background-color:rgba(38,181,206,0.16);
+		border-color:#7fe3f0;
+		color:#ffffff;
+	}
+}
+
+/* Pulsado: baja 1 px. Va después de :hover para ganarle cuando
+   coinciden (misma especificidad). */
+.hero-banda .boton:active {
+	top:1px;
+}
+
+/* Teclado: anillo ámbar de 3 px separado 3 px del borde. Se usa
+   :focus-visible para no pintar el anillo al hacer clic con ratón;
+   el :focus de 2 px de estilos.css queda como respaldo. */
+.hero-banda .boton:focus-visible {
+	outline:3px solid #ffcc00;
+	outline-offset:3px;
+}
+
+/* Al hacer clic con ratón no hace falta anillo; el teclado sí lo lleva.
+   En navegadores sin :focus-visible esta regla no se aplica y queda el
+   :focus de 2 px de estilos.css como respaldo. */
+.hero-banda .boton:focus:not(:focus-visible) {
+	outline:none;
+}
+
+/* Deshabilitado: por si en el futuro algún botón es un <button> o
+   lleva aria-disabled. No se puede pulsar ni arrastrar el hover. */
+.hero-banda .boton:disabled,
+.hero-banda .boton[aria-disabled="true"] {
+	opacity:0.45;
+	cursor:not-allowed;
+	top:0;
+	box-shadow:none;
+}
+
+/* Móvil: apilados, a ancho completo y con 12 px de separación.
+   La letra baja a 20 px y el interlineado a 1,2 para que el alto
+   siga siendo 72 px (24 + 44 de padding + 4 de borde). El tracking
+   se aprieta un pelo (0,05em) para que «Reservar entradas» no
+   desborde a lo ancho en pantallas de 320 px. */
+@media (max-width:47.99em) {
+	.hero-banda .menu {
+		flex-direction:column;
+		align-items:stretch;
+		gap:12px;
+		margin-top:2.2rem;
+	}
+
+	.hero-banda .menu li {
+		width:100%;
+	}
+
+	.hero-banda .boton {
+		width:100%;
+		min-width:0;
+		padding:22px 20px;
+		font-size:1.25rem;
+		line-height:1.2;
+		letter-spacing:0.05em;
+	}
+}
+
+/* Móviles muy estrechos (320 px): el texto de «Reservar entradas» no
+   cabe con 20 px de padding a cada lado, así que se recorta el padding
+   horizontal; el alto no cambia. */
+@media (max-width:21.99em) {
+	.hero-banda .boton {
+		padding-left:8px;
+		padding-right:8px;
+	}
+}
+
+/* Con menos movimiento, sin saltos ni transiciones. */
+@media (prefers-reduced-motion: reduce) {
+	.hero-banda .boton,
+	.hero-banda .boton:hover,
+	.hero-banda .boton:active {
+		top:0;
+		transition:none;
+	}
+}
