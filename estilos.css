@@ -359,7 +359,12 @@ input[type="reset"] {
 	margin:0;
 	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
 	text-transform:uppercase;
-	font-size:1.12rem;
+	/* 0.9rem (14,4 px): con la entrada a 195 px el aviso tiene 148 px
+	   de ancho. A 1.08rem partía en dos líneas (40 px de alto); el mayor
+	   tamaño que cabe en una es 15 px, pero deja 1 px de holgura y con la
+	   fuente de reserva vuelve a partirse. Un paso entero menos deja el
+	   texto en 141 px y aguanta lo que venga. */
+	font-size:0.9rem;
 	line-height:1.15;
 	letter-spacing:0.05em;
 	text-align:center;
@@ -504,23 +509,45 @@ dd {
 	color:#26b5ce;
 }
 
-/* Pie: dirección, correo y «Volver arriba». */
+/* Pie: marca, «Volver arriba» y dirección en UNA fila.
+   La caja negra la pone .contenido (css/fondo.css); el aire de .pie
+   deja ver el mar por arriba y por abajo, igual a ambos lados.
+   El padding simétrico de la caja (40 px arriba y abajo, y el mismo
+   valor a izquierda y derecha) deja aire suficiente para que nada
+   quede pegado a los bordes. */
 .pie {
 	margin-top:88px;
 	border-top:1px solid #1b2c31;
 	background-color:#04070a;
-	padding:44px 0 56px;
+	padding:44px 0;
 }
 
-.pie .contenido {
-	display:flex;
-	flex-wrap:wrap;
-	align-items:flex-end;
-	justify-content:space-between;
-	gap:24px;
+/* Tres columnas 1fr auto 1fr: marca a la izquierda, «Volver arriba»
+   en la columna del medio y dirección a la derecha. Las dos columnas
+   de fuera miden exactamente lo mismo, así que el enlace cae en el
+   centro geométrico de la caja; con space-between y anchos distintos
+   el bloque del medio se desplazaría hacia el lado más estrecho.
+   align-items:center centra los tres bloques en vertical.
+   El selector lleva .pagina-cartelera para ganar en especificidad a
+   .pagina-cartelera .contenido de css/fondo.css, que fija el padding
+   lateral de la caja. */
+.pagina-cartelera .pie .contenido {
+	display:grid;
+	grid-template-columns:1fr auto 1fr;
+	grid-template-areas:"marca volver direccion";
+	align-items:center;
+	justify-content:initial;
+	gap:clamp(24px, 4vw, 56px);
+	padding:40px clamp(20px, 5vw, 64px);
+	text-align:left;
 }
 
+/* La marca se ajusta a su texto en vez de estirarse por la columna:
+   el lienzo del efecto se centra sobre la caja del <p>, y así queda
+   sobre las letras y no sobre el hueco de la columna. */
 .pie-marca {
+	grid-area:marca;
+	justify-self:start;
 	margin:0;
 	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
 	font-size:1.4rem;
@@ -530,7 +557,10 @@ dd {
 }
 
 .pie-direccion {
+	grid-area:direccion;
+	justify-self:end;
 	margin:0;
+	text-align:right;
 	font-size:0.9rem;
 	line-height:1.8;
 	color:#92a6ab;
@@ -546,7 +576,10 @@ dd {
 }
 
 .pie-volver {
+	grid-area:volver;
+	justify-self:center;
 	margin:0;
+	text-align:center;
 }
 
 .pie-volver a {
@@ -637,6 +670,32 @@ dd {
 	isolation:isolate;
 }
 
+/* Capa 1 bis: el velo. NO es un fondo: va POR ENCIMA del shader con
+   opacidad 0.9, así que la animación se sigue notando al 10 % (y ese
+   0.1 queda libre para jugar más adelante). Cada velo ocupa media
+   altura y la banda opaca tapa los bordes interiores, de modo que a la
+   vista quedan solo las dos franjas de arriba y abajo, sin costura que
+   medir. pointer-events:none: la entrada vive en la franja de arriba y
+   tiene que seguir siendo pulsable (z-index 40, por encima del velo). */
+.hero-velo {
+	position:absolute;
+	left:0;
+	width:100%;
+	height:50%;
+	background-color:#000000;
+	opacity:0.77;
+	z-index:1;
+	pointer-events:none;
+}
+
+.hero-velo--arriba {
+	top:0;
+}
+
+.hero-velo--abajo {
+	bottom:0;
+}
+
 /* Capa 2: banda negra SOLO detrás del texto. Arriba y abajo de la banda
    queda a la vista la animación del shader. */
 .hero-banda {
@@ -655,9 +714,11 @@ dd {
 /* Los botones del menú caen sobre la banda negra: el texto blanco y el
    turquesa ya se leen bien ahí, no hace falta nada más. */
 /* Sin WebGL: resplandor estático para que arriba y abajo de la banda
-   no quede un negro muerto (se añade desde js/hero-fx.js al fallar). */
+   no quede un negro muerto (se añade desde js/hero-fx.js al fallar).
+   Va casi opaco a propósito: el velo lo tapa al 90 %, así que al 10 %
+   sigue viéndose un resplandor tenue en vez de un negro plano. */
 .hero-shader.sin-shader {
-	background:radial-gradient(ellipse at 50% 36%,rgba(38,181,206,0.22) 0%,rgba(2,6,8,0) 62%),#020608;
+	background:radial-gradient(ellipse at 50% 36%,rgba(38,181,206,0.95) 0%,rgba(38,181,206,0.55) 30%,rgba(2,6,8,0) 62%),#020608;
 }
 
 .hero-titulo {
@@ -707,8 +768,9 @@ dd {
    ENTRADA QUE SE PELA (Peel.js) — esquina superior derecha del hero
    Las tres capas (arriba, dorso y fondo) se apilan en el mismo sitio;
    Peel.js recorta la de arriba con un clip-path y la dobla sobre el
-   dorso. .peel-layer y .peel-svg-clip-element son las reglas que
-   exige la librería (antes venían en su peel.css).
+   dorso. La capa de fondo la crea la librería vacía: al pelar no hay
+   nada debajo, solo el hero. .peel-layer y .peel-svg-clip-element son
+   las reglas que exige la librería (antes venían en su peel.css).
    ============================================================ */
 
 .peel-layer {
@@ -731,13 +793,36 @@ dd {
 	opacity:0;
 }
 
-/* El sitio donde vive la entrada: la esquina del aviso, arriba a la derecha. */
+/* Antes de que Peel.js monte nada, el dorso es el último hijo de la
+   entrada y se pinta como un segundo ticket, justo debajo del anverso:
+   en el primer pintado se veía la cara de atrás entera. Se esconden el
+   dorso y las capas que crea la librería hasta que entrada.js pone
+   .entrada-lista (Peel montado y las dos caras decodificadas). Sin JS
+   esa clase no llega nunca, así que queda el anverso: el ticket se ve
+   entero y quieto, que es la reserva que toca. */
+.entrada .peel-back,
+.entrada .peel-bottom,
+.entrada .peel-top-shadow {
+	visibility:hidden;
+}
+
+.entrada.entrada-lista .peel-back,
+.entrada.entrada-lista .peel-bottom,
+.entrada.entrada-lista .peel-top-shadow {
+	visibility:visible;
+}
+
+/* El sitio donde vive la entrada: la esquina del aviso, arriba a la derecha.
+   195×103 px es otro 15 % menos que los 230×122 de antes y mantiene la
+   proporción (1,89:1, la misma que el arte a 540×289). A 230 el ticket se
+   comía media banda; a 195 el aviso sigue cabiendo en una línea y el
+   doblez se ve sin dominar el hero. */
 .entrada-sitio {
 	position:absolute;
 	top:6px;
 	right:6px;
-	width:288px;
-	height:153px;
+	width:195px;
+	height:103px;
 	z-index:40;
 }
 
@@ -768,7 +853,7 @@ dd {
 
 /* Al final del pelado, la entrada se va desvaneciendo (entrada.js mueve
    --entrada-visible de 1 a 0): sin esto quedaría una esquinita de papel
-   pegada encima del horario. */
+   pegada encima del hero. */
 .entrada-anverso,
 .entrada-dorso,
 .entrada-estreno {
@@ -778,31 +863,6 @@ dd {
 /* El aviso del estreno va dentro de la capa de arriba, así que al pelar el
    ticket se va con él. Su sitio y su tipografía son la regla #aviso (arriba,
    en «Posicionamiento»); aquí solo queda la clase que lo desvanece. */
-
-/* Debajo: lo que sale al levantar la entrada. Sin caja y sin fondo, para
-   que se vea la página que hay detrás. Está oculto hasta que se pela,
-   porque el marco de arriba es translúcido y si no se leerían las dos
-   cosas a la vez. */
-.entrada-reverso {
-	text-align:center;
-	opacity:0;
-	transition:opacity 0.25s linear;
-}
-
-.entrada-abierta .entrada-reverso {
-	opacity:1;
-}
-
-.entrada-datos {
-	margin:0;
-	padding-top:33%;
-	font-size:0.66rem;
-	line-height:1.8;
-	letter-spacing:0.16em;
-	text-transform:uppercase;
-	color:#8fe9ff;
-	text-shadow:0 0 10px rgba(0,220,255,0.45);
-}
 
 /* Si Peel.js no arranca, la entrada se queda quieta: no se puede pelar,
    así que se avisa con el cursor en vez de un «grab» que no hace nada. */
@@ -871,16 +931,26 @@ dd {
 		gap:20px;
 	}
 
-	.pie .contenido {
-		display:block;
+	/* En móvil la fila no cabe: una sola columna centrada, en el
+	   orden marca, dirección y enlace, con el mismo aire simétrico
+	   arriba y abajo (40 px) y a los lados (20 px). */
+	.pie {
+		padding:36px 0;
 	}
 
-	.pie-marca {
-		margin-bottom:16px;
+	.pagina-cartelera .pie .contenido {
+		grid-template-columns:1fr;
+		grid-template-areas:"marca" "direccion" "volver";
+		gap:24px;
+		padding:40px 20px;
+		text-align:center;
 	}
 
+	.pie-marca,
+	.pie-direccion,
 	.pie-volver {
-		margin-top:20px;
+		justify-self:center;
+		text-align:center;
 	}
 }
 

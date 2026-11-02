@@ -6,7 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="author" content="Isaac Pérez Bassart" />
 <title>Cine Mar de Fondo - Cartelera Semanal</title>
-<link rel="stylesheet" type="text/css" href="estilos.css?v=13" />
+<link rel="stylesheet" type="text/css" href="estilos.css" />
+<link rel="stylesheet" type="text/css" href="css/pie-marca.css" />
+<link rel="stylesheet" type="text/css" href="css/cargador.css" />
+<link rel="stylesheet" type="text/css" href="css/fondo.css" />
+<link rel="stylesheet" type="text/css" href="css/peliculas.css" />
+<link rel="stylesheet" type="text/css" href="css/botones.css" />
+<script type="text/javascript" src="js/cargador.js"></script>
 </head>
 <body class="pagina-cartelera">
 
@@ -15,6 +21,14 @@
      Si no hay JS o WebGL, queda la banda negra con el texto en blanco. -->
 <div class="hero">
 <div class="hero-shader" id="hero-shader"></div>
+
+<!-- Velo negro de las dos franjas: va POR ENCIMA del shader (no es un
+     fondo) con opacidad 0.9, así que la animación se intuye al 10 %.
+     Son dos capas de media altura; la banda opaca tapa el borde interior
+     y a la vista solo quedan la franja de arriba y la de abajo. -->
+<div class="hero-velo hero-velo--arriba"></div>
+<div class="hero-velo hero-velo--abajo"></div>
+
 <div class="hero-banda">
 <h1 id="arriba" class="hero-titulo">Cine Mar de Fondo</h1>
 <p class="hero-sub" id="hero-sub">Un mar de cine · estrenos y clásicos</p>
@@ -29,14 +43,11 @@
 </div>
 
 <!-- Entrada de cine que se pela (Peel.js, lib/peel): se arrastra la
-     esquina, se levanta el papel y debajo aparece el horario. El marco es
-     translúcido: por dentro se ve la página, sin caja ni fondo.
+     esquina y se levanta el papel. Debajo no hay nada: queda el hero.
+     El marco es translúcido: por dentro se ve la página, sin caja ni fondo.
      El div de fuera solo la ancla en la esquina del aviso. -->
 <div class="entrada-sitio">
 <div class="entrada peel" id="entrada">
-<div class="peel-bottom entrada-reverso">
-<p class="entrada-datos">Viernes 20:00 · Sala 1<br />Entrada 5 €</p>
-</div>
 <div class="peel-top entrada-anverso">
 <img src="img/entrada-frente.png" alt="Entrada de cine del estreno del viernes a las 20:00" width="540" height="289" />
 <p class="entrada-estreno" id="aviso">¡Estreno este viernes!</p>
@@ -48,6 +59,32 @@
 </div>
 </div>
 
+<!-- ============================================================
+     FONDO CONTINUO — el mar del hero sigue por toda la página
+     ============================================================
+     Qué es: una sola capa, el velo que oscurece el shader del hero
+     también por debajo del hero. El shader NO se duplica: es el mismo
+     canvas de siempre (#hero-shader), que css/fondo.css pasa a
+     position:fixed. Esta capa va POR ENCIMA de él y POR DEBAJO del
+     contenido (z-index 1), y empieza justo donde termina el hero:
+     así el hero conserva sus dos velos y su banda tal cual estaban.
+
+     Dónde va: en index.html, justo DESPUÉS de cerrar
+         <div class="hero"> … </div>
+     y ANTES de
+         <div class="contenido principal">
+     No lleva contenido ni texto: es solo pintura. La capa no tiene
+     semántica (un div vacío) y el CSS le pone pointer-events:none.
+
+     La hoja ya está enlazada en el <head>, después de estilos.css
+     (para que pueda sobrescribirla), así que aquí solo queda el velo.
+
+     Sin WebGL o sin JS no se rompe nada: el shader se queda con su
+     resplandor estático (.sin-shader) y el velo sigue oscureciendo
+     igual; el contenido va sobre negro sólido.
+     ============================================================ -->
+<div class="fondo-velo"></div>
+
 <div class="contenido principal">
 
 <p class="presentacion">
@@ -57,34 +94,67 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 
 <h2 id="cartelera">Películas de la semana</h2>
 
-<!-- Tres carteles, los tres al mismo tamaño (720 x 1080, 2:3) y a la misma
-     altura: la rejilla reparte las columnas y el h3 reserva dos líneas para
-     que los carteles empiecen siempre a la misma altura.
-     El marco (.pelicula-cartel) recorta: ahí se apoya la animación de cada
-     cartel, que por ahora solo se acerca un poco al pasar el ratón. -->
+<!-- Tres carteles grandes (720 x 1080, 2:3). Cada película lleva su ficha
+     técnica en una lista de definición y, debajo, la sinopsis completa. -->
 <div class="cartelera">
 
 <div class="pelicula">
-<h3>El ladrón de bicicletas</h3>
 <div class="pelicula-cartel">
 <img class="cartel" src="img/poster1.jpg" alt="Cartel de El ladrón de bicicletas" width="720" height="1080" />
 </div>
+<h3>El ladrón de bicicletas</h3>
+<dl class="ficha">
+<dt>Director</dt>
+<dd>Vittorio De Sica</dd>
+<dt>Año</dt>
+<dd>1948</dd>
+<dt>Duración</dt>
+<dd>89 min</dd>
+<dt>País</dt>
+<dd>Italia</dd>
+<dt>Sala</dt>
+<dd>Sala 1</dd>
+</dl>
 <p class="sinopsis">En la Roma de la posguerra, Antonio, un obrero en paro, consigue un sencillo trabajo pegando carteles a condición de que posea una bicicleta. De ese modo, a duras penas consigue comprarse una, pero en su primer día de trabajo se la roban. Es así como comienza toda la aventura de Antonio junto con su hijo Bruno por recuperar su bicicleta mientras su esposa María espera en casa junto con su otro hijo.</p>
 </div>
 
 <div class="pelicula">
-<h3>El club de la lucha</h3>
 <div class="pelicula-cartel">
 <img class="cartel" src="img/poster2.jpg" alt="Cartel de El club de la lucha" width="720" height="1080" />
 </div>
+<h3>El club de la lucha</h3>
+<dl class="ficha">
+<dt>Director</dt>
+<dd>David Fincher</dd>
+<dt>Año</dt>
+<dd>1999</dd>
+<dt>Duración</dt>
+<dd>139 min</dd>
+<dt>País</dt>
+<dd>Estados Unidos</dd>
+<dt>Sala</dt>
+<dd>Sala 2</dd>
+</dl>
 <p class="sinopsis">Un joven hastiado de su gris y monótona vida lucha contra el insomnio. En un viaje en avión conoce a un carismático vendedor de jabón que sostiene una teoría muy particular: el perfeccionismo es cosa de gentes débiles; sólo la autodestrucción hace que la vida merezca la pena. Ambos deciden entonces fundar un club secreto de lucha, donde poder descargar sus frustaciones y su ira, que tendrá un éxito arrollador.</p>
 </div>
 
 <div class="pelicula">
-<h3>Donnie Darko</h3>
 <div class="pelicula-cartel">
 <img class="cartel" src="img/poster3.jpg" alt="Cartel de Donnie Darko" width="720" height="1080" />
 </div>
+<h3>Donnie Darko</h3>
+<dl class="ficha">
+<dt>Director</dt>
+<dd>Richard Kelly</dd>
+<dt>Año</dt>
+<dd>2001</dd>
+<dt>Duración</dt>
+<dd>113 min</dd>
+<dt>País</dt>
+<dd>Estados Unidos</dd>
+<dt>Sala</dt>
+<dd>Sala 3</dd>
+</dl>
 <p class="sinopsis">Donnie es un chico americano dotado de gran inteligencia e imaginación. Tras escapar milagrosamente de una muerte casi segura, comienza a sufrir alucinaciones que lo llevan a actuar como nunca hubiera imaginado y a descubrir un mundo insólito a su alrededor.</p>
 </div>
 
@@ -95,10 +165,10 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 <table>
 <thead>
 <tr>
-<th>Película</th>
-<th>Viernes</th>
-<th>Sábado</th>
-<th>Domingo</th>
+<th scope="col">Película</th>
+<th scope="col">Viernes</th>
+<th scope="col">Sábado</th>
+<th scope="col">Domingo</th>
 </tr>
 </thead>
 <tfoot>
@@ -109,35 +179,52 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 <tbody>
 <tr>
 <td>El ladrón de bicicletas</td>
-<td>20:00</td>
-<td>20:30</td>
-<td>21:00</td>
+<td><span class="dia">Viernes </span>20:00</td>
+<td><span class="dia">Sábado </span>20:30</td>
+<td><span class="dia">Domingo </span>21:00</td>
 </tr>
 <tr>
 <td>El club de la lucha</td>
-<td>19:30</td>
-<td>20:00</td>
-<td>20:30</td>
+<td><span class="dia">Viernes </span>19:30</td>
+<td><span class="dia">Sábado </span>20:00</td>
+<td><span class="dia">Domingo </span>20:30</td>
 </tr>
 <tr>
 <td>Donnie Darko</td>
-<td>21:00</td>
-<td>21:30</td>
-<td>22:00</td>
+<td><span class="dia">Viernes </span>21:00</td>
+<td><span class="dia">Sábado </span>21:30</td>
+<td><span class="dia">Domingo </span>22:00</td>
 </tr>
 </tbody>
 </table>
 
 <h2 id="precios">Precios</h2>
 
+<!-- Tres tarjetas: el precio manda y la etiqueta lo explica debajo. -->
+<div class="precios">
+
+<div class="precio">
 <dl>
 <dt>Entrada general</dt>
 <dd>6,00 €</dd>
+</dl>
+</div>
+
+<div class="precio">
+<dl>
 <dt>Entrada reducida</dt>
 <dd>4,50 €</dd>
+</dl>
+</div>
+
+<div class="precio">
+<dl>
 <dt>Día del espectador</dt>
 <dd>4,00 €</dd>
 </dl>
+</div>
+
+</div>
 
 </div>
 
@@ -154,18 +241,35 @@ Población, Provincia<br />
 </div>
 
 <!-- Librerías locales (sin CDN): GSAP + plugins, ajustes y el arranque del hero -->
-<script type="text/javascript" src="lib/gsap/gsap.min.js?v=11"></script>
-<script type="text/javascript" src="lib/gsap/SplitText.min.js?v=11"></script>
-<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js?v=11"></script>
+<script type="text/javascript" src="lib/gsap/gsap.min.js"></script>
+<script type="text/javascript" src="lib/gsap/SplitText.min.js"></script>
+<script type="text/javascript" src="lib/gsap/ScrambleTextPlugin.min.js"></script>
 <!-- Ajustes del hero: edita js/hero-ajustes.js y recarga con F5 (sin compilar) -->
-<script type="text/javascript" src="js/hero-ajustes.js?v=11"></script>
+<script type="text/javascript" src="js/hero-ajustes.js"></script>
 <!-- Peel.js local (MIT): la entrada que se pela. Si falta, la entrada se
      queda entera y quieta, sin romper nada. -->
-<script type="text/javascript" src="lib/peel/peel.js?v=11"></script>
+<script type="text/javascript" src="lib/peel/peel.js"></script>
+<!-- Las dos caras de la entrada se piden ya, antes del bundle: cuando
+     entrada.js pregunte por ellas estarán en caché y podrá enseñar el
+     dorso en el mismo fotograma del montaje. Se hace con new Image()
+     porque <link rel="preload"> no existe en XHTML 1.0 Strict. -->
+<script type="text/javascript">
+(function () {
+	var caras = ['img/entrada-frente.png', 'img/entrada-dorso.png'];
+	for (var i = 0; i !== caras.length; i += 1) {
+		var cara = new Image();
+		cara.src = caras[i];
+	}
+}());
+</script>
 <!-- Bundle clásico (hero.js + fondos + titular Blotter + entrada + librerías locales):
      funciona también al abrir el archivo con doble clic (file://), donde
      type="module" no carga. -->
-<script type="text/javascript" src="js/hero.bundle.js?v=11"></script>
+<script type="text/javascript" src="js/hero.bundle.js"></script>
+<!-- Efecto contenido de la marca del pie: ScrambleText al entrar en
+     pantalla y fleco cromático en canvas. Usa el GSAP y el plugin que
+     ya se cargan arriba; si faltan, la marca se queda quieta. -->
+<script type="text/javascript" src="js/pie-marca.js"></script>
 
 </body>
 </html>
