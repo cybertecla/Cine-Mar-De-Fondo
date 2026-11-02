@@ -180,13 +180,13 @@ rayos: {
 ## 7 · La entrada que se pela (Peel.js)
 
 En la esquina superior derecha, donde antes estaba la caja amarilla del
-aviso, hay una entrada de cine. Se arrastra la esquina, se levanta el papel
-y debajo aparece el horario. **Se arrastra desde cualquier punto** de la
-entrada (no hace falta acertar en la esquinita: en cuanto mueves el puntero,
-el doblez lo sigue). Al soltar a medias se va sola al extremo más cercano,
-doblada o abierta. **Un solo clic** la pela entera, y otro la vuelve a
-doblar. Al pasar el ratón por encima la esquinita se abre un poco, para que
-se vea que se puede tirar de ella.
+aviso, hay una entrada de cine. Se arrastra la esquina y se levanta el
+papel; debajo no hay nada, solo el hero. **Se arrastra desde cualquier
+punto** de la entrada (no hace falta acertar en la esquinita: en cuanto
+mueves el puntero, el doblez lo sigue). Al soltar a medias se va sola al
+extremo más cercano, doblada o abierta. **Un solo clic** la pela entera, y
+otro la vuelve a doblar. Al pasar el ratón por encima la esquinita se abre
+un poco, para que se vea que se puede tirar de ella.
 
 **Trampa de la librería, si algún día la tocas:** `peel.getAmountClipped()`
 no devuelve lo que se ha pelado, sino el trozo de papel que **queda**
@@ -203,8 +203,8 @@ Las piezas:
 | Librería (MIT, sin CDN) | `lib/peel/peel.js` + sus reglas CSS copiadas en `estilos.css` |
 | Lógica de arrastre y clic | `js/entrada.js` (entra en el bundle con `construir.sh`) |
 | Marcado: tres capas | `index.html` → `#entrada` |
-| Tamaño, sitio y tipografía | `estilos.css` → `.entrada-sitio`, `.entrada-estreno`, `.entrada-datos` |
-| Arte | `img/entrada-frente.png` (el marco) y `img/entrada-dorso.png` (su revés) |
+| Tamaño, sitio y tipografía | `estilos.css` → `.entrada-sitio`, `#aviso` |
+| Arte | `img/entrada-frente.png` (el marco) y `img/entrada-dorso.png` (el revés, ya en papel) |
 | Rehacer el arte | `entrada-arte.py` (desde el PNG de GIMP, que ya trae alfa) |
 
 **Sin fondo.** El arte sale del PNG exportado de GIMP
@@ -222,24 +222,24 @@ img { opacity: }`. Para rehacerlo desde el maestro de GIMP:
     python3 entrada-arte.py otro.png 600
 
 Deja `img/entrada-frente.png` y `img/entrada-dorso.png` (el dorso es la
-cara de atrás, apagada, la que se ve en la esquinita doblada).
+cara de atrás, en papel cálido: es lo que se ve en la esquinita doblada).
 
 **Pelado completo.** El doblez llega hasta la esquina opuesta y en el
 último tramo la entrada se desvanece (`--entrada-visible`, que mueve
 `js/entrada.js`): así no queda una esquinita de papel pegada encima del
-horario. Quien manda ahí es `FUNDIDO` (0.10 = se desvanece en el último
+hero. Quien manda ahí es `FUNDIDO` (0.10 = se desvanece en el último
 10 % del recorrido).
 
 **Cambiar el tamaño.** `.entrada-sitio` manda: `width` y `height` son el
-tamaño real (288×153 px, la proporción del arte, 1.88:1). Los textos van en
-tanto por ciento (`.entrada-estreno` al 12 % de ancho y 38 % de alto), así
-que aguantan cambios de tamaño; si deformas la proporción, el neón se
-estira.
+tamaño real (230×122 px, el 80 % de los 288×153 originales, misma
+proporción 1.88:1). El aviso va en tanto por ciento (`#aviso` al 76 % de
+ancho y 38 % de alto), así que aguanta cambios de tamaño; si deformas la
+proporción, el neón se estira.
 
-**Cambiar el texto.** El estreno, en `index.html` → `.entrada-estreno`;
-el horario que aparece al pelar, justo debajo → `.entrada-datos`. Los dos
-archivos de arte miden 540 px de ancho (el doble de 288) para que no se
-vean blandos en pantallas de alta densidad.
+**Cambiar el texto.** El estreno, en `index.html` → `#aviso` (clase
+`.entrada-estreno`). Los dos archivos de arte miden 540 px de ancho (más
+del doble de 230) para que no se vean blandos en pantallas de alta
+densidad.
 
 **Por qué no se usa `peel.handleDrag()`.** Peel.js calcula las coordenadas
 con `offsetLeft`/`offsetTop`, que dan por hecho que el elemento está en la
@@ -255,7 +255,7 @@ se oculta para no tapar el titular.
 
 **Comprobarlo sin navegador.** `node pruebas/entrada-test.js` monta un DOM,
 un Peel y un GSAP de mentira, dispara los mismos eventos y mira dónde acaba
-el doblez: 17 comprobaciones (un clic abre, el arrastre sigue al puntero, al
+el doblez: 19 comprobaciones (un clic abre, el arrastre sigue al puntero, al
 soltar a medias se va al extremo más cercano, sin animación funciona igual).
 Sale con código 1 si algo falla. Solo necesita node.
 

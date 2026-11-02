@@ -46,9 +46,9 @@ js/entrada.js       La entrada que se pela (Peel.js) y su lógica de arrastre.
 entrada-arte.py     Prepara img/entrada-*.png desde el PNG de GIMP
                     (../cine-fuentes/ticket-02.png, que ya trae el alfa).
 pruebas/            Comprobaciones que no necesitan navegador:
-                    node pruebas/entrada-test.js  → 23 pruebas de la entrada.
+                    node pruebas/entrada-test.js  → 19 pruebas de la entrada.
 js/hero-ajustes.js  Ajustes del hero editables sin compilar (F5 y listo).
                     Explicación de cada número: TOCAR-EL-HERO.md
 
 Para actualizar una librería, sustituye los archivos por los de la versión
-nueva (misma ruta y nombre) y prueba index.html y hero-lab.html.
+nueva (misma ruta y nombre) y prueba index.html y las páginas de reserva.

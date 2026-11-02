@@ -2,6 +2,9 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+._*
+.directory
+.Trash-*
 *~
 *.swp
 *.swo
@@ -20,7 +23,20 @@ nohup.out
 *.rej
 *.tmp
 *.part
+
+# Python: caché y entornos
 __pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Mapas de compilación (esbuild)
+*.js.map
+*.css.map
 
 # Cuentas del cine: fuentes de GIMP fuera del repo (viven en ../cine-fuentes/)
 *.xcf
@@ -32,6 +48,6 @@ __pycache__/
 # que no entre en el repo.
 node_modules/
 
-# OJO: js/hero.bundle.js y js/hero-lab.bundle.js SÍ se versionan a
-# propósito. index.html los carga directamente, así que el repo tiene
-# que funcionar tal cual, con doble clic y sin compilar.
+# OJO: js/hero.bundle.js SÍ se versiona a propósito. index.html lo
+# carga directamente, así que el repo tiene que funcionar tal cual,
+# con doble clic y sin compilar.
