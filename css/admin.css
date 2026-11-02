@@ -1,0 +1,399 @@
+/* ============================================================
+   Panel de aspecto del Cine Mar de Fondo
+   Mismo aire que la web: negro, cian y títulos condensados.
+   Solo para admin.html; no toca estilos.css.
+   ============================================================ */
+
+:root {
+	--panel-fondo: #05080a;
+	--panel-superficie: #0b1418;
+	--panel-superficie-alta: #0e1b20;
+	--panel-borde: #1d3036;
+	--panel-borde-fuerte: #2b454c;
+	--panel-texto: #e8f2f4;
+	--panel-suave: #a3b9be;
+	--panel-acento: #26b5ce;
+	--panel-acento-claro: #7fe3f0;
+	--panel-ambar: #ffcc00;
+	--display: "DejaVu Sans Condensed", "Liberation Sans Narrow", "Arial Narrow", Impact, sans-serif;
+	--texto: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background-color: var(--panel-fondo); }
+body {
+	margin: 0;
+	min-height: 100vh;
+	background:
+		radial-gradient(900px 420px at 12% -8%, rgba(38, 181, 206, 0.16), transparent 70%),
+		radial-gradient(700px 380px at 100% 0%, rgba(38, 181, 206, 0.07), transparent 70%),
+		var(--panel-fondo);
+	color: var(--panel-texto);
+	font-family: var(--texto);
+	font-size: 17px;
+	line-height: 1.6;
+}
+
+/* Foco muy visible en todo el panel: teclado ante todo. */
+:focus-visible { outline: 3px solid var(--panel-ambar); outline-offset: 3px; }
+
+.saltar {
+	position: absolute; left: 16px; top: -80px; z-index: 10;
+	padding: 12px 18px; background: var(--panel-ambar); color: #1a1200; font-weight: 700; text-decoration: none;
+}
+.saltar:focus { top: 16px; }
+
+/* ------------------------------------------------------------
+   Cabecera
+   ------------------------------------------------------------ */
+
+.cabecera {
+	width: 100%; max-width: 1460px; margin: 0 auto; padding: 48px 32px 34px;
+	display: flex; align-items: flex-end; justify-content: space-between; gap: 32px;
+	border-bottom: 1px solid var(--panel-borde);
+}
+.cabecera-texto { max-width: 820px; }
+
+.marca {
+	margin: 0 0 10px; color: var(--panel-acento-claro);
+	font-size: 0.78rem; font-weight: 700; letter-spacing: 0.34em; text-transform: uppercase;
+}
+h1 {
+	margin: 0; color: #f3fafb;
+	font-family: var(--display); font-size: clamp(2.7rem, 6vw, 5.2rem);
+	font-weight: 700; line-height: 0.94; letter-spacing: 0.015em; text-transform: uppercase;
+}
+h1::after {
+	content: ""; display: block; width: 68px; height: 4px;
+	margin-top: 18px; background: var(--panel-acento);
+}
+
+.entrada {
+	margin: 18px 0 0; max-width: 58ch; color: var(--panel-suave);
+	font-size: 1.02rem; line-height: 1.6;
+}
+
+/* ------------------------------------------------------------
+   Disposición: controles a la izquierda, muestra fija a la derecha
+   ------------------------------------------------------------ */
+
+.disposicion {
+	width: 100%; max-width: 1460px; margin: 0 auto; padding: 28px 32px 40px;
+	display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(380px, 0.82fr);
+	gap: 26px; align-items: start;
+}
+.controles { min-width: 0; }
+
+.lateral { position: sticky; top: 20px; }
+
+/* En pantallas anchas la vista previa tiene una ventana fija: si el tema
+   elegido la hace más alta, se desplaza por dentro y los botones de
+   guardar siguen siempre a la vista. */
+@media (min-width: 1121px) {
+	.vista-previa { max-height: 382px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--panel-borde-fuerte) transparent; }
+	.vista-previa::-webkit-scrollbar { width: 8px; }
+	.vista-previa::-webkit-scrollbar-thumb { background: var(--panel-borde-fuerte); border-radius: 8px; }
+}
+.vista-previa:focus-visible { outline: 3px solid var(--panel-foco); outline-offset: 3px; }
+.vista-previa--larga {
+	-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+	mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+}
+
+/* ------------------------------------------------------------
+   Tarjetas y secciones
+   ------------------------------------------------------------ */
+
+.tarjeta {
+	margin: 0 0 20px; padding: 22px 24px 24px; min-width: 0;
+	background: linear-gradient(180deg, #0c161a 0%, #081014 100%);
+	border: 1px solid var(--panel-borde); border-radius: 4px;
+}
+fieldset.tarjeta { padding-top: 26px; }
+
+legend {
+	padding: 0 10px 0 0; color: #f1f9fa;
+	font-family: var(--display); font-size: 1.28rem; font-weight: 700;
+	letter-spacing: 0.09em; text-transform: uppercase;
+}
+.numero {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 26px; height: 26px; margin-right: 8px; vertical-align: 2px;
+	background: var(--panel-acento); border-radius: 2px; color: #04141a;
+	font-family: var(--texto); font-size: 0.78rem; font-weight: 800; letter-spacing: 0;
+}
+
+.ayuda {
+	margin: 4px 0 22px; max-width: 62ch;
+	color: var(--panel-suave); font-size: 0.94rem; line-height: 1.55;
+}
+
+.rejilla-dos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 26px; }
+.campo { display: grid; gap: 8px; align-content: start; }
+.campo + .campo { margin-top: 24px; }
+.rejilla-dos .campo + .campo { margin-top: 0; }
+
+.campo-cabecera {
+	display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 26px;
+}
+.campo-cabecera label, .etiqueta-grupo { color: #eff7f8; font-size: 1rem; font-weight: 700; line-height: 1.3; }
+.valor {
+	flex: none; padding: 2px 8px; background: #0d242a;
+	border: 1px solid #275059; border-radius: 2px; color: var(--panel-acento-claro);
+	font-family: ui-monospace, "Liberation Mono", Consolas, monospace;
+	font-size: 0.82rem; font-weight: 700; line-height: 1.4; white-space: nowrap;
+}
+.pista { margin: 0; color: var(--panel-suave); font-size: 0.86rem; line-height: 1.5; }
+
+/* ------------------------------------------------------------
+   Controles
+   ------------------------------------------------------------ */
+
+input[type="color"] {
+	width: 100%; height: 52px; padding: 5px; cursor: pointer;
+	background: var(--panel-superficie-alta);
+	border: 1px solid var(--panel-borde-fuerte); border-radius: 3px;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 2px; }
+input[type="color"]::-moz-color-swatch { border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 2px; }
+
+select {
+	width: 100%; min-height: 48px; padding: 0 14px; cursor: pointer;
+	background: var(--panel-superficie-alta);
+	border: 1px solid var(--panel-borde-fuerte); border-radius: 2px;
+	color: var(--panel-texto); font-family: var(--texto); font-size: 1rem;
+}
+
+input[type="range"] {
+	width: 100%; height: 36px; margin: 0;
+	background: transparent; cursor: pointer;
+	-webkit-appearance: none; appearance: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+	height: 6px; background: #1b3339;
+	border: 1px solid #27474e; border-radius: 99px;
+}
+input[type="range"]::-moz-range-track {
+	height: 6px; background: #1b3339;
+	border: 1px solid #27474e; border-radius: 99px;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none; appearance: none;
+	width: 26px; height: 26px; margin-top: -11px;
+	background: var(--panel-acento); border: 3px solid #04141a; border-radius: 50%;
+	box-shadow: 0 0 0 1px var(--panel-acento-claro), 0 4px 12px rgba(0, 0, 0, 0.55);
+}
+input[type="range"]::-moz-range-thumb {
+	width: 22px; height: 22px;
+	background: var(--panel-acento); border: 3px solid #04141a; border-radius: 50%;
+	box-shadow: 0 0 0 1px var(--panel-acento-claro), 0 4px 12px rgba(0, 0, 0, 0.55);
+}
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px var(--panel-ambar); }
+
+.escala {
+	display: flex; justify-content: space-between; margin-top: -4px;
+	color: #8fa7ac; font-size: 0.76rem; letter-spacing: 0.03em;
+}
+
+.opciones { display: flex; gap: 8px; }
+.opcion { position: relative; flex: 1; }
+.opcion input {
+	position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+	opacity: 0; cursor: pointer;
+}
+.opcion span {
+	display: flex; align-items: center; justify-content: center; min-height: 48px;
+	background: var(--panel-superficie-alta);
+	border: 1px solid var(--panel-borde-fuerte); border-radius: 2px;
+	color: var(--panel-texto); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.opcion input:checked + span {
+	background: var(--panel-acento); border-color: var(--panel-acento); color: #04141a;
+}
+.opcion input:focus-visible + span { outline: 3px solid var(--panel-ambar); outline-offset: 2px; }
+
+/* ------------------------------------------------------------
+   Botones del panel
+   ------------------------------------------------------------ */
+
+.boton {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-height: 48px; padding: 10px 18px;
+	background: #0d1c21; border: 1px solid var(--panel-borde-fuerte); border-radius: 2px;
+	color: var(--panel-texto); font-family: var(--texto); font-size: 0.9rem;
+	font-weight: 700; line-height: 1.2; letter-spacing: 0.06em;
+	text-transform: uppercase; text-align: center; text-decoration: none; cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.boton:hover { background: #122b32; border-color: var(--panel-acento); }
+.boton--principal { background: var(--panel-acento); border-color: var(--panel-acento); color: #04141a; }
+.boton--principal:hover { background: var(--panel-acento-claro); border-color: var(--panel-acento-claro); color: #04141a; }
+.boton--ancho { width: 100%; min-height: 56px; font-size: 0.98rem; letter-spacing: 0.05em; }
+.volver { flex: none; }
+
+/* ------------------------------------------------------------
+   Vista previa
+   ------------------------------------------------------------ */
+
+.tarjeta-previa { padding: 18px 20px 16px; }
+.cabecera-previa {
+	display: flex; align-items: center; justify-content: space-between;
+	gap: 12px; margin-bottom: 10px;
+}
+.cabecera-previa h2, .acciones h2 {
+	margin: 0; color: #f1f9fa; font-family: var(--display);
+	font-size: 1.12rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+}
+.senal {
+	display: inline-flex; align-items: center; gap: 8px;
+	color: var(--panel-acento-claro);
+	font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.punto {
+	width: 8px; height: 8px; background: var(--panel-acento); border-radius: 50%;
+	box-shadow: 0 0 0 4px rgba(38, 181, 206, 0.16);
+	animation: latido 2.4s ease-in-out infinite;
+}
+@keyframes latido { 50% { opacity: 0.35; } }
+
+/* Aquí viven las variables que mueve el panel. */
+.vista-previa {
+	--tema-fondo: #05080a;
+	--tema-acento: #26b5ce;
+	--tema-texto: #e2ecee;
+	--tema-boton: #26b5ce;
+	--tema-boton-texto: #04141a;
+	--tema-tamano: 16px;
+	--tema-familia: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--tema-interlineado: 1.65;
+	--tema-alto-boton: 44px;
+	--tema-mayusculas: uppercase;
+	--tema-columnas: 3;
+	padding: 14px; overflow: hidden;
+	background: var(--tema-fondo);
+	border: 1px solid var(--panel-borde-fuerte); border-radius: 2px;
+	color: var(--tema-texto); font-family: var(--tema-familia);
+	font-size: var(--tema-tamano); line-height: var(--tema-interlineado);
+	transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.vp-hero {
+	padding: 14px; background: rgba(255, 255, 255, 0.035);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-top: 3px solid var(--tema-acento);
+}
+.vp-etiqueta { margin: 0 0 8px; color: var(--tema-acento); font-size: 0.66em; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+.vp-titulo {
+	margin: 0 0 8px; color: var(--tema-acento); font-family: var(--display);
+	font-size: 1.7em; font-weight: 700; line-height: 0.98; letter-spacing: 0.02em; text-transform: uppercase;
+}
+.vp-texto { max-width: 42ch; margin: 0 0 12px; color: var(--tema-texto); font-size: 0.88em; }
+.vp-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.vp-boton {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-height: var(--tema-alto-boton); padding: 8px 0.95em;
+	border: 1px solid transparent; border-radius: 2px;
+	font-size: 0.7em; font-weight: 700; line-height: 1.2;
+	letter-spacing: 0.12em; text-align: center; text-transform: var(--tema-mayusculas);
+}
+.vp-boton--lleno { background: var(--tema-boton); border-color: rgba(0, 0, 0, 0.4); color: var(--tema-boton-texto); }
+.vp-boton--fantasma { background: transparent; border-color: currentColor; color: var(--tema-texto); }
+
+.vp-subtitulo {
+	margin: 14px 0 7px; color: var(--tema-texto); font-family: var(--display);
+	font-size: 0.74em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.vp-cartelera { display: grid; grid-template-columns: repeat(var(--tema-columnas), minmax(0, 1fr)); gap: 8px; }
+.vp-pelicula {
+	position: relative; margin: 0; overflow: hidden;
+	background: #000; border: 1px solid rgba(255, 255, 255, 0.16);
+}
+.vp-pelicula img { display: block; width: 100%; height: 88px; object-fit: cover; opacity: 0.82; }
+.vp-pelicula figcaption {
+	position: absolute; right: 0; bottom: 0; left: 0; padding: 22px 7px 7px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.94), transparent);
+	color: var(--tema-texto); font-family: var(--texto);
+	font-size: 0.6em; font-weight: 700; line-height: 1.15;
+	letter-spacing: 0.03em; text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   Acciones y estado
+   ------------------------------------------------------------ */
+
+.acciones { padding: 18px 20px 16px; }
+.acciones h2 { margin-bottom: 10px; font-size: 1.05rem; }
+.estado {
+	margin: 0 0 14px; padding: 10px 12px;
+	background: #0a181d; border-left: 3px solid var(--panel-borde-fuerte);
+	color: #c6d9dd; font-size: 0.9rem; line-height: 1.5;
+}
+.estado.es-bueno { border-left-color: var(--panel-acento); color: var(--panel-acento-claro); }
+.estado.es-aviso { border-left-color: var(--panel-ambar); color: #ffe58a; }
+
+.acciones-secundarias {
+	display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px; margin-top: 8px;
+}
+.acciones-secundarias .boton { padding-right: 10px; padding-left: 10px; font-size: 0.8rem; letter-spacing: 0.04em; }
+.acciones-secundarias .boton:last-child { grid-column: 1 / -1; }
+
+.caja-css { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--panel-borde); }
+.caja-css summary { padding: 6px 0; color: var(--panel-acento-claro); font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+.caja-css[open] summary { margin-bottom: 8px; }
+.caja-css textarea {
+	width: 100%; margin-top: 10px; padding: 12px; resize: vertical;
+	background: #040a0c; border: 1px solid var(--panel-borde-fuerte); border-radius: 2px;
+	color: #cfe4e8;
+	font-family: ui-monospace, "Liberation Mono", Consolas, monospace;
+	font-size: 0.76rem; line-height: 1.5;
+}
+
+.oculto {
+	position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+	overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.pie {
+	margin: 0; padding: 22px 32px 32px; border-top: 1px solid var(--panel-borde);
+	color: #8fa7ac; font-size: 0.82rem; text-align: center;
+}
+/* ------------------------------------------------------------
+   Pantallas estrechas
+   ------------------------------------------------------------ */
+
+@media (max-width: 1120px) {
+	.disposicion { grid-template-columns: minmax(0, 1fr); }
+	.lateral {
+		position: static; max-height: none; overflow: visible;
+		display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+		gap: 20px; align-items: start;
+	}
+	.lateral .tarjeta { margin-bottom: 0; }
+}
+
+@media (max-width: 820px) {
+	.cabecera { flex-direction: column; align-items: flex-start; padding: 32px 20px 26px; gap: 22px; }
+	h1 { font-size: clamp(2.5rem, 11vw, 4rem); }
+	.disposicion { padding: 22px 20px 32px; }
+	.lateral { grid-template-columns: minmax(0, 1fr); }
+	.tarjeta { padding: 20px; }
+	.rejilla-dos { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+	.pie { padding: 20px; }
+}
+
+@media (max-width: 430px) {
+	.acciones-secundarias { grid-template-columns: minmax(0, 1fr); }
+	.acciones-secundarias .boton:last-child { grid-column: auto; }
+	.vista-previa { padding: 14px; }
+	.vp-hero { padding: 16px; }
+	.vp-pelicula img { height: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel de aspecto · Cine Mar de Fondo</title>
+<link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+<a class="saltar" href="#controles">Saltar a los controles</a>
+
+<header class="cabecera">
+	<div class="cabecera-texto">
+		<p class="marca">Cine Mar de Fondo</p>
+		<h1>Panel de aspecto</h1>
+		<p class="entrada">Cambia los colores, las letras y los botones de la web. Verás el resultado al momento y, cuando te guste, lo guardas. No hace falta saber informática.</p>
+	</div>
+	<a class="boton volver" href="index.html">Volver a la cartelera</a>
+</header>
+
+<main class="disposicion">
+
+	<div class="controles" id="controles">
+
+		<fieldset class="tarjeta">
+			<legend><span class="numero">1</span> Colores</legend>
+			<p class="ayuda">Los cuatro colores de la web. Pulsa en cada muestra para elegir otro.</p>
+
+			<div class="rejilla-dos">
+				<div class="campo">
+					<div class="campo-cabecera">
+						<label for="color-fondo">Fondo de la página</label>
+						<output class="valor" data-para="fondo">#05080a</output>
+					</div>
+					<input type="color" id="color-fondo" data-campo="fondo" value="#05080a" aria-describedby="pista-fondo" />
+					<p class="pista" id="pista-fondo">Así se verá el fondo de la portada.</p>
+				</div>
+
+				<div class="campo">
+					<div class="campo-cabecera">
+						<label for="color-acento">Color de acento</label>
+						<output class="valor" data-para="acento">#26b5ce</output>
+					</div>
+					<input type="color" id="color-acento" data-campo="acento" value="#26b5ce" aria-describedby="pista-acento" />
+					<p class="pista" id="pista-acento">Para títulos, enlaces y detalles.</p>
+				</div>
+
+				<div class="campo">
+					<div class="campo-cabecera">
+						<label for="color-texto">Color del texto</label>
+						<output class="valor" data-para="texto">#e2ecee</output>
+					</div>
+					<input type="color" id="color-texto" data-campo="texto" value="#e2ecee" aria-describedby="pista-texto" />
+					<p class="pista" id="pista-texto">El color de los párrafos y las fichas.</p>
+				</div>
+
+				<div class="campo">
+					<div class="campo-cabecera">
+						<label for="color-boton">Fondo de los botones</label>
+						<output class="valor" data-para="boton">#26b5ce</output>
+					</div>
+					<input type="color" id="color-boton" data-campo="boton" value="#26b5ce" aria-describedby="pista-boton" />
+					<p class="pista" id="pista-boton">El relleno de los botones principales.</p>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="tarjeta">
+			<legend><span class="numero">2</span> Letras</legend>
+			<p class="ayuda">El tamaño y el ritmo de lectura del texto normal.</p>
+
+			<div class="campo">
+				<div class="campo-cabecera">
+					<label for="tamano">Tamaño del texto</label>
+					<output class="valor" data-para="tamano">16 px</output>
+				</div>
+				<input type="range" id="tamano" data-campo="tamano" min="16" max="26" step="1" value="16" aria-describedby="pista-tamano" />
+				<div class="escala"><span>16</span><span>21</span><span>26</span></div>
+				<p class="pista" id="pista-tamano">Cuánto ocupa el texto de los párrafos.</p>
+			</div>
+
+			<div class="campo">
+				<div class="campo-cabecera">
+					<label for="familia">Letra</label>
+					<output class="valor" data-para="familia">Limpia</output>
+				</div>
+				<select id="familia" data-campo="familia" aria-describedby="pista-familia">
+					<option value="helvetica">Limpia y moderna</option>
+					<option value="georgia">Clásica, tipo libro</option>
+					<option value="trebuchet">Redondeada y suave</option>
+				</select>
+				<p class="pista" id="pista-familia">Los títulos grandes conservan la letra condensada de la casa.</p>
+			</div>
+
+			<div class="campo">
+				<div class="campo-cabecera">
+					<label for="interlineado">Espacio entre líneas</label>
+					<output class="valor" data-para="interlineado">1,65</output>
+				</div>
+				<input type="range" id="interlineado" data-campo="interlineado" min="1.3" max="2" step="0.05" value="1.65" aria-describedby="pista-interlineado" />
+				<div class="escala"><span>Junto</span><span>Normal</span><span>Amplio</span></div>
+				<p class="pista" id="pista-interlineado">Más aire entre una línea y la siguiente.</p>
+			</div>
+		</fieldset>
+
+		<fieldset class="tarjeta">
+			<legend><span class="numero">3</span> Botones</legend>
+			<p class="ayuda">El tamaño y el estilo de los botones que venden entradas.</p>
+
+			<div class="rejilla-dos">
+				<div class="campo">
+					<div class="campo-cabecera">
+						<label for="altoBoton">Altura de los botones</label>
+						<output class="valor" data-para="altoBoton">44 px</output>
+					</div>
+					<input type="range" id="altoBoton" data-campo="altoBoton" min="44" max="64" step="2" value="44" aria-describedby="pista-altoBoton" />
+					<div class="escala"><span>44</span><span>54</span><span>64</span></div>
+					<p class="pista" id="pista-altoBoton">Más altura, más fácil de pulsar.</p>
+				</div>
+
+				<div class="campo">
+					<div class="campo-cabecera">
+						<span class="etiqueta-grupo" id="etiqueta-mayusculas">Mayúsculas</span>
+						<output class="valor" data-para="mayusculas">Sí</output>
+					</div>
+					<div class="opciones" role="radiogroup" aria-labelledby="etiqueta-mayusculas" aria-describedby="pista-mayusculas">
+						<label class="opcion">
+							<input type="radio" name="mayusculas" data-campo="mayusculas" value="si" checked="checked" />
+							<span>Sí</span>
+						</label>
+						<label class="opcion">
+							<input type="radio" name="mayusculas" data-campo="mayusculas" value="no" />
+							<span>No</span>
+						</label>
+					</div>
+					<p class="pista" id="pista-mayusculas">El texto del botón, en mayúsculas o normal.</p>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="tarjeta">
+			<legend><span class="numero">4</span> Cartelera</legend>
+			<p class="ayuda">Cómo se reparten las películas en la portada.</p>
+
+			<div class="campo">
+				<div class="campo-cabecera">
+					<label for="columnas">Películas por fila</label>
+					<output class="valor" data-para="columnas">3 columnas</output>
+				</div>
+				<input type="range" id="columnas" data-campo="columnas" min="1" max="3" step="1" value="3" aria-describedby="pista-columnas" />
+				<div class="escala"><span>1</span><span>2</span><span>3</span></div>
+				<p class="pista" id="pista-columnas">Con una columna, cada cartel ocupa todo el ancho.</p>
+			</div>
+		</fieldset>
+
+	</div>
+
+	<aside class="lateral">
+
+		<section class="tarjeta tarjeta-previa" aria-labelledby="titulo-previa">
+			<div class="cabecera-previa">
+				<h2 id="titulo-previa">Vista previa</h2>
+				<span class="senal"><span class="punto"></span>En vivo</span>
+			</div>
+
+			<div class="vista-previa" id="vista-previa" role="group" tabindex="0" aria-label="Muestra del aspecto elegido">
+				<div class="vp-hero">
+					<p class="vp-etiqueta">Estreno · VOSE</p>
+					<p class="vp-titulo">El ladrón de bicicletas</p>
+					<p class="vp-texto">En la Roma de posguerra, un obrero busca la bicicleta que le robaron.</p>
+					<div class="vp-acciones">
+						<span class="vp-boton vp-boton--lleno">Reservar entradas</span>
+						<span class="vp-boton vp-boton--fantasma">Ver horarios</span>
+					</div>
+				</div>
+
+				<p class="vp-subtitulo">Películas de la semana</p>
+				<div class="vp-cartelera">
+					<figure class="vp-pelicula">
+						<img src="img/poster1.jpg" alt="" />
+						<figcaption>El ladrón de bicicletas</figcaption>
+					</figure>
+					<figure class="vp-pelicula">
+						<img src="img/poster2.jpg" alt="" />
+						<figcaption>El club de la lucha</figcaption>
+					</figure>
+					<figure class="vp-pelicula">
+						<img src="img/poster3.jpg" alt="" />
+						<figcaption>Donnie Darko</figcaption>
+					</figure>
+				</div>
+			</div>
+		</section>
+
+		<section class="tarjeta acciones" aria-labelledby="titulo-acciones">
+			<h2 id="titulo-acciones">Guardar los cambios</h2>
+			<p class="estado" id="estado" role="status" aria-live="polite">Aún no has guardado nada.</p>
+
+			<button type="button" class="boton boton--principal boton--ancho" id="guardar">Guardar en este navegador</button>
+
+			<div class="acciones-secundarias">
+				<button type="button" class="boton" id="restablecer">Restablecer</button>
+				<button type="button" class="boton" id="copiar">Copiar estilo</button>
+				<button type="button" class="boton" id="descargar">Descargar hoja de estilos</button>
+			</div>
+
+			<details class="caja-css" id="caja-css">
+				<summary>Ver la hoja generada</summary>
+				<p class="pista">Si el navegador no deja copiar o descargar, selecciona este texto y cópialo a mano.</p>
+				<label class="oculto" for="css-generado">Hoja de estilos generada</label>
+				<textarea id="css-generado" rows="9" readonly="readonly" spellcheck="false"></textarea>
+			</details>
+		</section>
+
+	</aside>
+
+</main>
+
+<p class="pie">Panel interno del Cine Mar de Fondo · Los cambios se guardan solo en este navegador.</p>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
