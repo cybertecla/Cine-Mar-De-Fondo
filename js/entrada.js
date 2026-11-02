@@ -9,7 +9,7 @@
        en cualquier punto de la entrada (ratón o dedo).
      · Se puede pelar ENTERA: el doblez llega a la esquina opuesta y la
        capa de arriba se desvanece, así que no queda una esquinita
-       pegada encima del horario.
+       pegada encima del hero.
      · Al soltar a medias se va sola al extremo más cercano: doblada
        o pelada del todo.
      · Clic seco: pela del todo o vuelve al doblez. Con un clic basta:
@@ -48,11 +48,16 @@ const UMBRAL = 5;
 const ABIERTA_X = 0;
 const ABIERTA_Y = 1;
 
-/* A partir de qué tanto por uno de pelado se enseña el horario de debajo. */
-const ASOMA = 0.12;
-
-/* Cuánto pelo se ve cubriendo el horario antes de desvanecerse. */
+/* Cuánto pelo se ve antes de desvanecerse del todo. */
 const FUNDIDO = 0.10;
+
+/* Las dos caras del ticket, en el orden en que las pide el HTML. */
+const CARAS = ['img/entrada-frente.png', 'img/entrada-dorso.png'];
+
+/* Cuánto se espera, como mucho, a que las caras estén decodificadas.
+   Si pasado este tiempo no han contestado, se enseña el dorso igual:
+   mejor el ticket sin el borde fino que un ticket a medias. */
+const ESPERA_CARAS = 1200;
 
 function sinMovimiento() {
 	return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -61,6 +66,53 @@ function sinMovimiento() {
 /* En pantallas táctiles no hay ratón: nada de abrir la esquina al pasar. */
 function conRaton() {
 	return !window.matchMedia || window.matchMedia('(hover: hover)').matches;
+}
+
+/* Enseña el dorso: pone .entrada-lista, que es lo que quita el
+   visibility:hidden del CSS. Se llama con Peel ya montado y las dos caras
+   decodificadas; sin eso, el primer fotograma del doblez podía salir con
+   el PNG del revés a medio pintar (o directamente en blanco). Sin JS esta
+   clase no llega nunca y se queda el anverso, que es el respaldo bueno. */
+function marcarLista(caja) {
+	let pendientes = CARAS.length;
+	let hecho = false;
+
+	function listo() {
+		if (hecho) {
+			return;
+		}
+		hecho = true;
+		caja.classList.add('entrada-lista');
+	}
+
+	/* En las pruebas no hay DOM ni Image: se marca y ya. */
+	if (!window.Image) {
+		listo();
+		return;
+	}
+
+	CARAS.forEach(function (ruta) {
+		const img = new window.Image();
+
+		function unaMenos() {
+			pendientes -= 1;
+			if (pendientes <= 0) {
+				listo();
+			}
+		}
+
+		/* img.decode() no está en navegadores viejos: ahí, onload. */
+		if (img.decode) {
+			img.src = ruta;
+			img.decode().then(unaMenos, unaMenos);
+		} else {
+			img.onload = unaMenos;
+			img.onerror = unaMenos;
+			img.src = ruta;
+		}
+	});
+
+	window.setTimeout(listo, ESPERA_CARAS);
 }
 
 export function montarEntrada() {
@@ -82,9 +134,10 @@ export function montarEntrada() {
 		backShadowSize: 0.05,
 		backReflection: true,
 		backReflectionAlpha: 0.1,
-		bottomShadow: true,
-		bottomShadowSize: 2.2,
-		bottomShadowDarkAlpha: 0.6
+		/* Peel.js pinta un degradado negro en .peel-bottom-shadow (la capa
+		   de abajo) y, al pelar del todo, se quedaba encima del hero como
+		   un manchón oscuro: sin sombra de fondo no hay nada que borrar. */
+		bottomShadow: false
 	});
 
 	/* Dónde está el doblez AHORA: la fuente de verdad para animar. */
@@ -92,6 +145,10 @@ export function montarEntrada() {
 	let tween = null;
 	let arrastrando = false;
 	let movido = false;
+	/* Cuánto se ve la entrada: 1 = entera, 0 = pelada del todo. Es la misma
+	   cifra que se vuelca en --entrada-visible, guardada aquí para poder
+	   consultarla sin depender del CSSOM (las pruebas montan un caja falso). */
+	let visto = 1;
 
 	function doblada() {
 		return { x: caja.offsetWidth - DOBLEZ, y: DOBLEZ };
@@ -119,24 +176,15 @@ export function montarEntrada() {
 		return Math.max(0, Math.min(1, andado / largo));
 	}
 
-	/* El marco de arriba es translúcido: el horario de debajo solo se enseña
-	   cuando ya hay papel levantado, o se leerían los dos a la vez. */
-	function sincronizar() {
-		if (progreso() > ASOMA) {
-			caja.classList.add('entrada-abierta');
-		} else {
-			caja.classList.remove('entrada-abierta');
-		}
-	}
-
+	/* El marco de arriba es translúcido: la capa de abajo no lleva nada,
+	   así que al pelar solo queda el hero. */
 	function poner(x, y) {
 		posicion.x = x;
 		posicion.y = y;
 		peel.setPeelPosition(x, y);
-		sincronizar();
 		/* En el último tramo la capa de arriba se va desvaneciendo: así la
-		   entrada no se queda como una esquinita encima del horario. */
-		const visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
+		   entrada no se queda como una esquinita encima del hero. */
+		visto = Math.min(1, Math.max(0, (1 - progreso()) / FUNDIDO));
 		caja.style.setProperty('--entrada-visible', visto.toFixed(3));
 	}
 
@@ -174,9 +222,14 @@ export function montarEntrada() {
 		tween = acabada ? null : animacion;
 	}
 
-	/* Clic seco: pela del todo o vuelve al doblez. */
+	/* Clic seco: pela del todo o vuelve al doblez. La decisión se toma por lo
+	   que se ve, no por lo que haya pelado el propio pointerdown: al pulsar en
+	   el centro de la entrada la librería ya coloca el doblez a media altura y
+	   progreso() daba más de 0.5, así que el clic se interpretaba como
+	   «cierra» y no pasaba nada. Con la visibilidad como referencia, clic
+	   siempre pela y el segundo clic siempre devuelve la entrada. */
 	function alternar() {
-		if (progreso() > 0.5) {
+		if (visto < 0.5) {
 			irA(doblada(), 0.5);
 		} else {
 			irA(abierta(), 0.55);
@@ -279,6 +332,11 @@ export function montarEntrada() {
 	caja.addEventListener('pointercancel', alSoltar, false);
 	caja.addEventListener('mouseenter', alEntrar, false);
 	caja.addEventListener('mouseleave', alSalir, false);
+
+	/* Peel ya está montado y el doblez colocado: ahora sí se puede
+	   enseñar el dorso (hasta aquí el CSS lo tenía escondido). Se espera
+	   además a que las dos caras estén decodificadas. */
+	marcarLista(caja);
 
 	/* Peel.js mide el elemento una sola vez: si cambia el tamaño hay que
 	   volver a decirle las medidas y recolocar el doblez. */
