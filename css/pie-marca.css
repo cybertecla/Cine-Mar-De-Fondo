@@ -1,0 +1,56 @@
+/* ============================================================
+   pie-marca.css — apoyo del efecto de «Cine Mar de Fondo» en el pie.
+
+   El efecto lo monta js/pie-marca.js: un <canvas> 2D dentro del
+   propio <p class="pie-marca">, con la separación de canales del
+   titular de reserva.html. Aquí solo van el sitio del lienzo, el
+   estado «activo» (texto real transparente) y el apagado por
+   prefers-reduced-motion. No toca ninguna otra parte del pie.
+   ============================================================ */
+
+/* El <p> necesita contexto de apilado propio para que el lienzo
+   quede sobre su texto y no sobre la dirección ni el enlace. */
+.pie-marca {
+	position:relative;
+	z-index:0;
+}
+
+/* Lienzo del efecto: centrado sobre la caja de la marca. El tamaño
+   en píxeles lo fija js/pie-marca.js (incluye aire para el fleco de
+   los canales); aquí solo se coloca, se le da un brillo teal muy
+   discreto y se le quitan los clics. */
+.pie-marca canvas.pie-marca-lienzo {
+	position:absolute;
+	left:50%;
+	top:50%;
+	transform:translate(-50%,-50%);
+	z-index:1;
+	pointer-events:none;
+	opacity:0;
+	transition:opacity 0.45s ease;
+	filter:drop-shadow(0 0 8px rgba(38,181,206,0.30));
+}
+
+.pie-marca canvas.pie-marca-lienzo.listo {
+	opacity:1;
+}
+
+/* Mientras el lienzo manda, el texto real sigue ocupando su sitio y
+   se sigue leyendo por lectores de pantalla, pero no se pinta. */
+.pie-marca.pie-marca--efecto {
+	color:transparent;
+	text-shadow:none;
+}
+
+/* Sin animación: ni lienzo ni transición; la marca se queda blanca,
+   quieta y perfectamente legible. */
+@media (prefers-reduced-motion: reduce) {
+	.pie-marca canvas.pie-marca-lienzo {
+		display:none !important;
+	}
+
+	.pie-marca.pie-marca--efecto {
+		color:#eef7f8;
+		text-shadow:none;
+	}
+}
