@@ -16,8 +16,11 @@ const path = require('path');
 const vm = require('vm');
 
 const RUTA = path.join(__dirname, '..', 'js', 'entrada.js');
-const ANCHO = 288;
-const ALTO = 153;
+
+/* Los mismos que .entrada-sitio en estilos.css (195×103): si cambia el
+   tamaño en la hoja, se cambia aquí o las cuentas dejan de cuadrar. */
+const ANCHO = 195;
+const ALTO = 103;
 
 /* Estados de referencia, en píxeles de la entrada. */
 const DOBLADA = { x: ANCHO - 34, y: 34 };
@@ -165,24 +168,24 @@ console.log('entrada que se pela:');
 const m = crearMundo();
 comprobar('monta y arranca doblada', m.montado === true && mismo(m.pos(), DOBLADA),
 	m.pos().x + ',' + m.pos().y);
-comprobar('el horario empieza oculto', !m.clases.has('entrada-abierta'));
 comprobar('arranca opaca', m.visible() === '1.000', m.visible());
 comprobar('escucha pointerdown/move/up',
 	m.hayOyen('pointerdown') && m.hayOyen('pointermove') && m.hayOyen('pointerup'));
+/* El CSS esconde el dorso hasta esta clase: sin ella, el primer pintado
+   enseñaba la cara de atrás entera. */
+comprobar('se declara lista al montar (dorso visible)', m.clases.has('entrada-lista'));
 
 /* 2 · Un solo clic la pela ENTERA (los dos fallos viejos: hacían falta dos
        clics y nunca llegaba al final) */
 m.disparar('pointerdown', m.evento(120, 60));
 m.disparar('pointerup', m.evento(120, 60));
 comprobar('un clic pela del todo', mismo(m.pos(), ABIERTA), m.pos().x + ',' + m.pos().y);
-comprobar('pelada del todo: se enseña el horario', m.clases.has('entrada-abierta'));
 comprobar('pelada del todo: la entrada se desvanece', m.visible() === '0.000', m.visible());
 
 /* 3 · Otro clic la vuelve a doblar */
 m.disparar('pointerdown', m.evento(120, 60));
 m.disparar('pointerup', m.evento(120, 60));
 comprobar('otro clic la dobla', mismo(m.pos(), DOBLADA), m.pos().x + ',' + m.pos().y);
-comprobar('al doblar se esconde el horario', !m.clases.has('entrada-abierta'));
 comprobar('al doblar vuelve a ser opaca', m.visible() === '1.000', m.visible());
 
 /* 4 · Arrastrar desde cualquier punto sigue al puntero */
@@ -210,20 +213,17 @@ comprobar('soltada al 80 % se pela entera', mismo(m.pos(), ABIERTA), m.pos().x +
 /* (un clic para cerrarla, que venimos de pelada del todo) */
 m.disparar('pointerdown', m.evento(120, 60));
 m.disparar('pointerup', m.evento(120, 60));
-m.clases.clear();
 m.disparar('mouseenter', {});
 comprobar('al entrar asoma la esquina', mismo(m.pos(), ENCIMA), m.pos().x + ',' + m.pos().y);
-comprobar('asomar no enseña el horario', !m.clases.has('entrada-abierta'));
 comprobar('asomar no transparenta', m.visible() === '1.000', m.visible());
 m.disparar('mouseleave', {});
 comprobar('al salir vuelve a doblada', mismo(m.pos(), DOBLADA), m.pos().x + ',' + m.pos().y);
 
-/* 7 · A medio pelar el horario ya se enseña y el papel sigue opaco */
+/* 7 · A medio pelar el papel sigue opaco (solo se funde al final) */
 const tercio = crearMundo();
 const cuarenta = enCamino(0.4);
 tercio.disparar('pointerdown', tercio.evento(200, 40));
 tercio.disparar('pointermove', tercio.evento(cuarenta.x, cuarenta.y));
-comprobar('al 40 % se enseña el horario', tercio.clases.has('entrada-abierta'));
 comprobar('al 40 % el papel sigue opaco', tercio.visible() === '1.000', tercio.visible());
 
 /* 8 · Sin animación (prefers-reduced-motion) y sin GSAP funcionan igual */
