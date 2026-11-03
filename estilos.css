@@ -208,6 +208,20 @@ textarea:focus {
 	box-shadow:0 0 0 3px rgba(38,181,206,0.18);
 }
 
+select {
+	appearance:none;
+	-webkit-appearance:none;
+	background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%2326b5ce' stroke-width='2' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+	background-repeat:no-repeat;
+	background-position:right 0.75rem center;
+	padding-right:2.2rem;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+	accent-color:#26b5ce;
+}
+
 /* El gris que pone Chromium en el placeholder no llega a 4,5:1. */
 ::placeholder {
 	color:#92a6ab;
@@ -315,41 +329,7 @@ input[type="reset"] {
 	cursor:inherit;
 }
 
-body.reserva-html5 #aviso {
-	position:fixed;
-	/* Por debajo de la banda de cabecera: si no, tapa «Reservar entradas». */
-	top:6.5rem;
-	right:1.25rem;
-	width:auto;
-	max-width:70%;
-	padding:0.75rem 1.1rem;
-	background-color:#1a1200;
-	border:1px solid #ffcc00;
-	box-shadow:0 0 22px rgba(255,204,0,0.28);
-	font-size:0.9rem;
-	z-index:50;
-}
-
 @media (max-width:63.99em) {
-	body.reserva-html5 {
-		padding-top:calc(1.1rem + 0.92rem + 1px);
-	}
-
-	body.reserva-html5 #aviso {
-		top:0;
-		right:0;
-		bottom:auto;
-		left:0;
-		width:auto;
-		max-width:none;
-		padding:0.55rem 0.75rem;
-		border-top:0;
-		border-right:0;
-		border-left:0;
-		font-size:0.8rem;
-		text-align:center;
-	}
-
 	body.reserva-html5 input,
 	body.reserva-html5 select,
 	body.reserva-html5 textarea,
@@ -512,7 +492,7 @@ dd {
 .pie {
 	margin-top:88px;
 	border-top:1px solid #1b2c31;
-	background-color:#04070a;
+	background-color:#000000;
 	padding:44px 0;
 }
 
@@ -1758,9 +1738,7 @@ body.pagina-cartelera .contenido .pelicula:focus-within p.sinopsis {
    Contraste medido (WCAG 2.1, luminancia relativa):
      blanco #ffffff sobre cian #26b5ce ....... 2,45:1  (insuficiente)
      casi negro #08131a sobre cian #26b5ce ... 7,67:1  (AAA)
-   Por eso el texto del botón principal va en casi negro y no en
-   blanco. El botón fantasma lleva texto claro sobre negro: 20,0:1.
-   ============================================================ */
+============================================================ */
 
 .hero-banda .menu {
 	display:block;
