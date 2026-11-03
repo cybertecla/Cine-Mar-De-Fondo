@@ -30,6 +30,7 @@
 		el.setAttribute('cx', String(cx));
 		el.setAttribute('cy', String(cy));
 		el.setAttribute('r', String(RADIO));
+		el.setAttribute('fill', 'currentColor');
 		return el;
 	}
 

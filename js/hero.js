@@ -5,43 +5,26 @@
    ------------------------------------------------------------------ */
 
 import {
-	PRESETS,
-	montarShader,
 	prefiereMenosMovimiento,
 	animarTitulo,
 	animarSubtitulo
 } from './hero-fx.js';
-import { montarFluido } from './hero-fluid.js';
 import { montarDither } from './hero-dither.js';
 import { montarTituloBlotter } from './hero-titulo.js';
 import { montarEntrada } from './entrada.js';
 
-const ajustes = window.HERO_AJUSTES || {};
 const sinMovimiento = prefiereMenosMovimiento();
 const cajaShader = document.getElementById('hero-shader');
-const presetRayos = PRESETS[ajustes.preset] || PRESETS.abismo;
-
-/* Cada fondo se monta con su función; el primero que arranque, gana. */
-const montadores = {
-	dither: () => montarDither(cajaShader),
-	fluido: () => montarFluido(cajaShader),
-	rayos: () => montarShader(cajaShader, presetRayos)
-};
-const ordenes = {
-	dither: ['dither', 'fluido', 'rayos'],
-	fluido: ['fluido', 'dither', 'rayos'],
-	rayos: ['rayos', 'fluido', 'dither']
-};
 
 async function arrancarFondo() {
 	if (!cajaShader) {
 		return;
 	}
-	const orden = ordenes[ajustes.fondo || 'fluido'] || ordenes.fluido;
-	for (const nombre of orden) {
-		if (await montadores[nombre]()) {
-			return;
-		}
+	if (await montarDither(cajaShader)) {
+		return;
+	}
+	if (cajaShader.dataset.estado === 'estatico') {
+		return;
 	}
 	console.warn('Hero: sin WebGL; queda el resplandor estático ·', cajaShader.dataset.motivo || 'WebGL no disponible');
 }
@@ -77,4 +60,4 @@ if (!sinMovimiento) {
 }
 
 /* Los dos botones del hero no se animan nunca: se ven desde el primer
-   fotograma, sin fundido ni retardo. Su estilo vive en css/botones.css. */
+   fotograma, sin fundido ni retardo. Su estilo vive en estilos.css. */

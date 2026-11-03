@@ -14,14 +14,11 @@ lib/blotter/        blotter.ts 1.0.1 · MIT (necesita three.js)
                     https://github.com/dnhn/blotter
 lib/paper-shaders/  @paper-design/shaders 0.0.82 · Apache-2.0
                     https://github.com/paper-design/shaders
-                    (shaders usados: god-rays.js y dithering.js)
+                    (shader usado: dithering.js)
 estilos.css         Tipografía Anton 400 (subconjunto latino, woff2),
                     incrustada en base64: es la del demo de blotter.ts.
                     © The Anton Project Authors · SIL Open Font License 1.1
                     https://fonts.google.com/specimen/Anton
-lib/webgl-fluid/    webgl-fluid 0.4.0 (tinta líquida; porta de
-                    PavelDoGreat/WebGL-Fluid-Simulation) · MIT
-                    https://github.com/cloydlau/webgl-fluid
 lib/peel/           Peel.js (andrewplummer/peel-js) · MIT
                     https://github.com/andrewplummer/peel-js
                     Efecto de papel que se pela: la entrada de cine de la

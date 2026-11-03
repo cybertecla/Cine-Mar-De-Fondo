@@ -6,15 +6,6 @@
    ============================================================ */
 window.HERO_AJUSTES = {
 
-	/* Fondo del hero de index.html (elige uno):
-	   'dither' → trama tramada Bayer, el efecto del preview    ← el activo
-	   'fluido' → tinta líquida interactiva (efecto WebGL Fluid)
-	   'rayos'  → haces de luz (god rays)                        */
-	fondo: 'dither',
-
-	/* Preset de los rayos cuando el fondo es 'rayos': 'abismo' | 'estreno' */
-	preset: 'abismo',
-
 	/* Retoques del titular (Blotter.ts channel-split: los canales R/G/B
 	   se separan siguiendo al ratón). Los valores de abajo son los del
 	   demo de webdev.teknium.io, tal cual.
@@ -43,31 +34,6 @@ window.HERO_AJUSTES = {
 	       speed: 1                // velocidad de la animación
 	   },                                                              */
 	dither: {
-	},
-
-	/* Retoques de la tinta líquida, encima de los valores por defecto.
-	   Ejemplos (copia el que quieras y quita las // para activarlo):
-
-	   fluido: {
-	       CURL: 38,                 // rebullir de la tinta (0–50)
-	       DENSITY_DISSIPATION: 0.9, // estela: más alto = se borra antes (0–4)
-	       INTERVAL: 2600,           // ms entre chorros automáticos
-	       SPLAT_RADIUS: 0.28,       // grosor del trazo (0.1–0.5)
-	       SPLAT_COLOR: { r: 38, g: 181, b: 206 }, // tinta de un solo color
-	       BLOOM: true,              // brillo
-	       SUNRAYS: true             // rayos de sol
-	   },                                                             */
-	fluido: {
-	},
-
-	/* Retoques de los rayos, encima del preset. Ejemplo:
-	   rayos: {
-	       intensity: 1,      // brillo (0–1)
-	       speed: 0.45,       // velocidad
-	       density: 0.32,     // cuántos haces (0–1)
-	       colors: ['#0a4a63f2', '#1b87a3e6', '#26b5ceff', '#8fe7f5']
-	   }                                                              */
-	rayos: {
 	}
 
 };

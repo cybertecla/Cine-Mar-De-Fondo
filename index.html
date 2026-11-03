@@ -7,11 +7,6 @@
 <meta name="author" content="Isaac Pérez Bassart" />
 <title>Cine Mar de Fondo - Cartelera Semanal</title>
 <link rel="stylesheet" type="text/css" href="estilos.css" />
-<link rel="stylesheet" type="text/css" href="css/pie-marca.css" />
-<link rel="stylesheet" type="text/css" href="css/cargador.css" />
-<link rel="stylesheet" type="text/css" href="css/fondo.css" />
-<link rel="stylesheet" type="text/css" href="css/peliculas.css" />
-<link rel="stylesheet" type="text/css" href="css/botones.css" />
 <script type="text/javascript" src="js/cargador.js"></script>
 </head>
 <body class="pagina-cartelera">
@@ -59,7 +54,7 @@
      ============================================================
      Qué es: una sola capa, el velo que oscurece el shader del hero
      también por debajo del hero. El shader NO se duplica: es el mismo
-     canvas de siempre (#hero-shader), que css/fondo.css pasa a
+     canvas de siempre (#hero-shader), que la hoja de estilos pasa a
      position:fixed. Esta capa va POR ENCIMA de él y POR DEBAJO del
      contenido (z-index 1), y empieza justo donde termina el hero:
      así el hero conserva sus dos velos y su banda tal cual estaban.
@@ -181,31 +176,19 @@ película de la semana con <strong>estrenos</strong> y <em>clásicos</em> selecc
 
 <h2 id="precios">Precios</h2>
 
-<!-- Tres tarjetas: el precio manda y la etiqueta lo explica debajo. -->
-<div class="precios">
+<!-- Tres tarjetas, una por tipo de entrada. -->
+<dl class="precios">
 
-<div class="precio">
-<dl>
 <dt>Entrada general</dt>
 <dd>6,00 €</dd>
-</dl>
-</div>
 
-<div class="precio">
-<dl>
 <dt>Entrada reducida</dt>
 <dd>4,50 €</dd>
-</dl>
-</div>
 
-<div class="precio">
-<dl>
 <dt>Día del espectador</dt>
 <dd>4,00 €</dd>
-</dl>
-</div>
 
-</div>
+</dl>
 
 </div>
 

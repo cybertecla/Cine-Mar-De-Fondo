@@ -84,24 +84,19 @@ h3 {
 .menu {
 	list-style-type:none;
 	padding:0;
-	margin:0;
+	text-align:center;
+	margin:2.9rem 0 0;
 }
 
 .menu li {
-	display:inline-block;
-	margin:0 0.15rem 0.6rem;
+	display:inline;
+	margin:0 0.45rem 0.6rem;
 	vertical-align:top;
 }
 
 /* Quitar subrayado a los enlaces del menú */
 .menu a {
 	text-decoration:none;
-}
-
-/* El menú vive dentro del hero (y, en la reserva, en su cabecera). */
-.menu {
-	text-align:center;
-	margin:2.9rem 0 0;
 }
 
 /* Botones del menú: una sola forma y dos variantes de color. El primario
@@ -153,52 +148,6 @@ h3 {
 .boton:focus {
 	outline:2px solid #ffcc00;
 	outline-offset:3px;
-}
-
-/* Modelo de caja: bordes, padding y margin en la tabla de horarios */
-table {
-	border-collapse:collapse;
-	border:1px solid #1b2c31;
-	padding:0;
-	width:100%;
-	margin:0;
-	font-size:0.95rem;
-}
-
-table th, table td {
-	border-bottom:1px solid #1b2c31;
-	padding:15px 16px;
-	text-align:left;
-}
-
-table th {
-	background-color:#0a1114;
-	border-top:1px solid #1b2c31;
-	font-family:'Anton',Impact,'Arial Narrow',sans-serif;
-	font-weight:400;
-	text-transform:uppercase;
-	letter-spacing:0.08em;
-	font-size:0.82rem;
-	color:#7fe3f0;
-}
-
-table tbody tr:hover {
-	background-color:rgba(38,181,206,0.06);
-}
-
-table tbody td:first-child {
-	color:#eef7f8;
-	font-weight:bold;
-}
-
-/* El pie de tabla es el día del espectador: el único sitio en ámbar,
-   para que destaque sin gritar. */
-table tfoot td {
-	background-color:rgba(255,204,0,0.06);
-	border-top:1px solid #4a3a00;
-	border-bottom:none;
-	color:#ffcc00;
-	font-weight:bold;
 }
 
 /* Modelo de caja en los fieldset */
@@ -323,12 +272,6 @@ fieldset.grupo > legend {
 	min-width:0;
 }
 
-.nota {
-	font-size:0.8rem;
-	color:#7b9199;
-	margin:0 0 8px;
-}
-
 input[type="submit"],
 input[type="reset"] {
 	border-radius:2px;
@@ -340,6 +283,7 @@ input[type="reset"] {
 .cartel {
 	float:left;
 	width:320px;
+	max-width:100%;
 	height:auto;
 	display:block;
 	transition:transform 0.6s ease,filter 0.6s ease;
@@ -384,6 +328,34 @@ body.reserva-html5 #aviso {
 	box-shadow:0 0 22px rgba(255,204,0,0.28);
 	font-size:0.9rem;
 	z-index:50;
+}
+
+@media (max-width:63.99em) {
+	body.reserva-html5 {
+		padding-top:calc(1.1rem + 0.92rem + 1px);
+	}
+
+	body.reserva-html5 #aviso {
+		top:0;
+		right:0;
+		bottom:auto;
+		left:0;
+		width:auto;
+		max-width:none;
+		padding:0.55rem 0.75rem;
+		border-top:0;
+		border-right:0;
+		border-left:0;
+		font-size:0.8rem;
+		text-align:center;
+	}
+
+	body.reserva-html5 input,
+	body.reserva-html5 select,
+	body.reserva-html5 textarea,
+	body.reserva-html5 a {
+		scroll-margin-top:calc(1.1rem + 0.92rem + 1px + 0.6rem);
+	}
 }
 
 /* Clase restringida a un elemento: p.sinopsis */
@@ -476,15 +448,47 @@ p.sinopsis {
 	padding-top:18px;
 }
 
-/* Lista de precios: tres columnas, cada pareja dt/dd en vertical.
-   grid-auto-flow:column es lo que mantiene el dt encima de su dd. */
+/* Lista de precios: tres columnas, cada pareja dt/dd en vertical. */
 dl {
-	display:grid;
-	grid-template-columns:repeat(3,1fr);
-	grid-template-rows:auto auto;
-	grid-auto-flow:column;
-	gap:8px 32px;
 	margin:0;
+}
+
+.precios {
+	display:grid;
+	grid-template-columns:repeat(3,minmax(0,1fr));
+	grid-template-rows:auto auto;
+	column-gap:28px;
+	row-gap:0;
+}
+
+.precios dt:nth-of-type(1) {
+	grid-column:1;
+	grid-row:1;
+}
+
+.precios dt:nth-of-type(2) {
+	grid-column:2;
+	grid-row:1;
+}
+
+.precios dt:nth-of-type(3) {
+	grid-column:3;
+	grid-row:1;
+}
+
+.precios dd:nth-of-type(1) {
+	grid-column:1;
+	grid-row:2;
+}
+
+.precios dd:nth-of-type(2) {
+	grid-column:2;
+	grid-row:2;
+}
+
+.precios dd:nth-of-type(3) {
+	grid-column:3;
+	grid-row:2;
 }
 
 dt {
@@ -529,6 +533,8 @@ dd {
    el lienzo del efecto se centra sobre la caja del <p>, y así queda
    sobre las letras y no sobre el hueco de la columna. */
 .pie-marca {
+	position:relative;
+	z-index:0;
 	grid-area:marca;
 	justify-self:start;
 	margin:0;
@@ -597,6 +603,8 @@ dd {
 }
 
 .cabecera .hero-titulo {
+	position:relative;
+	z-index:0;
 	font-size:1.5rem;
 	letter-spacing:0.04em;
 	text-shadow:none;
@@ -645,6 +653,7 @@ dd {
 	width:100%;
 	height:100%;
 	isolation:isolate;
+	background:radial-gradient(ellipse at 50% 36%,rgba(38,181,206,0.95) 0%,rgba(38,181,206,0.55) 30%,rgba(2,6,8,0) 62%),#020608;
 }
 
 /* Capa 1 bis: el velo. NO es un fondo: va POR ENCIMA del shader con
@@ -658,7 +667,6 @@ dd {
 	background-color:#000000;
 	opacity:0.77;
 	z-index:1;
-	pointer-events:none;
 }
 
 .hero-velo--arriba {
@@ -838,14 +846,11 @@ dd {
 	.entrada-sitio {
 		display:none;
 	}
+}
 
-	/* Con la cabecera en dos filas (casi 200 px), el aviso fijo se va a la
-	   esquina de abajo: sigue fijo al hacer scroll, pero no tapa el menú. */
-	body.reserva-html5 #aviso {
-		top:auto;
-		bottom:1rem;
-		right:1rem;
-		max-width:70%;
+@media (max-width:30em) {
+	.acciones {
+		max-width:270px;
 	}
 }
 
@@ -870,28 +875,6 @@ dd {
 
 	h2 {
 		font-size:1.8rem;
-	}
-
-	/* La tabla de horarios cabe en un móvil sin scroll lateral. */
-	table {
-		font-size:0.78rem;
-	}
-
-	table th,
-	table td {
-		padding:10px 6px;
-	}
-
-	table th {
-		font-size:0.68rem;
-		letter-spacing:0.04em;
-	}
-
-	dl {
-		grid-template-columns:1fr;
-		grid-template-rows:auto;
-		grid-auto-flow:row;
-		gap:20px;
 	}
 
 	/* En móvil la fila no cabe: una sola columna centrada, en el
@@ -931,5 +914,1040 @@ dd {
 	.boton,
 	.cartel {
 		transition:none;
+	}
+}
+
+/* Lienzo del efecto */
+.pie-marca canvas.pie-marca-lienzo {
+	position:absolute;
+	left:50%;
+	top:50%;
+	transform:translate(-50%,-50%);
+	z-index:1;
+	opacity:0;
+	transition:opacity 0.45s ease;
+	filter:drop-shadow(0 0 8px rgba(38,181,206,0.30));
+}
+
+.pie-marca canvas.pie-marca-lienzo.listo {
+	opacity:1;
+}
+
+/* Mientras el lienzo manda, el texto real sigue ocupando su sitio y
+   se sigue leyendo por lectores de pantalla, pero no se pinta. */
+.pie-marca.pie-marca--efecto {
+	color:transparent;
+	text-shadow:none;
+}
+
+/* Sin animación: ni lienzo ni transición; la marca se queda blanca,
+   quieta y perfectamente legible. */
+@media (prefers-reduced-motion: reduce) {
+	.pie-marca canvas.pie-marca-lienzo {
+		display:none !important;
+	}
+
+	.pie-marca.pie-marca--efecto {
+		color:#eef7f8;
+		text-shadow:none;
+	}
+}
+
+/* ------------------------------------------------------------------
+   Cargador — pantalla de carga de Cine Mar de Fondo
+
+   El spinner «jelly-triangle» es un port a HTML+CSS puro (sin web
+   components ni shadow DOM) del original de LDRS:
+       https://uiball.com/ldrs  ·  https://github.com/GriffinJohnston/ldrs
+   Copyright (c) Griffin Johnston — publicado bajo licencia MIT.
+   ------------------------------------------------------------------ */
+
+/* El negro entra antes de que exista el body: si el navegador pinta
+   algo antes de tiempo, ya es negro y no blanco. */
+html {
+	background-color:#05080a;
+}
+
+/* Mientras el overlay está montado no se desplaza la página de debajo.
+   El atributo lo pone y lo quita js/cargador.js: al quitarlo vuelve el
+   scroll y el body queda interactivo. */
+html[data-cargando="si"],
+html[data-cargando="si"] body {
+	overflow:hidden;
+}
+
+.cargador {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:99999;
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:center;
+	background-color:#05080a;
+	opacity:1;
+	transition:opacity 450ms ease;
+	will-change:opacity;
+	-webkit-user-select:none;
+	user-select:none;
+}
+
+.cargador--fuera {
+	opacity:0;
+}
+
+.cargador-caja {
+	position:relative;
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	padding:0 1.5rem;
+}
+
+/* ------------------------------------------------------------------
+   Spinner jelly-triangle (LDRS, MIT)
+
+   S = 108 px: viewBox 0 0 108 108, puntos de 36 px (r = 18) en los
+   vértices y un viajero que los recorre. Por debajo de 30em el SVG
+   se escala a 84 px; como la geometría va en unidades del viewBox,
+   el filtro y las distancias se reducen en la misma proporción.
+   ------------------------------------------------------------------ */
+
+.cargador-jelly {
+	position:relative;
+	display:block;
+	width:108px;
+	height:108px;
+	overflow:visible;
+	filter:url(#cargador-ooze);
+	--jelly-color:#26b5ce;
+	--jelly-ciclo:2s;
+}
+
+.jelly-punto,
+.jelly-viajero {
+	display:block;
+	color:var(--jelly-color,#26b5ce);
+	transform-box:fill-box;
+	transform-origin:center;
+	will-change:transform;
+}
+
+/* Los tres vértices laten con el mismo «grow», desfasados un tercio
+   de ciclo entre sí. */
+.jelly-punto:nth-child(1) {
+	animation:grow var(--jelly-ciclo) ease infinite;
+}
+
+.jelly-punto:nth-child(2) {
+	animation:grow var(--jelly-ciclo) ease infinite;
+	animation-delay:-1.332s;
+}
+
+.jelly-punto:nth-child(3) {
+	animation:grow var(--jelly-ciclo) ease infinite;
+	animation-delay:-0.666s;
+}
+
+.jelly-viajero {
+	animation:triangulate var(--jelly-ciclo) ease infinite;
+}
+
+/* Keyframes: el viajero salta de vértice en
+   vértice y los puntos se hinchan o desaparecen a su paso. */
+@keyframes triangulate {
+	0%,
+	100% {
+		transform:none;
+	}
+
+	33.333% {
+		transform:translate(100%,200%);
+	}
+
+	66.666% {
+		transform:translate(-100%,200%);
+	}
+}
+
+@keyframes grow {
+	0%,
+	85%,
+	100% {
+		transform:scale(1.5);
+	}
+
+	50%,
+	60% {
+		transform:scale(0);
+	}
+}
+
+/* Móvil: el mismo spinner, un poco más pequeño. */
+@media (max-width:30em) {
+	.cargador-jelly {
+		width:84px;
+		height:84px;
+	}
+}
+
+/* Sin animación para quien prefiere menos movimiento: el triángulo se
+   queda quieto en su fotograma de reposo y la salida es directa (lo
+   decide también js/cargador.js). */
+@media (prefers-reduced-motion: reduce) {
+	.cargador {
+		transition:none;
+	}
+
+	/* :nth-child(n) sube la especificidad por encima de los retardos
+	   de arriba; si no, cada regla .jelly-punto:nth-child(2) seguiría
+	   ganando y el triángulo no se quedaría quieto. */
+	.cargador-jelly .jelly-punto:nth-child(n) {
+		animation:none;
+		transform:scale(1.5);
+	}
+
+	.cargador-jelly .jelly-viajero {
+		animation:none;
+		transform:none;
+	}
+}
+
+/* ============================================================
+   FONDO CONTINUO — extiende el mar del hero por toda la página
+   ------------------------------------------------------------
+   Solo maquetación: no pinta un fondo nuevo ni duplica el canvas.
+   Reutiliza el shader que ya monta js/hero.js en #hero-shader y lo
+   convierte en fondo fijo de la ventana. El hero se queda encima con
+   su propio recorte y sus velos, y el contenido se apoya en una caja
+   negra centrada: por los laterales se ve el mismo mar.
+
+   Orden de capas (de atrás a delante):
+     0  #hero-shader .... canvas fijo, toda la ventana
+     1  .fondo-velo ..... velo negro al 90 % (laterales al 10 %)
+     1  .hero-velo ..... los dos velos del hero, solo dentro del hero
+     2  .contenido ..... caja negra opaca con el texto
+     2  .pie ........... pie con su caja negra
+   ============================================================ */
+
+/* El body es el bloque de referencia del velo: este empieza en el
+   borde inferior del hero y llega al final del documento. */
+.pagina-cartelera {
+	position: relative;
+}
+
+/* ------------------------------------------------------------
+   1. El shader, de capa del hero a fondo de la página
+   ------------------------------------------------------------
+*/
+.pagina-cartelera #hero-shader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+}
+
+/* ------------------------------------------------------------
+   2. El velo que continúa el del hero
+   ------------------------------------------------------------
+*/
+.pagina-cartelera .fondo-velo {
+	position: absolute;
+	top: 100vh;
+	top: max(100vh, 560px);   /* = alto exacto del hero */
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.8) 0,
+		rgba(0, 0, 0, 0.9) 180px
+	);
+}
+
+/* ------------------------------------------------------------
+   3. El contenido, sobre negro y con ancho máximo
+   ------------------------------------------------------------
+*/
+.pagina-cartelera .contenido {
+	position: relative;
+	z-index: 2;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 1144px;   /* 1040 de contenido + 52 + 52 */
+	padding-left: clamp(18px, 4vw, 52px);
+	padding-right: clamp(18px, 4vw, 52px);
+	background-color: #05080a;
+}
+
+/* Entre 768 y 1156 px la cartelera pasa a DOS columnas fijas de
+   320 px (720 px con el hueco). Con 52 px de aire a cada lado no
+   cabría en un viewport de 768; con 12 px sí. No cambia nada del
+   resto de la página: solo el aire lateral de esta franja. */
+@media (min-width: 48em) and (max-width: 72.3em) {
+	.pagina-cartelera .contenido {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+}
+
+/* ------------------------------------------------------------
+   4. El pie
+   ------------------------------------------------------------
+*/
+.pagina-cartelera .pie {
+	position: relative;
+	z-index: 2;
+	background-color: transparent;
+}
+
+/* ------------------------------------------------------------
+   5. Móvil
+   ------------------------------------------------------------
+*/
+@media (max-width: 47.99em) {
+	.pagina-cartelera .contenido.principal {
+		margin-top: 10px;
+	}
+}
+
+/* --- Caja principal ------------------ */
+body.pagina-cartelera .contenido.principal {
+	width: 94%;
+	max-width: 1400px;
+	padding-top: 104px;
+	padding-bottom: 32px;
+}
+
+/* Párrafo de presentación */
+body.pagina-cartelera .contenido .presentacion {
+	max-width: 58ch;
+	margin: 0 auto;
+	font-size: 1.3rem;        /* 20,8 px */
+	line-height: 1.7;
+	color: #e6f0f2;
+	text-align: center;
+}
+
+body.pagina-cartelera .contenido .presentacion strong {
+	color: #ffcc00;
+}
+
+body.pagina-cartelera .contenido .presentacion em {
+	color: #8ce9f5;
+}
+
+body.pagina-cartelera .contenido .presentacion abbr {
+	border-bottom: 2px dotted #7fe3f0;
+	text-decoration: none;
+	cursor: help;
+}
+
+/* --- Titulares de sección ------------------------------------- */
+
+body.pagina-cartelera .contenido h2 {
+	margin: 104px 0 40px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 2.6rem;        /* 41,6 px */
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: 0;
+	text-transform: none;
+	color: #ffffff;
+}
+
+body.pagina-cartelera .contenido h2::before {
+	width: 72px;
+	height: 6px;
+	margin-bottom: 20px;
+	background-color: #7fe3f0;
+}
+
+/* La primera sección no necesita tanto aire: ya viene del hero. */
+body.pagina-cartelera .contenido .presentacion + h2 {
+	margin-top: 84px;
+}
+
+/* --- Rejilla de películas: 3 / 2 / 1 columnas ------------------ */
+body.pagina-cartelera .contenido .cartelera {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 40px;
+	justify-content: stretch;
+}
+
+body.pagina-cartelera .contenido .pelicula {
+	display: flex;
+	flex-direction: column;
+	padding: 18px 18px 28px;
+	background-color: #0c161a;
+	border: 1px solid #2a454d;
+	border-radius: 4px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Marco del cartel: 2:3, 320 px de ancho como el float. */
+body.pagina-cartelera .contenido .pelicula-cartel {
+	width: 320px;
+	max-width: 100%;
+	margin: 0 auto 24px;
+	overflow: hidden;
+	line-height: 0;
+	background-color: #101d22;
+	box-shadow: 0 0 0 1px #2a454d;
+}
+
+body.pagina-cartelera .contenido .pelicula h3 {
+	min-height: 2.6em;        /* reserva dos líneas y alinea las fichas */
+	margin: 0 0 18px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.65rem;       /* 26,4 px */
+	font-weight: 700;
+	line-height: 1.3;
+	letter-spacing: 0;
+	text-transform: none;
+	color: #ffffff;
+}
+
+/* --- Ficha técnica: lista de definición legible ---------------- */
+body.pagina-cartelera .contenido dl.ficha {
+	display: grid;
+	grid-template-columns: 7.2em minmax(0, 1fr);
+	grid-template-rows: none;
+	grid-auto-flow: row;
+	gap: 0;
+	margin: 0 0 22px;
+	padding: 0;
+	background: none;
+}
+
+body.pagina-cartelera .contenido dl.ficha dt,
+body.pagina-cartelera .contenido dl.ficha dd {
+	margin: 0;
+	padding: 9px 0;
+	border-top: 1px solid #243d44;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.125rem;      /* 18 px */
+	line-height: 1.45;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+body.pagina-cartelera .contenido dl.ficha dt {
+	font-weight: 700;
+	color: #b7cdd2;
+}
+
+body.pagina-cartelera .contenido dl.ficha dd {
+	font-weight: 400;
+	color: #ffffff;
+}
+
+/* --- Sinopsis: 20 px, sin cursiva y con línea corta -------------- */
+body.pagina-cartelera .contenido p.sinopsis {
+	max-width: 68ch;
+	margin: 0;
+	font-size: 1.25rem;       /* 20 px */
+	font-style: normal;
+	line-height: 1.7;
+	color: #d7e5e8;
+}
+
+/* --- Tabla de horarios ----------------------------------------- */
+body.pagina-cartelera .contenido table {
+	width: 100%;
+	margin: 0 0 40px;
+	padding: 8px;
+	border: 2px solid #33525b;
+	border-collapse: collapse;
+	background-color: #0c161a;
+	font-size: 1.1875rem;     /* 19 px */
+	line-height: 1.5;
+}
+
+body.pagina-cartelera .contenido table th,
+body.pagina-cartelera .contenido table td {
+	padding: 17px 18px;
+	border-bottom: 1px solid #2a454d;
+	font-size: 1.1875rem;     /* 19 px */
+	line-height: 1.5;
+	text-align: left;
+	vertical-align: middle;
+}
+
+body.pagina-cartelera .contenido table th {
+	padding-top: 18px;
+	padding-bottom: 18px;
+	border-top: none;
+	background-color: #13262c;
+	color: #ffffff;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	text-transform: none;
+}
+
+body.pagina-cartelera .contenido table tbody tr:nth-child(even) {
+	background-color: #122329;
+}
+
+body.pagina-cartelera .contenido table tbody tr:hover {
+	background-color: #17343d;
+}
+
+body.pagina-cartelera .contenido table tbody td:first-child {
+	width: 40%;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+body.pagina-cartelera .contenido table tfoot td {
+	padding: 18px;
+	border-top: 2px solid #ffcc00;
+	border-bottom: none;
+	background-color: #2a2308;
+	color: #ffe066;
+	font-size: 1.1875rem;     /* 19 px */
+	font-weight: 700;
+}
+
+/* Las etiquetas de día solo se usan en la versión móvil. */
+body.pagina-cartelera .contenido table .dia {
+	display: none;
+}
+
+/* --- Precios: tres tarjetas, una por pareja dt/dd -------------- */
+body.pagina-cartelera .contenido .precios dt {
+	padding: 26px 24px 10px;
+	background-color: #0c161a;
+	border: 1px solid #2a454d;
+	border-top: 5px solid #7fe3f0;
+	border-bottom: 0;
+	border-radius: 4px 4px 0 0;
+	text-align: center;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.125rem;      /* 18 px */
+	font-weight: 700;
+	letter-spacing: 0;
+	text-transform: none;
+	color: #cfe0e4;
+}
+
+body.pagina-cartelera .contenido .precios dd {
+	margin: 0;
+	padding: 0 24px 30px;
+	background-color: #0c161a;
+	border: 1px solid #2a454d;
+	border-top: 0;
+	border-radius: 0 0 4px 4px;
+	text-align: center;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 2.25rem;       /* 36 px */
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+	color: #ffffff;
+}
+
+/* --- Foco visible ---------------------------------------------- */
+body.pagina-cartelera .contenido a:focus-visible,
+body.pagina-cartelera .contenido abbr:focus-visible {
+	outline: 3px solid #ffcc00;
+	outline-offset: 3px;
+}
+
+/* ============================================================
+   ADAPTACIÓN A PANTALLAS
+   ============================================================ */
+
+/* Dos columnas a partir de 700 px. */
+@media (min-width: 700px) {
+	body.pagina-cartelera .contenido .cartelera {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 44px;
+	}
+}
+
+/* Tres columnas a partir de 1100 px. */
+@media (min-width: 1100px) {
+	body.pagina-cartelera .contenido .cartelera {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 36px;
+	}
+}
+
+/* Móvil: una columna, cartel centrado y tabla reflowada a tarjetas
+   para no tener que hacer scroll lateral. */
+@media (max-width: 699.98px) {
+	body.pagina-cartelera .contenido.principal {
+		width: 92%;
+		padding-top: 80px;
+	}
+
+	body.pagina-cartelera .contenido .presentacion {
+		font-size: 1.2rem;
+	}
+
+	body.pagina-cartelera .contenido h2 {
+		margin-top: 80px;
+		margin-bottom: 32px;
+		font-size: 2.2rem;    /* 35,2 px */
+	}
+
+	body.pagina-cartelera .contenido .presentacion + h2 {
+		margin-top: 72px;
+	}
+
+	body.pagina-cartelera .contenido .pelicula {
+		padding: 16px 16px 24px;
+	}
+
+	body.pagina-cartelera .contenido .pelicula-cartel {
+		max-width: 70vw;
+		max-width: min(420px, 70vw);
+	}
+
+	body.pagina-cartelera .contenido .pelicula h3 {
+		min-height: 0;
+		font-size: 1.5rem;    /* 24 px */
+	}
+
+	body.pagina-cartelera .contenido dl.ficha {
+		grid-template-columns: 6.8em minmax(0, 1fr);
+	}
+
+	body.pagina-cartelera .contenido .precios {
+		grid-template-columns: minmax(0, 1fr);
+		column-gap: 0;
+		row-gap: 0;
+	}
+
+	body.pagina-cartelera .contenido .precios dt,
+	body.pagina-cartelera .contenido .precios dd {
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	body.pagina-cartelera .contenido .precios dd {
+		margin-bottom: 20px;
+	}
+
+	body.pagina-cartelera .contenido .precios dd:nth-of-type(3) {
+		margin-bottom: 0;
+	}
+
+	/* Tabla en tarjetas: cada fila es un bloque con su película y
+	   sus tres pases. El HTML sigue siendo una <table> completa. */
+	body.pagina-cartelera .contenido table,
+	body.pagina-cartelera .contenido table thead,
+	body.pagina-cartelera .contenido table tbody,
+	body.pagina-cartelera .contenido table tfoot,
+	body.pagina-cartelera .contenido table tr,
+	body.pagina-cartelera .contenido table th,
+	body.pagina-cartelera .contenido table td {
+		display: block;
+		width: auto;
+	}
+
+	body.pagina-cartelera .contenido table {
+		display: flex;
+		flex-direction: column;
+		border: none;
+		background: none;
+	}
+
+	body.pagina-cartelera .contenido table tbody {
+		order: 2;
+	}
+
+	/* El pie va después de las películas aunque en el HTML vaya antes
+	   (el DTD de XHTML Strict obliga a poner tfoot antes de tbody). */
+	body.pagina-cartelera .contenido table tfoot {
+		order: 3;
+	}
+
+	/* La cabecera se oculta a la vista; las etiquetas .dia la
+	   sustituyen dentro de cada celda. */
+	body.pagina-cartelera .contenido table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		border: 0;
+	}
+
+	body.pagina-cartelera .contenido table tbody tr {
+		margin: 0 0 18px;
+		padding: 6px 18px 12px;
+		background-color: #0c161a;
+		border: 1px solid #2a454d;
+		border-radius: 4px;
+	}
+
+	body.pagina-cartelera .contenido table tbody tr:nth-child(even) {
+		background-color: #0c161a;
+	}
+
+	body.pagina-cartelera .contenido table tbody tr:hover {
+		background-color: #0c161a;
+	}
+
+	body.pagina-cartelera .contenido table tbody td {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		padding: 14px 0;
+		border-bottom: 1px solid #243d44;
+		font-size: 1.1875rem;  /* 19 px */
+		color: #ffffff;
+	}
+
+	body.pagina-cartelera .contenido table tbody td:first-child {
+		display: block;
+		width: auto;
+		padding: 14px 0 15px;
+		border-bottom: 2px solid #33525b;
+		font-size: 1.375rem;   /* 22 px */
+	}
+
+	body.pagina-cartelera .contenido table tbody td:last-child {
+		border-bottom: none;
+	}
+
+	body.pagina-cartelera .contenido table tbody td .dia {
+		display: inline;
+		font-weight: 700;
+		color: #b7cdd2;
+	}
+
+	body.pagina-cartelera .contenido table tfoot td {
+		padding: 18px;
+		border: 2px solid #ffcc00;
+		border-radius: 4px;
+		background-color: #2a2308;
+		color: #ffe066;
+		font-size: 1.1875rem;  /* 19 px */
+	}
+}
+
+/* --- Geometría invisible del recuadro de la sinopsis ----------- */
+
+body.pagina-cartelera .contenido .pelicula p.sinopsis {
+	margin: 0 -12px -10px;
+	padding-right: 12px;
+	padding-bottom: 10px;
+	padding-left: 12px;
+	border-radius: 8px;
+	background-color: transparent;
+	transition: color 200ms ease, background-color 200ms ease, text-shadow 200ms ease;
+}
+
+/* --- La tarjeta y su título  -------- */
+body.pagina-cartelera .contenido .pelicula {
+	transition: opacity 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+body.pagina-cartelera .contenido .pelicula h3 {
+	transition: color 200ms ease, text-shadow 200ms ease;
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+
+	body.pagina-cartelera .contenido .cartelera:hover .pelicula:not(:hover) {
+		opacity: 0.6;
+	}
+
+	body.pagina-cartelera .contenido .cartelera:hover .pelicula:hover {
+		opacity: 1;
+		border-color: #4a7783;
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(127, 227, 240, 0.22);
+	}
+
+	body.pagina-cartelera .contenido .pelicula:hover h3 {
+		color: #ffffff;
+		text-shadow: 0 0 2px rgba(127, 227, 240, 0.9), 0 0 10px rgba(127, 227, 240, 0.75), 0 0 30px rgba(56, 197, 224, 0.6);
+	}
+
+	body.pagina-cartelera .contenido .pelicula:hover p.sinopsis {
+		color: #f2fbfd;
+		background-color: rgba(38, 181, 206, 0.06);
+		text-shadow: 0 0 1px rgba(242, 251, 253, 0.55);
+	}
+}
+
+body.pagina-cartelera .contenido .cartelera:focus-within .pelicula:not(:focus-within) {
+	opacity: 0.6;
+}
+
+body.pagina-cartelera .contenido .cartelera .pelicula:focus-within {
+	opacity: 1;
+	border-color: #4a7783;
+	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(127, 227, 240, 0.22);
+}
+
+body.pagina-cartelera .contenido .pelicula:focus-within h3 {
+	color: #ffffff;
+	text-shadow: 0 0 2px rgba(127, 227, 240, 0.9), 0 0 10px rgba(127, 227, 240, 0.75), 0 0 30px rgba(56, 197, 224, 0.6);
+}
+
+body.pagina-cartelera .contenido .pelicula:focus-within p.sinopsis {
+	color: #f2fbfd;
+	background-color: rgba(38, 181, 206, 0.06);
+	text-shadow: 0 0 1px rgba(242, 251, 253, 0.55);
+}
+
+/* --- Táctil -------------------------- */
+/* Refuerzo para navegadores híbridos que dejan el :hover pegado
+   después de tocar: se devuelven los valores de reposo a mano. */
+@media (hover: none) {
+
+	body.pagina-cartelera .contenido .cartelera .pelicula,
+	body.pagina-cartelera .contenido .cartelera .pelicula:hover {
+		opacity: 1;
+		transition: none;
+	}
+
+	body.pagina-cartelera .contenido .cartelera .pelicula h3,
+	body.pagina-cartelera .contenido .cartelera .pelicula:hover h3 {
+		color: #ffffff;
+		text-shadow: none;
+		transition: none;
+	}
+
+	body.pagina-cartelera .contenido .cartelera .pelicula p.sinopsis,
+	body.pagina-cartelera .contenido .cartelera .pelicula:hover p.sinopsis {
+		color: #d7e5e8;
+		background-color: transparent;
+		text-shadow: none;
+		transition: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	body.pagina-cartelera .contenido .pelicula,
+	body.pagina-cartelera .contenido .pelicula h3,
+	body.pagina-cartelera .contenido .pelicula p.sinopsis {
+		transition: none;
+	}
+}
+
+/* ============================================================
+   BOTONES DEL HERO — Cine Mar de Fondo
+   Los dos botones del hero son grandes y cómodos sin romper la
+   banda negra ni el diseño original.
+
+   Medidas actuales (objetivo accesibilidad, gente con poca visión):
+     alto ......... ~72 px (antes 62 px)
+     letra ........ 20,5 px en escritorio y 20 px en móvil (antes 18,4)
+     padding ...... 21/30 px escritorio · 22/20 px móvil
+     gap .......... 18 px escritorio · 12 px móvil
+
+   Contraste medido (WCAG 2.1, luminancia relativa):
+     blanco #ffffff sobre cian #26b5ce ....... 2,45:1  (insuficiente)
+     casi negro #08131a sobre cian #26b5ce ... 7,67:1  (AAA)
+   Por eso el texto del botón principal va en casi negro y no en
+   blanco. El botón fantasma lleva texto claro sobre negro: 20,0:1.
+   ============================================================ */
+
+.hero-banda .menu {
+	display:block;
+	text-align:center;
+	margin:2.9rem 0 0;
+	padding:0;
+}
+
+/* Base común: área táctil de 72 px de alto, texto de 20,5 px y
+   padding generoso. box-sizing evita que el borde sume de más.
+   El alto sale de 20,48 px × 1,25 de interlínea + 42 px de padding
+   vertical + 4 px de borde = 71,6 px. */
+.hero-banda .boton {
+	position:relative;
+	top:0;
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	box-sizing:border-box;
+	min-width:11.5rem;
+	min-height:64px;
+	padding:21px 30px;
+	border:2px solid transparent;
+	border-radius:2px;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:1.28rem;
+	font-weight:700;
+	line-height:1.25;
+	letter-spacing:0.06em;
+	text-transform:uppercase;
+	text-align:center;
+	text-decoration:none;
+	white-space:nowrap;
+	cursor:pointer;
+	/* El movimiento del botón va por top, no por transform: la intro
+	   de GSAP deja un transform en línea y anularía el de :hover. */
+	transform:none;
+	transition:background-color 0.22s ease,color 0.22s ease,border-color 0.22s ease,top 0.12s ease;
+}
+
+/* Variante principal: cian de la casa con texto casi negro.
+   #08131a sobre #26b5ce da 7,67:1. */
+.hero-banda .boton--principal {
+	background-color:#26b5ce;
+	border-color:#1a93a8;
+	color:#08131a;
+}
+
+/* Variante fantasma: fondo transparente, borde de 2 px y texto
+   claro. El borde blanco al 55 % sobre negro da 6,25:1. */
+.hero-banda .boton--fantasma {
+	background-color:transparent;
+	border-color:rgba(255,255,255,0.55);
+	color:#f2fbfd;
+}
+
+/* Estados de puntero: solo donde hay hover real, para que en móvil
+   no se quede el relleno pegado después de tocar. El salto usa top
+   (no transform): así no choca con ningún transform en línea que se
+   aplique en el futuro. Hoy los botones del hero no se animan. */
+@media (hover:hover) {
+	.hero-banda .boton:hover {
+		top:-2px;
+	}
+
+	.hero-banda .boton--principal:hover {
+		background-color:#ffcc00;
+		border-color:#d6ab00;
+		color:#1a1200;
+	}
+
+	.hero-banda .boton--fantasma:hover {
+		background-color:rgba(38,181,206,0.16);
+		border-color:#7fe3f0;
+		color:#ffffff;
+	}
+}
+
+/* Pulsado: baja 1 px. Va después de :hover para ganarle cuando
+   coinciden (misma especificidad). */
+.hero-banda .boton:active {
+	top:1px;
+}
+
+/* Teclado: anillo ámbar de 3 px separado 3 px del borde. Se usa
+   :focus-visible para no pintar el anillo al hacer clic con ratón;
+   el :focus de 2 px de estilos.css queda como respaldo. */
+.hero-banda .boton:focus-visible {
+	outline:3px solid #ffcc00;
+	outline-offset:3px;
+}
+
+/* Al hacer clic con ratón no hace falta anillo; el teclado sí lo lleva.
+   En navegadores sin :focus-visible esta regla no se aplica y queda el
+   :focus de 2 px de estilos.css como respaldo. */
+.hero-banda .boton:focus:not(:focus-visible) {
+	outline:none;
+}
+
+/* Deshabilitado: por si en el futuro algún botón es un <button> o
+   lleva aria-disabled. No se puede pulsar ni arrastrar el hover. */
+.hero-banda .boton:disabled,
+.hero-banda .boton[aria-disabled="true"] {
+	opacity:0.45;
+	cursor:not-allowed;
+	top:0;
+	box-shadow:none;
+}
+
+/* Móvil: apilados, a ancho completo y con 12 px de separación.
+   La letra baja a 20 px y el interlineado a 1,2 para que el alto
+   siga siendo 72 px (24 + 44 de padding + 4 de borde). El tracking
+   se aprieta un pelo (0,05em) para que «Reservar entradas» no
+   desborde a lo ancho en pantallas de 320 px. */
+@media (max-width:47.99em) {
+	.hero-banda .menu {
+		margin-top:2.2rem;
+	}
+
+	.hero-banda .menu li {
+		display:block;
+		width:100%;
+		margin:0 0 12px;
+	}
+
+	.hero-banda .boton {
+		width:100%;
+		min-width:0;
+		padding:22px 20px;
+		font-size:1.25rem;
+		line-height:1.2;
+		letter-spacing:0.05em;
+	}
+}
+
+/* Móviles muy estrechos (320 px): el texto de «Reservar entradas» no
+   cabe con 20 px de padding a cada lado, así que se recorta el padding
+   horizontal; el alto no cambia. */
+@media (max-width:21.99em) {
+	.hero-banda .boton {
+		padding-left:8px;
+		padding-right:8px;
+	}
+}
+
+/* Con menos movimiento, sin saltos ni transiciones. */
+@media (prefers-reduced-motion: reduce) {
+	.hero-banda .boton,
+	.hero-banda .boton:hover,
+	.hero-banda .boton:active {
+		top:0;
+		transition:none;
+	}
+}
+
+/* Lienzo del efecto */
+.cabecera .hero-titulo canvas.titulo-lienzo {
+	position:absolute;
+	left:50%;
+	top:50%;
+	transform:translate(-50%,-50%);
+	z-index:1;
+	opacity:0;
+	transition:opacity 0.45s ease;
+	filter:drop-shadow(0 0 12px rgba(38,181,206,0.45));
+}
+
+.cabecera .hero-titulo canvas.titulo-lienzo.listo {
+	opacity:1;
+}
+
+/* Mientras el lienzo manda, el texto real sigue ocupando su sitio y
+   se sigue leyendo por lectores de pantalla, pero no se pinta. */
+.cabecera .hero-titulo.titulo-efecto {
+	color:transparent;
+	text-shadow:none;
+}
+
+/* Sin animación: ni lienzo ni transición; el titular se queda blanco,
+   quieto y perfectamente legible. */
+@media (prefers-reduced-motion: reduce) {
+	.cabecera .hero-titulo canvas.titulo-lienzo {
+		display:none !important;
+	}
+
+	.cabecera .hero-titulo.titulo-efecto {
+		color:#ffffff;
+		text-shadow:0 0 22px rgba(38,181,206,0.55);
 	}
 }

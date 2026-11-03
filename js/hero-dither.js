@@ -11,7 +11,7 @@ import {
 import { getShaderColorFromString } from '../lib/paper-shaders/dist/get-shader-color-from-string.js';
 import { prefiereMenosMovimiento } from './hero-fx.js';
 
-export const OPCIONES_DITHER = {
+const OPCIONES_DITHER = {
 	colorBack: '#020608',
 	colorFront: '#26b5ce',
 	shape: 'warp',
@@ -25,6 +25,10 @@ function fallar(caja, motivo) {
 	caja.dataset.estado = /webgl/i.test(motivo) ? 'sin-webgl' : 'fallo';
 	caja.dataset.motivo = motivo;
 	caja.classList.add('sin-shader');
+	const lienzos = caja.querySelectorAll('canvas');
+	for (let i = 0; i < lienzos.length; i++) {
+		lienzos[i].parentNode.removeChild(lienzos[i]);
+	}
 	console.warn('Hero: no se pudo montar el dither ·', motivo);
 }
 
@@ -62,7 +66,7 @@ function conectarRaton(escucha, caja, mount, fuerza) {
 
 /* Monta el dither dentro de la caja indicada.
    Devuelve una promesa con el ShaderMount (o null si no se pudo crear). */
-export function montarDither(caja, preset) {
+export function montarDither(caja) {
 	return new Promise((resolve) => {
 		if (!caja) {
 			resolve(null);
@@ -71,7 +75,14 @@ export function montarDither(caja, preset) {
 
 		/* Retoques del usuario (js/hero-ajustes.js) por encima de lo de arriba */
 		const retoques = (window.HERO_AJUSTES && window.HERO_AJUSTES.dither) || {};
-		const ajustes = Object.assign({}, OPCIONES_DITHER, preset || {}, retoques);
+		const ajustes = Object.assign({}, OPCIONES_DITHER, retoques);
+
+		if (prefiereMenosMovimiento()) {
+			caja.dataset.estado = 'estatico';
+			caja.classList.add('sin-shader');
+			resolve(null);
+			return;
+		}
 
 		try {
 			const uniforms = {
@@ -113,6 +124,10 @@ export function montarDither(caja, preset) {
 				);
 			} catch (error) {
 				caja.dataset.renderer = '';
+			}
+
+			if (/swiftshader|llvmpipe|software|mesa offscreen/i.test(caja.dataset.renderer)) {
+				mount.setMaxPixelCount(100000);
 			}
 
 			if (!sinMovimiento && ajustes.steer > 0) {
