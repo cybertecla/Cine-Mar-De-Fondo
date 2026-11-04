@@ -77,13 +77,6 @@ export function montarDither(caja) {
 		const retoques = (window.HERO_AJUSTES && window.HERO_AJUSTES.dither) || {};
 		const ajustes = Object.assign({}, OPCIONES_DITHER, retoques);
 
-		if (prefiereMenosMovimiento()) {
-			caja.dataset.estado = 'estatico';
-			caja.classList.add('sin-shader');
-			resolve(null);
-			return;
-		}
-
 		try {
 			const uniforms = {
 				u_colorBack: getShaderColorFromString(ajustes.colorBack),

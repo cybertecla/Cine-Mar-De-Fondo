@@ -32,7 +32,7 @@ async function arrancarFondo() {
 /* El titular: primero Blotter.ts (channel-split); si no, GSAP SplitText. */
 async function arrancarTitulo() {
 	const titulo = document.getElementById('arriba');
-	if (!titulo || sinMovimiento) {
+	if (!titulo) {
 		return;
 	}
 	try {

@@ -88,7 +88,7 @@ function propiedadesTexto(titulo) {
 
 /* Monta el titular con Blotter. Devuelve true si quedó funcionando. */
 export async function montarTituloBlotter(titulo) {
-	if (!titulo || !titulo.textContent || prefiereMenosMovimiento()) {
+	if (!titulo || !titulo.textContent) {
 		return false;
 	}
 	if (typeof isWebGLSupported === 'function' && !isWebGLSupported()) {
@@ -132,7 +132,11 @@ export async function montarTituloBlotter(titulo) {
 	titulo.setAttribute('data-efecto', 'blotter');   /* para comprobarlo en el inspector */
 	window.requestAnimationFrame(() => lienzo.classList.add('listo'));
 
-	seguirRaton(material, titulo, lienzo, ajustes);
+	/* Con «menos movimiento» el titular se monta igual (canales separados
+	   fijos), pero no sigue al ratón ni se pasea solo. */
+	if (!prefiereMenosMovimiento()) {
+		seguirRaton(material, titulo, lienzo, ajustes);
+	}
 	reescalar(texto, titulo);
 
 	return true;

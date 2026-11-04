@@ -1,22 +1,4 @@
 (() => {
-  var __defProp = Object.defineProperty;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
-  };
-  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
   // js/hero-fx.js
   function prefiereMenosMovimiento() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -287,390 +269,41 @@ void main() {
   // lib/paper-shaders/dist/shader-mount.js
   var DEFAULT_MAX_PIXEL_COUNT = 1920 * 1080 * 4;
   var ShaderMount = class {
+    parentElement;
+    canvasElement;
+    gl;
+    program = null;
+    uniformLocations = {};
+    /** The fragment shader that we are using */
+    fragmentShader;
+    /** Stores the RAF for the render loop */
+    rafId = null;
+    /** Time of the last rendered frame */
+    lastRenderTime = 0;
+    /** Total time that we have played any animation, passed as a uniform to the shader for time-based VFX */
+    currentFrame = 0;
+    /** The speed that we progress through animation time (multiplies by delta time every update). Allows negatives to play in reverse. If set to 0, rAF will stop entirely so static shaders have no recurring performance costs */
+    speed = 0;
+    /** Actual speed used that accounts for visibility: we pause the shader if the tab is hidden or the element out of the viewport */
+    currentSpeed = 0;
+    /** Uniforms that are provided by the user for the specific shader being mounted (not including uniforms that this Mount adds, like time and resolution) */
+    providedUniforms;
+    /** Names of the uniforms that should have mipmaps generated for them */
+    mipmaps = [];
+    /** Just a sanity check to make sure frames don't run after we're disposed */
+    hasBeenDisposed = false;
+    /** If the resolution of the canvas has changed since the last render */
+    resolutionChanged = true;
+    /** Store textures that are provided by the user */
+    textures = /* @__PURE__ */ new Map();
+    minPixelRatio;
+    maxPixelCount;
+    isSafari = isSafari();
+    uniformCache = {};
+    textureUnitMap = /* @__PURE__ */ new Map();
+    ownerDocument;
     constructor(parentElement, fragmentShader, uniforms, webGlContextAttributes, speed = 0, frame = 0, minPixelRatio = 2, maxPixelCount = DEFAULT_MAX_PIXEL_COUNT, mipmaps = []) {
-      __publicField(this, "parentElement");
-      __publicField(this, "canvasElement");
-      __publicField(this, "gl");
-      __publicField(this, "program", null);
-      __publicField(this, "uniformLocations", {});
-      /** The fragment shader that we are using */
-      __publicField(this, "fragmentShader");
-      /** Stores the RAF for the render loop */
-      __publicField(this, "rafId", null);
-      /** Time of the last rendered frame */
-      __publicField(this, "lastRenderTime", 0);
-      /** Total time that we have played any animation, passed as a uniform to the shader for time-based VFX */
-      __publicField(this, "currentFrame", 0);
-      /** The speed that we progress through animation time (multiplies by delta time every update). Allows negatives to play in reverse. If set to 0, rAF will stop entirely so static shaders have no recurring performance costs */
-      __publicField(this, "speed", 0);
-      /** Actual speed used that accounts for visibility: we pause the shader if the tab is hidden or the element out of the viewport */
-      __publicField(this, "currentSpeed", 0);
-      /** Uniforms that are provided by the user for the specific shader being mounted (not including uniforms that this Mount adds, like time and resolution) */
-      __publicField(this, "providedUniforms");
-      /** Names of the uniforms that should have mipmaps generated for them */
-      __publicField(this, "mipmaps", []);
-      /** Just a sanity check to make sure frames don't run after we're disposed */
-      __publicField(this, "hasBeenDisposed", false);
-      /** If the resolution of the canvas has changed since the last render */
-      __publicField(this, "resolutionChanged", true);
-      /** Store textures that are provided by the user */
-      __publicField(this, "textures", /* @__PURE__ */ new Map());
-      __publicField(this, "minPixelRatio");
-      __publicField(this, "maxPixelCount");
-      __publicField(this, "isSafari", isSafari());
-      __publicField(this, "uniformCache", {});
-      __publicField(this, "textureUnitMap", /* @__PURE__ */ new Map());
-      __publicField(this, "ownerDocument");
-      __publicField(this, "initProgram", () => {
-        const program = createProgram(this.gl, vertexShaderSource, this.fragmentShader);
-        if (!program) return;
-        this.program = program;
-        this.gl.useProgram(program);
-      });
-      __publicField(this, "setupPositionAttribute", () => {
-        const positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
-        const positionBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
-        const positions = [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1];
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
-        this.gl.enableVertexAttribArray(positionAttributeLocation);
-        this.gl.vertexAttribPointer(positionAttributeLocation, 2, this.gl.FLOAT, false, 0, 0);
-      });
-      __publicField(this, "setupUniforms", () => {
-        const uniformLocations = {
-          u_time: this.gl.getUniformLocation(this.program, "u_time"),
-          u_pixelRatio: this.gl.getUniformLocation(this.program, "u_pixelRatio"),
-          u_resolution: this.gl.getUniformLocation(this.program, "u_resolution")
-        };
-        Object.entries(this.providedUniforms).forEach(([key, value]) => {
-          uniformLocations[key] = this.gl.getUniformLocation(this.program, key);
-          if (value instanceof HTMLImageElement) {
-            const aspectRatioUniformName = `${key}AspectRatio`;
-            uniformLocations[aspectRatioUniformName] = this.gl.getUniformLocation(this.program, aspectRatioUniformName);
-          }
-        });
-        this.uniformLocations = uniformLocations;
-      });
-      /**
-       * The scale that we should render at.
-       * - Used to target 2x rendering even on 1x screens for better antialiasing
-       * - Prevents the virtual resolution from going beyond the maximum resolution
-       * - Accounts for the page zoom level so we render in physical device pixels rather than CSS pixels
-       */
-      __publicField(this, "renderScale", 1);
-      __publicField(this, "parentWidth", 0);
-      __publicField(this, "parentHeight", 0);
-      __publicField(this, "parentDevicePixelWidth", 0);
-      __publicField(this, "parentDevicePixelHeight", 0);
-      __publicField(this, "devicePixelsSupported", false);
-      __publicField(this, "intersectionObserver", null);
-      __publicField(this, "isInViewport", true);
-      __publicField(this, "resizeObserver", null);
-      __publicField(this, "setupResizeObserver", () => {
-        this.resizeObserver = new ResizeObserver(([entry]) => {
-          var _a2;
-          if (entry == null ? void 0 : entry.borderBoxSize[0]) {
-            const physicalPixelSize = (_a2 = entry.devicePixelContentBoxSize) == null ? void 0 : _a2[0];
-            if (physicalPixelSize !== void 0) {
-              this.devicePixelsSupported = true;
-              this.parentDevicePixelWidth = physicalPixelSize.inlineSize;
-              this.parentDevicePixelHeight = physicalPixelSize.blockSize;
-            }
-            this.parentWidth = entry.borderBoxSize[0].inlineSize;
-            this.parentHeight = entry.borderBoxSize[0].blockSize;
-          }
-          this.handleResize();
-        });
-        this.resizeObserver.observe(this.parentElement);
-      });
-      __publicField(this, "setupIntersectionObserver", () => {
-        const view = this.ownerDocument.defaultView;
-        if (!(view == null ? void 0 : view.IntersectionObserver)) return;
-        this.intersectionObserver = new view.IntersectionObserver(([entry]) => {
-          var _a2;
-          this.isInViewport = (_a2 = entry == null ? void 0 : entry.isIntersecting) != null ? _a2 : true;
-          this.updateCurrentSpeed();
-        });
-        this.intersectionObserver.observe(this.parentElement);
-      });
-      // Visual viewport resize handler, mainly used to react to browser zoom changes.
-      // Resize observer by itself does not react to pinch zoom, and although it usually
-      // reacts to classic browser zoom, it's not guaranteed in edge cases.
-      // Since timing between visual viewport changes and resize observer is complex
-      // and because we'd like to know the device pixel sizes of elements, we just restart
-      // the observer to get a guaranteed fresh callback regardless if it would have triggered or not.
-      __publicField(this, "handleVisualViewportChange", () => {
-        var _a2;
-        (_a2 = this.resizeObserver) == null ? void 0 : _a2.disconnect();
-        this.setupResizeObserver();
-      });
-      /** Resize handler for when the container div changes size or the max pixel count changes and we want to resize our canvas to match */
-      __publicField(this, "handleResize", () => {
-        var _a2;
-        let targetPixelWidth = 0;
-        let targetPixelHeight = 0;
-        const dpr = Math.max(1, window.devicePixelRatio);
-        const pinchZoom = (_a2 = visualViewport == null ? void 0 : visualViewport.scale) != null ? _a2 : 1;
-        if (this.devicePixelsSupported) {
-          const scaleToMeetMinPixelRatio = Math.max(1, this.minPixelRatio / dpr);
-          targetPixelWidth = this.parentDevicePixelWidth * scaleToMeetMinPixelRatio * pinchZoom;
-          targetPixelHeight = this.parentDevicePixelHeight * scaleToMeetMinPixelRatio * pinchZoom;
-        } else {
-          let targetRenderScale = Math.max(dpr, this.minPixelRatio) * pinchZoom;
-          if (this.isSafari) {
-            const zoomLevel = bestGuessBrowserZoom(this.ownerDocument);
-            targetRenderScale *= Math.max(1, zoomLevel);
-          }
-          targetPixelWidth = Math.round(this.parentWidth) * targetRenderScale;
-          targetPixelHeight = Math.round(this.parentHeight) * targetRenderScale;
-        }
-        const maxPixelCountHeadroom = Math.sqrt(this.maxPixelCount) / Math.sqrt(targetPixelWidth * targetPixelHeight);
-        const scaleToMeetMaxPixelCount = Math.min(1, maxPixelCountHeadroom);
-        const newWidth = Math.round(targetPixelWidth * scaleToMeetMaxPixelCount);
-        const newHeight = Math.round(targetPixelHeight * scaleToMeetMaxPixelCount);
-        const newRenderScale = newWidth / Math.round(this.parentWidth);
-        if (this.canvasElement.width !== newWidth || this.canvasElement.height !== newHeight || this.renderScale !== newRenderScale) {
-          this.renderScale = newRenderScale;
-          this.canvasElement.width = newWidth;
-          this.canvasElement.height = newHeight;
-          this.resolutionChanged = true;
-          this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-          this.render(performance.now());
-        }
-      });
-      __publicField(this, "render", (currentTime) => {
-        if (this.hasBeenDisposed) return;
-        if (this.program === null) {
-          console.warn("Tried to render before program or gl was initialized");
-          return;
-        }
-        const dt2 = currentTime - this.lastRenderTime;
-        this.lastRenderTime = currentTime;
-        if (this.currentSpeed !== 0) {
-          this.currentFrame += dt2 * this.currentSpeed;
-        }
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-        this.gl.uniform1f(this.uniformLocations.u_time, this.currentFrame * 1e-3);
-        if (this.resolutionChanged) {
-          this.gl.uniform2f(this.uniformLocations.u_resolution, this.gl.canvas.width, this.gl.canvas.height);
-          this.gl.uniform1f(this.uniformLocations.u_pixelRatio, this.renderScale);
-          this.resolutionChanged = false;
-        }
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-        if (this.currentSpeed !== 0) {
-          this.requestRender();
-        } else {
-          this.rafId = null;
-        }
-      });
-      __publicField(this, "requestRender", () => {
-        if (this.rafId !== null) {
-          cancelAnimationFrame(this.rafId);
-        }
-        this.rafId = requestAnimationFrame(this.render);
-      });
-      /** Creates a texture from an image and sets it into a uniform value */
-      __publicField(this, "setTextureUniform", (uniformName, image) => {
-        if (!image.complete || image.naturalWidth === 0) {
-          throw new Error(`Paper Shaders: image for uniform ${uniformName} must be fully loaded`);
-        }
-        const existingTexture = this.textures.get(uniformName);
-        if (existingTexture) {
-          this.gl.deleteTexture(existingTexture);
-        }
-        if (!this.textureUnitMap.has(uniformName)) {
-          this.textureUnitMap.set(uniformName, this.textureUnitMap.size);
-        }
-        const textureUnit = this.textureUnitMap.get(uniformName);
-        this.gl.activeTexture(this.gl.TEXTURE0 + textureUnit);
-        const texture = this.gl.createTexture();
-        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
-        if (this.mipmaps.includes(uniformName)) {
-          this.gl.generateMipmap(this.gl.TEXTURE_2D);
-          this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
-        }
-        const error = this.gl.getError();
-        if (error !== this.gl.NO_ERROR || texture === null) {
-          console.error("Paper Shaders: WebGL error when uploading texture:", error);
-          return;
-        }
-        this.textures.set(uniformName, texture);
-        const location = this.uniformLocations[uniformName];
-        if (location) {
-          this.gl.uniform1i(location, textureUnit);
-          const aspectRatioUniformName = `${uniformName}AspectRatio`;
-          const aspectRatioLocation = this.uniformLocations[aspectRatioUniformName];
-          if (aspectRatioLocation) {
-            const aspectRatio = image.naturalWidth / image.naturalHeight;
-            this.gl.uniform1f(aspectRatioLocation, aspectRatio);
-          }
-        }
-      });
-      /** Utility: recursive equality test for all the uniforms */
-      __publicField(this, "areUniformValuesEqual", (a, b) => {
-        if (a === b) return true;
-        if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
-          return a.every((val, i) => this.areUniformValuesEqual(val, b[i]));
-        }
-        return false;
-      });
-      /** Sets the provided uniform values into the WebGL program, can be a partial list of uniforms that have changed */
-      __publicField(this, "setUniformValues", (updatedUniforms) => {
-        Object.entries(updatedUniforms).forEach(([key, value]) => {
-          let cacheValue = value;
-          if (value instanceof HTMLImageElement) {
-            cacheValue = `${value.src.slice(0, 200)}|${value.naturalWidth}x${value.naturalHeight}`;
-          }
-          if (this.areUniformValuesEqual(this.uniformCache[key], cacheValue)) return;
-          this.uniformCache[key] = cacheValue;
-          const location = this.uniformLocations[key];
-          if (!location) {
-            console.warn(`Uniform location for ${key} not found`);
-            return;
-          }
-          if (value instanceof HTMLImageElement) {
-            this.setTextureUniform(key, value);
-          } else if (Array.isArray(value)) {
-            let flatArray = null;
-            let valueLength = null;
-            if (value[0] !== void 0 && Array.isArray(value[0])) {
-              const firstChildLength = value[0].length;
-              if (value.every((arr) => arr.length === firstChildLength)) {
-                flatArray = value.flat();
-                valueLength = firstChildLength;
-              } else {
-                console.warn(`All child arrays must be the same length for ${key}`);
-                return;
-              }
-            } else {
-              flatArray = value;
-              valueLength = flatArray.length;
-            }
-            switch (valueLength) {
-              case 2:
-                this.gl.uniform2fv(location, flatArray);
-                break;
-              case 3:
-                this.gl.uniform3fv(location, flatArray);
-                break;
-              case 4:
-                this.gl.uniform4fv(location, flatArray);
-                break;
-              case 9:
-                this.gl.uniformMatrix3fv(location, false, flatArray);
-                break;
-              case 16:
-                this.gl.uniformMatrix4fv(location, false, flatArray);
-                break;
-              default:
-                console.warn(`Unsupported uniform array length: ${valueLength}`);
-            }
-          } else if (typeof value === "number") {
-            this.gl.uniform1f(location, value);
-          } else if (typeof value === "boolean") {
-            this.gl.uniform1i(location, value ? 1 : 0);
-          } else {
-            console.warn(`Unsupported uniform type for ${key}: ${typeof value}`);
-          }
-        });
-      });
-      /** Gets the current total animation time from 0ms */
-      __publicField(this, "getCurrentFrame", () => {
-        return this.currentFrame;
-      });
-      /** Set a frame to get a deterministic result, frames are literally just milliseconds from zero since the animation started */
-      __publicField(this, "setFrame", (newFrame) => {
-        this.currentFrame = newFrame;
-        this.lastRenderTime = performance.now();
-        this.renderUnlessAnimating();
-      });
-      /** Set an animation speed (or 0 to stop animation) */
-      __publicField(this, "setSpeed", (newSpeed = 1) => {
-        this.speed = newSpeed;
-        this.updateCurrentSpeed();
-      });
-      /** Apply the target speed, pausing (0) while the tab is hidden or the element is out of the viewport */
-      __publicField(this, "updateCurrentSpeed", () => {
-        this.setCurrentSpeed(this.ownerDocument.hidden || !this.isInViewport ? 0 : this.speed);
-      });
-      __publicField(this, "setCurrentSpeed", (newSpeed) => {
-        this.currentSpeed = newSpeed;
-        if (this.rafId === null && newSpeed !== 0) {
-          this.lastRenderTime = performance.now();
-          this.rafId = requestAnimationFrame(this.render);
-        }
-        if (this.rafId !== null && newSpeed === 0) {
-          cancelAnimationFrame(this.rafId);
-          this.rafId = null;
-        }
-      });
-      /** Set the maximum pixel count for the shader, this will limit the number of pixels that will be rendered */
-      __publicField(this, "setMaxPixelCount", (newMaxPixelCount = DEFAULT_MAX_PIXEL_COUNT) => {
-        this.maxPixelCount = newMaxPixelCount;
-        this.handleResize();
-      });
-      /** Set the minimum pixel ratio for the shader */
-      __publicField(this, "setMinPixelRatio", (newMinPixelRatio = 2) => {
-        this.minPixelRatio = newMinPixelRatio;
-        this.handleResize();
-      });
-      /** Update the uniforms that are provided by the outside shader, can be a partial set with only the uniforms that have changed */
-      __publicField(this, "setUniforms", (newUniforms) => {
-        this.setUniformValues(newUniforms);
-        this.providedUniforms = __spreadValues(__spreadValues({}, this.providedUniforms), newUniforms);
-        this.renderUnlessAnimating();
-      });
-      /** Render right away only when the rAF loop isn't running */
-      __publicField(this, "renderUnlessAnimating", () => {
-        if (this.rafId === null) {
-          this.render(performance.now());
-        }
-      });
-      __publicField(this, "handleDocumentVisibilityChange", () => {
-        this.updateCurrentSpeed();
-      });
-      /** Dispose of the shader mount, cleaning up all of the WebGL resources */
-      __publicField(this, "dispose", () => {
-        var _a2;
-        this.hasBeenDisposed = true;
-        if (this.rafId !== null) {
-          cancelAnimationFrame(this.rafId);
-          this.rafId = null;
-        }
-        if (this.gl && this.program) {
-          this.textures.forEach((texture) => {
-            this.gl.deleteTexture(texture);
-          });
-          this.textures.clear();
-          this.gl.deleteProgram(this.program);
-          this.program = null;
-          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
-          this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
-          this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
-          this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-          this.gl.getError();
-        }
-        (_a2 = this.gl.getExtension("WEBGL_lose_context")) == null ? void 0 : _a2.loseContext();
-        if (this.resizeObserver) {
-          this.resizeObserver.disconnect();
-          this.resizeObserver = null;
-        }
-        if (this.intersectionObserver) {
-          this.intersectionObserver.disconnect();
-          this.intersectionObserver = null;
-        }
-        visualViewport == null ? void 0 : visualViewport.removeEventListener("resize", this.handleVisualViewportChange);
-        this.ownerDocument.removeEventListener("visibilitychange", this.handleDocumentVisibilityChange);
-        this.uniformLocations = {};
-        this.canvasElement.remove();
-        delete this.parentElement.paperShaderMount;
-      });
-      if ((parentElement == null ? void 0 : parentElement.nodeType) === 1) {
+      if (parentElement?.nodeType === 1) {
         this.parentElement = parentElement;
       } else {
         throw new Error("Paper Shaders: parent element must be an HTMLElement");
@@ -691,11 +324,12 @@ void main() {
       this.currentFrame = frame;
       this.minPixelRatio = minPixelRatio;
       this.maxPixelCount = maxPixelCount;
-      const gl2 = canvasElement.getContext("webgl2", __spreadValues({
+      const gl2 = canvasElement.getContext("webgl2", {
         antialias: false,
         depth: false,
-        stencil: false
-      }, webGlContextAttributes));
+        stencil: false,
+        ...webGlContextAttributes
+      });
       if (!gl2) {
         throw new Error("Paper Shaders: WebGL is not supported in this browser");
       }
@@ -705,13 +339,357 @@ void main() {
       this.setupUniforms();
       this.setUniformValues(this.providedUniforms);
       this.setupResizeObserver();
-      visualViewport == null ? void 0 : visualViewport.addEventListener("resize", this.handleVisualViewportChange);
+      visualViewport?.addEventListener("resize", this.handleVisualViewportChange);
       this.setupIntersectionObserver();
       this.setSpeed(speed);
       this.parentElement.setAttribute("data-paper-shader", "");
       this.parentElement.paperShaderMount = this;
       this.ownerDocument.addEventListener("visibilitychange", this.handleDocumentVisibilityChange);
     }
+    initProgram = () => {
+      const program = createProgram(this.gl, vertexShaderSource, this.fragmentShader);
+      if (!program) return;
+      this.program = program;
+      this.gl.useProgram(program);
+    };
+    setupPositionAttribute = () => {
+      const positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
+      const positionBuffer = this.gl.createBuffer();
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
+      const positions = [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1];
+      this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+      this.gl.enableVertexAttribArray(positionAttributeLocation);
+      this.gl.vertexAttribPointer(positionAttributeLocation, 2, this.gl.FLOAT, false, 0, 0);
+    };
+    setupUniforms = () => {
+      const uniformLocations = {
+        u_time: this.gl.getUniformLocation(this.program, "u_time"),
+        u_pixelRatio: this.gl.getUniformLocation(this.program, "u_pixelRatio"),
+        u_resolution: this.gl.getUniformLocation(this.program, "u_resolution")
+      };
+      Object.entries(this.providedUniforms).forEach(([key, value]) => {
+        uniformLocations[key] = this.gl.getUniformLocation(this.program, key);
+        if (value instanceof HTMLImageElement) {
+          const aspectRatioUniformName = `${key}AspectRatio`;
+          uniformLocations[aspectRatioUniformName] = this.gl.getUniformLocation(this.program, aspectRatioUniformName);
+        }
+      });
+      this.uniformLocations = uniformLocations;
+    };
+    /**
+     * The scale that we should render at.
+     * - Used to target 2x rendering even on 1x screens for better antialiasing
+     * - Prevents the virtual resolution from going beyond the maximum resolution
+     * - Accounts for the page zoom level so we render in physical device pixels rather than CSS pixels
+     */
+    renderScale = 1;
+    parentWidth = 0;
+    parentHeight = 0;
+    parentDevicePixelWidth = 0;
+    parentDevicePixelHeight = 0;
+    devicePixelsSupported = false;
+    intersectionObserver = null;
+    isInViewport = true;
+    resizeObserver = null;
+    setupResizeObserver = () => {
+      this.resizeObserver = new ResizeObserver(([entry]) => {
+        if (entry?.borderBoxSize[0]) {
+          const physicalPixelSize = entry.devicePixelContentBoxSize?.[0];
+          if (physicalPixelSize !== void 0) {
+            this.devicePixelsSupported = true;
+            this.parentDevicePixelWidth = physicalPixelSize.inlineSize;
+            this.parentDevicePixelHeight = physicalPixelSize.blockSize;
+          }
+          this.parentWidth = entry.borderBoxSize[0].inlineSize;
+          this.parentHeight = entry.borderBoxSize[0].blockSize;
+        }
+        this.handleResize();
+      });
+      this.resizeObserver.observe(this.parentElement);
+    };
+    setupIntersectionObserver = () => {
+      const view = this.ownerDocument.defaultView;
+      if (!view?.IntersectionObserver) return;
+      this.intersectionObserver = new view.IntersectionObserver(([entry]) => {
+        this.isInViewport = entry?.isIntersecting ?? true;
+        this.updateCurrentSpeed();
+      });
+      this.intersectionObserver.observe(this.parentElement);
+    };
+    // Visual viewport resize handler, mainly used to react to browser zoom changes.
+    // Resize observer by itself does not react to pinch zoom, and although it usually
+    // reacts to classic browser zoom, it's not guaranteed in edge cases.
+    // Since timing between visual viewport changes and resize observer is complex
+    // and because we'd like to know the device pixel sizes of elements, we just restart
+    // the observer to get a guaranteed fresh callback regardless if it would have triggered or not.
+    handleVisualViewportChange = () => {
+      this.resizeObserver?.disconnect();
+      this.setupResizeObserver();
+    };
+    /** Resize handler for when the container div changes size or the max pixel count changes and we want to resize our canvas to match */
+    handleResize = () => {
+      let targetPixelWidth = 0;
+      let targetPixelHeight = 0;
+      const dpr = Math.max(1, window.devicePixelRatio);
+      const pinchZoom = visualViewport?.scale ?? 1;
+      if (this.devicePixelsSupported) {
+        const scaleToMeetMinPixelRatio = Math.max(1, this.minPixelRatio / dpr);
+        targetPixelWidth = this.parentDevicePixelWidth * scaleToMeetMinPixelRatio * pinchZoom;
+        targetPixelHeight = this.parentDevicePixelHeight * scaleToMeetMinPixelRatio * pinchZoom;
+      } else {
+        let targetRenderScale = Math.max(dpr, this.minPixelRatio) * pinchZoom;
+        if (this.isSafari) {
+          const zoomLevel = bestGuessBrowserZoom(this.ownerDocument);
+          targetRenderScale *= Math.max(1, zoomLevel);
+        }
+        targetPixelWidth = Math.round(this.parentWidth) * targetRenderScale;
+        targetPixelHeight = Math.round(this.parentHeight) * targetRenderScale;
+      }
+      const maxPixelCountHeadroom = Math.sqrt(this.maxPixelCount) / Math.sqrt(targetPixelWidth * targetPixelHeight);
+      const scaleToMeetMaxPixelCount = Math.min(1, maxPixelCountHeadroom);
+      const newWidth = Math.round(targetPixelWidth * scaleToMeetMaxPixelCount);
+      const newHeight = Math.round(targetPixelHeight * scaleToMeetMaxPixelCount);
+      const newRenderScale = newWidth / Math.round(this.parentWidth);
+      if (this.canvasElement.width !== newWidth || this.canvasElement.height !== newHeight || this.renderScale !== newRenderScale) {
+        this.renderScale = newRenderScale;
+        this.canvasElement.width = newWidth;
+        this.canvasElement.height = newHeight;
+        this.resolutionChanged = true;
+        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        this.render(performance.now());
+      }
+    };
+    render = (currentTime) => {
+      if (this.hasBeenDisposed) return;
+      if (this.program === null) {
+        console.warn("Tried to render before program or gl was initialized");
+        return;
+      }
+      const dt2 = currentTime - this.lastRenderTime;
+      this.lastRenderTime = currentTime;
+      if (this.currentSpeed !== 0) {
+        this.currentFrame += dt2 * this.currentSpeed;
+      }
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      this.gl.uniform1f(this.uniformLocations.u_time, this.currentFrame * 1e-3);
+      if (this.resolutionChanged) {
+        this.gl.uniform2f(this.uniformLocations.u_resolution, this.gl.canvas.width, this.gl.canvas.height);
+        this.gl.uniform1f(this.uniformLocations.u_pixelRatio, this.renderScale);
+        this.resolutionChanged = false;
+      }
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+      if (this.currentSpeed !== 0) {
+        this.requestRender();
+      } else {
+        this.rafId = null;
+      }
+    };
+    requestRender = () => {
+      if (this.rafId !== null) {
+        cancelAnimationFrame(this.rafId);
+      }
+      this.rafId = requestAnimationFrame(this.render);
+    };
+    /** Creates a texture from an image and sets it into a uniform value */
+    setTextureUniform = (uniformName, image) => {
+      if (!image.complete || image.naturalWidth === 0) {
+        throw new Error(`Paper Shaders: image for uniform ${uniformName} must be fully loaded`);
+      }
+      const existingTexture = this.textures.get(uniformName);
+      if (existingTexture) {
+        this.gl.deleteTexture(existingTexture);
+      }
+      if (!this.textureUnitMap.has(uniformName)) {
+        this.textureUnitMap.set(uniformName, this.textureUnitMap.size);
+      }
+      const textureUnit = this.textureUnitMap.get(uniformName);
+      this.gl.activeTexture(this.gl.TEXTURE0 + textureUnit);
+      const texture = this.gl.createTexture();
+      this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+      this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+      this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+      this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+      this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+      this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
+      if (this.mipmaps.includes(uniformName)) {
+        this.gl.generateMipmap(this.gl.TEXTURE_2D);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR);
+      }
+      const error = this.gl.getError();
+      if (error !== this.gl.NO_ERROR || texture === null) {
+        console.error("Paper Shaders: WebGL error when uploading texture:", error);
+        return;
+      }
+      this.textures.set(uniformName, texture);
+      const location = this.uniformLocations[uniformName];
+      if (location) {
+        this.gl.uniform1i(location, textureUnit);
+        const aspectRatioUniformName = `${uniformName}AspectRatio`;
+        const aspectRatioLocation = this.uniformLocations[aspectRatioUniformName];
+        if (aspectRatioLocation) {
+          const aspectRatio = image.naturalWidth / image.naturalHeight;
+          this.gl.uniform1f(aspectRatioLocation, aspectRatio);
+        }
+      }
+    };
+    /** Utility: recursive equality test for all the uniforms */
+    areUniformValuesEqual = (a, b) => {
+      if (a === b) return true;
+      if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
+        return a.every((val, i) => this.areUniformValuesEqual(val, b[i]));
+      }
+      return false;
+    };
+    /** Sets the provided uniform values into the WebGL program, can be a partial list of uniforms that have changed */
+    setUniformValues = (updatedUniforms) => {
+      Object.entries(updatedUniforms).forEach(([key, value]) => {
+        let cacheValue = value;
+        if (value instanceof HTMLImageElement) {
+          cacheValue = `${value.src.slice(0, 200)}|${value.naturalWidth}x${value.naturalHeight}`;
+        }
+        if (this.areUniformValuesEqual(this.uniformCache[key], cacheValue)) return;
+        this.uniformCache[key] = cacheValue;
+        const location = this.uniformLocations[key];
+        if (!location) {
+          console.warn(`Uniform location for ${key} not found`);
+          return;
+        }
+        if (value instanceof HTMLImageElement) {
+          this.setTextureUniform(key, value);
+        } else if (Array.isArray(value)) {
+          let flatArray = null;
+          let valueLength = null;
+          if (value[0] !== void 0 && Array.isArray(value[0])) {
+            const firstChildLength = value[0].length;
+            if (value.every((arr) => arr.length === firstChildLength)) {
+              flatArray = value.flat();
+              valueLength = firstChildLength;
+            } else {
+              console.warn(`All child arrays must be the same length for ${key}`);
+              return;
+            }
+          } else {
+            flatArray = value;
+            valueLength = flatArray.length;
+          }
+          switch (valueLength) {
+            case 2:
+              this.gl.uniform2fv(location, flatArray);
+              break;
+            case 3:
+              this.gl.uniform3fv(location, flatArray);
+              break;
+            case 4:
+              this.gl.uniform4fv(location, flatArray);
+              break;
+            case 9:
+              this.gl.uniformMatrix3fv(location, false, flatArray);
+              break;
+            case 16:
+              this.gl.uniformMatrix4fv(location, false, flatArray);
+              break;
+            default:
+              console.warn(`Unsupported uniform array length: ${valueLength}`);
+          }
+        } else if (typeof value === "number") {
+          this.gl.uniform1f(location, value);
+        } else if (typeof value === "boolean") {
+          this.gl.uniform1i(location, value ? 1 : 0);
+        } else {
+          console.warn(`Unsupported uniform type for ${key}: ${typeof value}`);
+        }
+      });
+    };
+    /** Gets the current total animation time from 0ms */
+    getCurrentFrame = () => {
+      return this.currentFrame;
+    };
+    /** Set a frame to get a deterministic result, frames are literally just milliseconds from zero since the animation started */
+    setFrame = (newFrame) => {
+      this.currentFrame = newFrame;
+      this.lastRenderTime = performance.now();
+      this.renderUnlessAnimating();
+    };
+    /** Set an animation speed (or 0 to stop animation) */
+    setSpeed = (newSpeed = 1) => {
+      this.speed = newSpeed;
+      this.updateCurrentSpeed();
+    };
+    /** Apply the target speed, pausing (0) while the tab is hidden or the element is out of the viewport */
+    updateCurrentSpeed = () => {
+      this.setCurrentSpeed(this.ownerDocument.hidden || !this.isInViewport ? 0 : this.speed);
+    };
+    setCurrentSpeed = (newSpeed) => {
+      this.currentSpeed = newSpeed;
+      if (this.rafId === null && newSpeed !== 0) {
+        this.lastRenderTime = performance.now();
+        this.rafId = requestAnimationFrame(this.render);
+      }
+      if (this.rafId !== null && newSpeed === 0) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    };
+    /** Set the maximum pixel count for the shader, this will limit the number of pixels that will be rendered */
+    setMaxPixelCount = (newMaxPixelCount = DEFAULT_MAX_PIXEL_COUNT) => {
+      this.maxPixelCount = newMaxPixelCount;
+      this.handleResize();
+    };
+    /** Set the minimum pixel ratio for the shader */
+    setMinPixelRatio = (newMinPixelRatio = 2) => {
+      this.minPixelRatio = newMinPixelRatio;
+      this.handleResize();
+    };
+    /** Update the uniforms that are provided by the outside shader, can be a partial set with only the uniforms that have changed */
+    setUniforms = (newUniforms) => {
+      this.setUniformValues(newUniforms);
+      this.providedUniforms = { ...this.providedUniforms, ...newUniforms };
+      this.renderUnlessAnimating();
+    };
+    /** Render right away only when the rAF loop isn't running */
+    renderUnlessAnimating = () => {
+      if (this.rafId === null) {
+        this.render(performance.now());
+      }
+    };
+    handleDocumentVisibilityChange = () => {
+      this.updateCurrentSpeed();
+    };
+    /** Dispose of the shader mount, cleaning up all of the WebGL resources */
+    dispose = () => {
+      this.hasBeenDisposed = true;
+      if (this.rafId !== null) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+      if (this.gl && this.program) {
+        this.textures.forEach((texture) => {
+          this.gl.deleteTexture(texture);
+        });
+        this.textures.clear();
+        this.gl.deleteProgram(this.program);
+        this.program = null;
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
+        this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.gl.getError();
+      }
+      this.gl.getExtension("WEBGL_lose_context")?.loseContext();
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+        this.resizeObserver = null;
+      }
+      if (this.intersectionObserver) {
+        this.intersectionObserver.disconnect();
+        this.intersectionObserver = null;
+      }
+      visualViewport?.removeEventListener("resize", this.handleVisualViewportChange);
+      this.ownerDocument.removeEventListener("visibilitychange", this.handleDocumentVisibilityChange);
+      this.uniformLocations = {};
+      this.canvasElement.remove();
+      delete this.parentElement.paperShaderMount;
+    };
   };
   function createShader(gl2, type, source) {
     const shader = gl2.createShader(type);
@@ -776,9 +754,8 @@ void main() {
     return ua2.includes("safari") && !ua2.includes("chrome") && !ua2.includes("android");
   }
   function bestGuessBrowserZoom(doc) {
-    var _a2, _b;
-    const viewportScale = (_a2 = visualViewport == null ? void 0 : visualViewport.scale) != null ? _a2 : 1;
-    const viewportWidth = (_b = visualViewport == null ? void 0 : visualViewport.width) != null ? _b : window.innerWidth;
+    const viewportScale = visualViewport?.scale ?? 1;
+    const viewportWidth = visualViewport?.width ?? window.innerWidth;
     const scrollbarWidth = window.innerWidth - doc.documentElement.clientWidth;
     const innerWidth = viewportScale * viewportWidth + scrollbarWidth;
     const ratio = outerWidth / innerWidth;
@@ -1152,24 +1129,22 @@ void main() {
     return [r, g, b, a];
   }
   function parseRgba(rgba) {
-    var _a2, _b, _c2;
     const match = rgba.match(/^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([0-9.]+))?\s*\)$/i);
     if (!match) return null;
     return [
-      parseInt((_a2 = match[1]) != null ? _a2 : "0") / 255,
-      parseInt((_b = match[2]) != null ? _b : "0") / 255,
-      parseInt((_c2 = match[3]) != null ? _c2 : "0") / 255,
+      parseInt(match[1] ?? "0") / 255,
+      parseInt(match[2] ?? "0") / 255,
+      parseInt(match[3] ?? "0") / 255,
       match[4] === void 0 ? 1 : parseFloat(match[4])
     ];
   }
   function parseHsla(hsla) {
-    var _a2, _b, _c2;
     const match = hsla.match(/^hsla?\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([0-9.]+))?\s*\)$/i);
     if (!match) return null;
     return [
-      parseInt((_a2 = match[1]) != null ? _a2 : "0"),
-      parseInt((_b = match[2]) != null ? _b : "0"),
-      parseInt((_c2 = match[3]) != null ? _c2 : "0"),
+      parseInt(match[1] ?? "0"),
+      parseInt(match[2] ?? "0"),
+      parseInt(match[3] ?? "0"),
       match[4] === void 0 ? 1 : parseFloat(match[4])
     ];
   }
@@ -1256,12 +1231,6 @@ void main() {
       }
       const retoques = window.HERO_AJUSTES && window.HERO_AJUSTES.dither || {};
       const ajustes = Object.assign({}, OPCIONES_DITHER, retoques);
-      if (prefiereMenosMovimiento()) {
-        caja.dataset.estado = "estatico";
-        caja.classList.add("sin-shader");
-        resolve(null);
-        return;
-      }
       try {
         const uniforms = {
           u_colorBack: getShaderColorFromString(ajustes.colorBack),
@@ -1316,10 +1285,10 @@ void main() {
   }
 
   // lib/blotter/chunk-CXYC3ZAY.js
-  var __defProp2 = Object.defineProperty;
+  var __defProp = Object.defineProperty;
   var __export = (target, all) => {
     for (var name in all)
-      __defProp2(target, name, { get: all[name], enumerable: true });
+      __defProp(target, name, { get: all[name], enumerable: true });
   };
   function pixelRatio() {
     return typeof window !== "undefined" && window.devicePixelRatio || 1;
@@ -1336,12 +1305,11 @@ void main() {
     return canvas;
   }
   function updateCanvasSize(canvas, width, height, ratio = 1) {
-    var _a2;
     canvas.width = width * ratio;
     canvas.height = height * ratio;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
-    (_a2 = canvas.getContext("2d")) == null ? void 0 : _a2.setTransform(ratio, 0, 0, ratio, 0, 0);
+    canvas.getContext("2d")?.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   function mousePosition(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -1446,7 +1414,7 @@ void main() {
   }
   function extractValidUniforms(uniforms) {
     const result = {};
-    for (const [name, descriptor] of Object.entries(uniforms != null ? uniforms : {})) {
+    for (const [name, descriptor] of Object.entries(uniforms ?? {})) {
       if (!UNIFORM_TYPES.includes(descriptor.type)) {
         logError(
           "blotter",
@@ -2623,11 +2591,10 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
   );
   var Material = class extends Emitter {
     constructor(options = {}) {
-      var _a2;
       super();
       this.uniformUnsubscribers = [];
       this.mainImage = options.mainImage;
-      this.uniforms = (_a2 = options.uniforms) != null ? _a2 : {};
+      this.uniforms = options.uniforms ?? {};
     }
     get mainImage() {
       return this._mainImage;
@@ -2645,7 +2612,10 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
     set uniforms(uniforms) {
       for (const unsubscribe of this.uniformUnsubscribers) unsubscribe();
       this.uniformUnsubscribers = [];
-      const valid = extractValidUniforms(__spreadValues(__spreadValues({}, uniforms), createDefaultUniforms(pixelRatio())));
+      const valid = extractValidUniforms({
+        ...uniforms,
+        ...createDefaultUniforms(pixelRatio())
+      });
       const interfaces = {};
       for (const [name, descriptor] of Object.entries(valid)) {
         const uniformInterface = new UniformInterface(descriptor, "Material");
@@ -12146,7 +12116,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
     paddingLeft: 0
   };
   function ensurePropertyValues(properties = {}) {
-    return __spreadValues(__spreadValues({}, DEFAULT_TEXT_PROPERTIES), properties);
+    return { ...DEFAULT_TEXT_PROPERTIES, ...properties };
   }
   function stringifiedPadding(properties = {}) {
     const p2 = ensurePropertyValues(properties);
@@ -12301,7 +12271,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
     }
   };
   function filterTexts(texts) {
-    const array = texts instanceof Text ? [texts] : Array.from(texts != null ? texts : []);
+    const array = texts instanceof Text ? [texts] : Array.from(texts ?? []);
     return array.filter((text) => {
       const isText = text instanceof Text;
       if (!isText) {
@@ -12315,9 +12285,8 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
       this.root = { x: 0, y: 0, w: 0, h: 0 };
     }
     fit(blocks) {
-      var _a2, _b;
       const first = blocks[0];
-      this.root = { x: 0, y: 0, w: (_a2 = first == null ? void 0 : first.w) != null ? _a2 : 0, h: (_b = first == null ? void 0 : first.h) != null ? _b : 0 };
+      this.root = { x: 0, y: 0, w: first?.w ?? 0, h: first?.h ?? 0 };
       for (const block of blocks) {
         const node = this.findNode(this.root, block.w, block.h);
         block.fit = node ? this.splitNode(node, block.w, block.h) : this.growNode(block.w, block.h);
@@ -12376,7 +12345,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
   };
   function yieldToMain() {
     const scheduler = globalThis.scheduler;
-    if (scheduler == null ? void 0 : scheduler.yield) {
+    if (scheduler?.yield) {
       return scheduler.yield();
     }
     return new Promise((resolve) => setTimeout(resolve, 0));
@@ -12404,13 +12373,12 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
     return new Mapping(filtered, textBounds, packer.root.w, packer.root.h);
   }
   function setValueAtIndex(data, i, descriptor) {
-    var _a2, _b, _c2, _d;
     const base = 4 * i;
     const value = descriptor.type === "1f" ? [descriptor.value] : descriptor.value;
-    data[base] = (_a2 = value[0]) != null ? _a2 : 0;
-    data[base + 1] = (_b = value[1]) != null ? _b : 0;
-    data[base + 2] = (_c2 = value[2]) != null ? _c2 : 0;
-    data[base + 3] = (_d = value[3]) != null ? _d : 0;
+    data[base] = value[0] ?? 0;
+    data[base + 1] = value[1] ?? 0;
+    data[base + 2] = value[2] ?? 0;
+    data[base + 3] = value[3] ?? 0;
   }
   var MappingMaterial = class {
     constructor(mapping, material, shaderMaterial, userUniformDataTextureObjects) {
@@ -12443,9 +12411,8 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord ) {
           "MappingMaterial"
         );
         uniformInterface.on("update", () => {
-          var _a2;
           for (const text of mapping.texts) {
-            const textInterface = (_a2 = this.textUniformInterface[text.id]) == null ? void 0 : _a2[uniformName];
+            const textInterface = this.textUniformInterface[text.id]?.[uniformName];
             if (textInterface) textInterface.value = uniformInterface.value;
           }
           texture.needsUpdate = true;
@@ -12858,7 +12825,7 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       return Boolean(
         window.WebGLRenderingContext && (canvas.getContext("webgl2") || canvas.getContext("webgl"))
       );
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -12906,7 +12873,6 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       return this._height;
     }
     setSize(width, height) {
-      var _a2;
       this._width = Math.trunc(width) || 1;
       this._height = Math.trunc(height) || 1;
       this.mesh.scale.set(this._width, this._height, 1);
@@ -12915,7 +12881,7 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       this.camera.top = this._height / 2;
       this.camera.bottom = this._height / -2;
       this.camera.updateProjectionMatrix();
-      (_a2 = this.renderTarget) == null ? void 0 : _a2.dispose();
+      this.renderTarget?.dispose();
       this.renderTarget = new bi(this._width, this._height, {
         minFilter: Mt,
         magFilter: Mt,
@@ -12949,7 +12915,6 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
   };
   var Blotter = class extends Emitter {
     constructor(material, options = {}) {
-      var _a2, _b, _c2, _d, _e2;
       super();
       this._texts = [];
       this.scopes = {};
@@ -12968,15 +12933,15 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
           "device does not support webgl"
         );
       }
-      this.ratio = (_a2 = options.ratio) != null ? _a2 : pixelRatio();
-      this.autobuild = (_b = options.autobuild) != null ? _b : true;
-      this.autostart = (_c2 = options.autostart) != null ? _c2 : true;
-      this.autoplay = (_d = options.autoplay) != null ? _d : true;
+      this.ratio = options.ratio ?? pixelRatio();
+      this.autobuild = options.autobuild ?? true;
+      this.autostart = options.autostart ?? true;
+      this.autoplay = options.autoplay ?? true;
       this.ready = new Promise((resolve) => {
         this.resolveReady = resolve;
       });
       this.setMaterial(material);
-      this.addTexts((_e2 = options.texts) != null ? _e2 : []);
+      this.addTexts(options.texts ?? []);
       this.renderer.on("render", () => this.onRendered());
       if (this.autobuild) {
         this.update().catch((error) => {
@@ -13044,12 +13009,11 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       this.removeTexts(text);
     }
     removeTexts(texts) {
-      var _a2;
       const filtered = filterTexts(texts);
       const removed = this._texts.filter((text) => filtered.includes(text));
       for (const text of removed) {
         this._texts = this._texts.filter((existing) => existing !== text);
-        for (const unsubscribe of (_a2 = this.textUnsubscribers[text.id]) != null ? _a2 : []) {
+        for (const unsubscribe of this.textUnsubscribers[text.id] ?? []) {
           unsubscribe();
         }
         delete this.textUnsubscribers[text.id];
@@ -13106,12 +13070,11 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       return scope;
     }
     boundsForText(text) {
-      var _a2;
       if (!this.scopes[text.id]) {
         logError("Blotter", "boundsForText", "Text object not found in blotter");
         return void 0;
       }
-      return (_a2 = this.mappingMaterial) == null ? void 0 : _a2.boundsForText(text);
+      return this.mappingMaterial?.boundsForText(text);
     }
     async build() {
       const mapping = await buildMapping(this._texts);
@@ -13154,17 +13117,15 @@ void mainImage(out vec4 mainImage, in vec2 fragCoord);
       this.emit("render");
     }
     updateUniformValue(uniformName) {
-      var _a2;
-      const target = (_a2 = this.mappingMaterial) == null ? void 0 : _a2.uniformInterface[uniformName];
+      const target = this.mappingMaterial?.uniformInterface[uniformName];
       const source = this._material.uniforms[uniformName];
       if (target && source) {
         target.value = source.value;
       }
     }
     updateTextUniformValue(textId, uniformName) {
-      var _a2, _b, _c2;
-      const target = (_b = (_a2 = this.mappingMaterial) == null ? void 0 : _a2.textUniformInterface[textId]) == null ? void 0 : _b[uniformName];
-      const source = (_c2 = this.scopes[textId]) == null ? void 0 : _c2.material.uniforms[uniformName];
+      const target = this.mappingMaterial?.textUniformInterface[textId]?.[uniformName];
+      const source = this.scopes[textId]?.material.uniforms[uniformName];
       if (target && source) {
         target.value = source.value;
       }
@@ -13602,7 +13563,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
     };
   }
   async function montarTituloBlotter(titulo) {
-    if (!titulo || !titulo.textContent || prefiereMenosMovimiento()) {
+    if (!titulo || !titulo.textContent) {
       return false;
     }
     if (typeof isWebGLSupported === "function" && !isWebGLSupported()) {
@@ -13638,7 +13599,9 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
     titulo.classList.add("blotter-activo");
     titulo.setAttribute("data-efecto", "blotter");
     window.requestAnimationFrame(() => lienzo.classList.add("listo"));
-    seguirRaton(material, titulo, lienzo, ajustes);
+    if (!prefiereMenosMovimiento()) {
+      seguirRaton(material, titulo, lienzo, ajustes);
+    }
     reescalar(texto, titulo);
     return true;
   }
@@ -13961,7 +13924,7 @@ void mainImage( out vec4 mainImage, in vec2 fragCoord )
   }
   async function arrancarTitulo() {
     const titulo = document.getElementById("arriba");
-    if (!titulo || sinMovimiento2) {
+    if (!titulo) {
       return;
     }
     try {
